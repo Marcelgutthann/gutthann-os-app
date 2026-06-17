@@ -152,7 +152,9 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
 .vs-h{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--c-slate-700);display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s3)}
 .vs-h .ico{width:15px;height:15px;stroke:var(--c-blue-600);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .vs-h .vs-tag{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--c-blue-700);background:var(--c-blue-50);padding:2px 8px;border-radius:9px}
-.vs-zp{display:grid;grid-template-columns:1.25fr 2fr auto;gap:var(--s4);align-items:center;padding:var(--s3) 0;border-bottom:1px solid var(--c-slate-200)}
+.vs-zp-wrap{border-bottom:1px solid var(--c-slate-200)}.vs-zp-wrap:last-of-type{border-bottom:none}
+.vs-zp{display:grid;grid-template-columns:1.25fr 2fr auto;gap:var(--s4);align-items:center;padding:var(--s3) 0}
+.vs-zp-erl{font-size:11px;color:var(--c-navy-800);line-height:1.45;background:var(--c-blue-50);border-left:2px solid var(--c-blue-400);padding:6px 10px;margin:0 0 9px;border-radius:0 var(--r-sm) var(--r-sm) 0}
 .vs-zp:last-of-type{border-bottom:none}
 .vs-zp-name{font-size:12px;font-weight:600;color:var(--c-navy-900)}
 .vs-zp-sub{font-size:10px;color:var(--c-slate-500);margin-top:1px}
@@ -600,7 +602,7 @@ function renderVorausschau(vs){
   if(zp.length){
     left='<div class="vs-block-c"><div class="vs-h">'+icoClock()+'Termin-Radar · Rückwärtsterminierung<span class="vs-tag">'+zp.length+' Zwangspunkt'+(zp.length>1?'e':'')+'</span></div>';
     for(const z of zp){const st=z.status||'warn',pw=Math.max(0,+z.puffer_wochen||0),fill=Math.min(98,Math.max(6,Math.round((26-pw)/26*100)));
-      left+='<div class="vs-zp"><div><div class="vs-zp-name">'+esc(z.name||'')+'</div><div class="vs-zp-sub">'+esc(z.quelle||'')+'</div></div><div><div class="vs-track"><div class="vs-track-fill '+st+'" style="width:'+fill+'%"></div><div class="vs-track-need" style="left:'+fill+'%"></div></div><div class="vs-track-labels"><span>heute</span><span>Frist '+esc(fmtFrist(z.frist))+'</span></div></div><div class="vs-puffer '+st+'"><div class="vs-puffer-d">'+pw+' Wo</div><div class="vs-puffer-l">Puffer</div></div></div>';}
+      left+='<div class="vs-zp-wrap"><div class="vs-zp"><div><div class="vs-zp-name">'+esc(z.name||'')+'</div><div class="vs-zp-sub">'+esc(z.quelle||'')+'</div></div><div><div class="vs-track"><div class="vs-track-fill '+st+'" style="width:'+fill+'%"></div><div class="vs-track-need" style="left:'+fill+'%"></div></div><div class="vs-track-labels"><span>heute</span><span>Frist '+esc(fmtFrist(z.frist))+'</span></div></div><div class="vs-puffer '+st+'"><div class="vs-puffer-d">'+pw+' Wo</div><div class="vs-puffer-l">Puffer</div></div></div>'+(z.erlaeuterung?'<div class="vs-zp-erl">'+esc(z.erlaeuterung)+'</div>':'')+'</div>';}
     left+='</div>';
   }
   let right='';
