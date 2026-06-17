@@ -167,13 +167,33 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
 .fw-h{font-size:12.5px;font-weight:700;color:var(--c-danger);margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .fw-dot{width:8px;height:8px;border-radius:50%;background:var(--c-danger);flex-shrink:0;box-shadow:0 0 0 3px var(--c-danger-bg)}
 .fw-cnt{font-family:var(--f-mono);font-size:10px;font-weight:600;background:var(--c-danger-bg);color:var(--c-danger);padding:1px 7px;border-radius:9px}
-.fw-item{display:grid;grid-template-columns:135px 150px 1fr auto;gap:14px;align-items:center;padding:8px 0;border-top:1px solid var(--c-slate-100);cursor:pointer}
+.fw-item{display:grid;grid-template-columns:135px 150px minmax(0,1fr) auto;gap:14px;align-items:center;padding:8px 0;border-top:1px solid var(--c-slate-100);cursor:pointer}
 .fw-item:hover{background:var(--c-slate-50)}
 .fw-proj{font-size:12px;font-weight:600;color:var(--c-navy-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fw-typ{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--c-slate-500);white-space:nowrap}
+.fw-typ{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--c-slate-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fw-item.danger .fw-typ{color:var(--c-danger)}.fw-item.warn .fw-typ{color:var(--c-warning)}
 .fw-titel{font-size:12px;color:var(--c-slate-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fw-frist{font-size:11px;color:var(--c-slate-500);white-space:nowrap}
+.fw-frist{font-size:11px;color:var(--c-slate-500);white-space:nowrap;text-align:right}
+@media(max-width:760px){.fw-item{grid-template-columns:1fr auto;gap:3px 12px}
+.fw-proj{grid-column:1;grid-row:1}.fw-typ{grid-column:1;grid-row:2}
+.fw-titel{grid-column:1;grid-row:3;white-space:normal;overflow-wrap:anywhere}
+.fw-frist{grid-column:2;grid-row:1/4;align-self:center}}
+.gl{border-bottom:1px dotted var(--c-slate-400);cursor:help}
+.gtip{position:fixed;z-index:9999;left:-999px;top:0;max-width:280px;background:var(--c-navy-900);color:#fff;font-size:11px;line-height:1.45;padding:8px 11px;border-radius:7px;box-shadow:0 6px 24px rgba(15,23,42,.28);opacity:0;transform:translateY(3px);transition:opacity .12s,transform .12s;pointer-events:none}
+.gtip.on{opacity:1;transform:translateY(0)}
+.glossbtn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--c-slate-300);background:var(--c-white);color:var(--c-slate-600);font-size:12px;font-weight:700;cursor:pointer;line-height:1}
+.glossbtn:hover{border-color:var(--c-blue-600);color:var(--c-blue-700)}
+.gmodal{position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.45);display:flex;align-items:flex-start;justify-content:center;padding:7vh 16px 16px;overflow-y:auto}
+.gm-card{background:var(--c-white);border-radius:var(--r-lg);box-shadow:0 24px 60px rgba(15,23,42,.35);max-width:520px;width:100%;padding:0 0 18px}
+.gm-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--c-slate-200);font-size:15px;font-weight:700;color:var(--c-navy-900);position:sticky;top:0;background:var(--c-white);border-radius:var(--r-lg) var(--r-lg) 0 0}
+.gm-x{border:none;background:none;font-size:22px;line-height:1;color:var(--c-slate-400);cursor:pointer;padding:0 2px}.gm-x:hover{color:var(--c-navy-900)}
+.gm-sec-h{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--c-slate-500);padding:16px 20px 6px}
+.gm-legend{display:flex;flex-wrap:wrap;gap:6px 18px;padding:0 20px 4px;font-size:12px;color:var(--c-slate-700)}.gm-legend span{display:inline-flex;align-items:center;gap:7px}
+.gm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}.gm-dot.d{background:var(--c-danger)}.gm-dot.w{background:var(--c-amber)}.gm-dot.o{background:var(--c-success)}
+.gm-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:6px 20px;font-size:12.5px;align-items:start}
+.gm-t{font-weight:700;color:var(--c-navy-900)}.gm-d{color:var(--c-slate-600);line-height:1.45}
+.gm-note{margin:14px 20px 0;padding:11px 13px;background:var(--c-slate-50);border-radius:var(--r-sm);font-size:11.5px;color:var(--c-slate-600);line-height:1.5}
+@media(max-width:520px){.gm-row{grid-template-columns:1fr;gap:1px;padding:7px 20px}}
 .side-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.side-h .t{font-size:13px;font-weight:600}
 .run{background:var(--c-white);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:9px 11px;margin-bottom:7px;cursor:pointer}
 .run .rh{display:flex;align-items:center;gap:7px}.run .ra{font-size:12px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -360,7 +380,7 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
 </form>
 <div id="shell" hidden>
   <div class="top"><button class="menu-btn" id="menubtn" aria-label="Menü">☰</button><span class="brand">Gutthann HIW · Agentic OS</span><span class="crumb" id="crumb"></span>
-    <span class="right"><span class="rstatus off" id="rstatus"><span class="d"></span><span id="rstext">Runner aus</span></span><span class="user" id="useremail"></span><button class="lnk" id="logout">abmelden</button></span></div>
+    <span class="right"><button class="glossbtn" id="glossbtn" title="Glossar &amp; Legende — was bedeuten die Begriffe?">?</button><span class="rstatus off" id="rstatus"><span class="d"></span><span id="rstext">Runner aus</span></span><span class="user" id="useremail"></span><button class="lnk" id="logout">abmelden</button></span></div>
   <div id="runbanner" class="runbanner" hidden></div>
   <div class="sb-backdrop" id="sbbackdrop"></div>
   <div class="layout">
@@ -380,6 +400,38 @@ const el=id=>document.getElementById(id),esc=s=>(s||'').replace(/[&<>]/g,c=>({'&
 const short=n=>(n||'').replace(/^\d+\s*-\s*/,'').replace(/^\d+\s+/,''),slug=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-'),today=()=>new Date().toISOString().slice(0,10),prioN=p=>({P1:1,P2:2,P3:3}[p]||3);
 const fmtD=d=>d?new Date(d).toLocaleDateString('de-DE'):'—';
 const LPH=['Grundlagen','Vorentwurf','Entwurf','Genehmigung','Ausführung','Vergabe-Vorb.','Vergabe','Objekt-ÜW','Gewährl.'];
+// ── Glossar & Erklärbarkeit: ein Außenstehender muss erklären können, was abgeht ──
+const GLOSS={
+ 'LPH':'Leistungsphase nach HOAI (1–9) — Stufe der Planung bzw. Ausführung. „Aktive Phase" = woran gerade gearbeitet wird.',
+ 'KG':'Kostengruppe nach DIN 276 — z. B. KG 300 Bauwerk-Baukonstruktion, KG 400 Technische Anlagen.',
+ 'DIN 276':'Norm zur Gliederung der Baukosten in Kostengruppen (KG 100–700).',
+ 'Zwangspunkt':'Unverrückbarer Termin oder Abhängigkeit, der den Ablauf zwingt (z. B. Frist Bauamt, Liefertermin). Davon wird rückwärts terminiert.',
+ 'Puffer':'Zeitreserve in Wochen, bis dieser Zwangspunkt kritisch wird. 0–2 Wochen = eng (rot).',
+ 'Rückwärtsterminierung':'Vom Fixtermin aus rückwärts gerechnet, wann spätestens begonnen werden muss.',
+ 'Phasen-Reife':'Wie weit die Grundleistungen der aktiven LPH abgeschlossen sind (0–100 %).',
+ 'Nachhaken':'Offener Vorgang, auf dessen Antwort/Erledigung gewartet wird — wird überfällig, wenn die Frist verstreicht.',
+ 'Schnittstelle':'Übergabepunkt zwischen Beteiligten (z. B. Architekt → Statiker). „Stillstand" = wie lange dort nichts passiert ist.',
+ 'P1':'Priorität 1 — kritisch, sofort handeln.',
+ 'P2':'Priorität 2 — wichtig, zeitnah.',
+ 'P3':'Priorität 3 — normal, planbar.'
+};
+const glAttr=t=>esc(t||'').replace(/"/g,'&quot;');
+const gl=(term,def)=>'<span class="gl" data-gl="'+glAttr(def||GLOSS[term]||'')+'">'+esc(term)+'</span>';
+function posTip(g,tip){const r=g.getBoundingClientRect();tip.style.left='-999px';tip.style.top='0px';const tw=tip.offsetWidth,th=tip.offsetHeight;let x=r.left+r.width/2-tw/2;x=Math.max(8,Math.min(x,innerWidth-tw-8));let y=r.top-th-9;if(y<8)y=r.bottom+9;tip.style.left=Math.round(x)+'px';tip.style.top=Math.round(y)+'px';}
+function initTips(){if(el('gtip'))return;const tip=document.createElement('div');tip.id='gtip';tip.className='gtip';document.body.appendChild(tip);let cur=null;
+ document.addEventListener('mouseover',e=>{const g=e.target.closest?e.target.closest('[data-gl]'):null;if(g&&g!==cur){cur=g;tip.textContent=g.getAttribute('data-gl');tip.classList.add('on');posTip(g,tip);}});
+ document.addEventListener('mouseout',e=>{const g=e.target.closest?e.target.closest('[data-gl]'):null;if(g&&cur){cur=null;tip.classList.remove('on');}});
+ window.addEventListener('scroll',()=>{if(cur){cur=null;tip.classList.remove('on');}},true);}
+function openGloss(){let o=el('gmodal');if(o){o.remove();return;}
+ const row=(t,d)=>'<div class="gm-row"><div class="gm-t">'+esc(t)+'</div><div class="gm-d">'+esc(d)+'</div></div>';
+ const card='<div class="gm-card"><div class="gm-head"><span>Glossar &amp; Legende</span><button class="gm-x" id="gmx">×</button></div>'+
+  '<div class="gm-sec-h">Status-Farben</div><div class="gm-legend"><span><i class="gm-dot d"></i>kritisch · überfällig · eng</span><span><i class="gm-dot w"></i>bald · Achtung</span><span><i class="gm-dot o"></i>ok · erledigt</span></div>'+
+  '<div class="gm-sec-h">Prioritäten</div>'+row('P1','kritisch, sofort handeln')+row('P2','wichtig, zeitnah')+row('P3','normal, planbar')+
+  '<div class="gm-sec-h">Begriffe &amp; Abkürzungen</div>'+['LPH','KG','DIN 276','Zwangspunkt','Puffer','Rückwärtsterminierung','Phasen-Reife','Nachhaken','Schnittstelle'].map(k=>row(k,GLOSS[k])).join('')+
+  '<div class="gm-note">Alle analysierten Zahlen beziehen sich auf den <strong>Analyse-Stand</strong> (oben rechts im Projekt-Header). Quelle je Wert steht — wo vorhanden — direkt am Eintrag.</div></div>';
+ o=document.createElement('div');o.id='gmodal';o.className='gmodal';o.innerHTML=card;document.body.appendChild(o);
+ o.onclick=e=>{if(e.target===o||e.target.id==='gmx')o.remove();};
+ document.addEventListener('keydown',function esc2(ev){if(ev.key==='Escape'){const m=el('gmodal');if(m)m.remove();document.removeEventListener('keydown',esc2);}});}
 const AGENT_GROUPS=[
   {h:'Doku & Analyse',items:[
     {id:'dashboard-analyse',ic:'◎',doku:true,t:'Doku-Agent · Analyse',s:'Vorausschau, Kosten, Beschlüsse aus der Wissensbasis'},
@@ -409,6 +461,7 @@ function showAuthed(s){el('login').hidden=!!s;el('shell').hidden=!s;if(s){el('us
 sb.auth.getSession().then(({data})=>showAuthed(data.session));sb.auth.onAuthStateChange((_e,s)=>showAuthed(s));
 el('login').addEventListener('submit',async e=>{e.preventDefault();el('loginerr').textContent='';const{error}=await sb.auth.signInWithPassword({email:el('email').value.trim(),password:el('pw').value});if(error)el('loginerr').textContent='Anmeldung fehlgeschlagen: '+error.message;});
 el('logout').addEventListener('click',()=>sb.auth.signOut());
+{const gb=el('glossbtn');if(gb)gb.addEventListener('click',openGloss);}initTips();
 function setDrawer(open){const s=document.querySelector('.sidebar'),b=el('sbbackdrop');if(s)s.classList.toggle('open',open);if(b)b.classList.toggle('open',open);}
 function boot(){if(started){render();return;}started=true;render();loadRuns();
   const mb=el('menubtn'),bd=el('sbbackdrop');
@@ -513,7 +566,7 @@ async function renderProject(){
   h+='<nav class="pilgrim"><div class="pilgrim-label">Leistungsphasen HOAI · klick zum Setzen der aktiven Phase</div><div class="pilgrim-track"><div class="pilgrim-line"></div><div class="pilgrim-line-progress" style="width:'+(lph?((lph-1)/8*89+5.5):0)+'%"></div>';
   for(let i=1;i<=9;i++){const cl=lph&&i<lph?'done':lph&&i===lph?'active':'';h+='<div class="pilgrim-station '+cl+'" data-lph="'+i+'"><div class="pilgrim-dot">'+i+'</div><div class="pilgrim-labelset">'+LPH[i-1]+'</div></div>';}
   h+='</div></nav>';
-  h+='<div class="kpi-strip">'+kpi('accent','Aktive Phase',lph?'LPH '+lph:'—','','HOAI § 34')+
+  h+='<div class="kpi-strip">'+kpi('accent','Aktive Phase',lph?gl('LPH')+' '+lph:'—','','HOAI § 34')+
     kpi('warn','Offene Aufgaben',offen,'',p1+' P1 kritisch')+
     kpi(kostenVal?'':'','Kosten aktuell',kostenVal?(kostenVal/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}):'—',kostenVal?'Mio €':'',kostenVal?'brutto · Stand lt. Analyse':'Tiefenanalyse nötig')+
     kpi(cOver?'alert':'','Überfällige Vorgänge',cOver,'','Nachhaken nötig')+
@@ -536,7 +589,7 @@ async function renderProject(){
   // Aktivität
   h+=sec('aktivitaet','','◷','Aktivität (zuletzt geändert)','neueste Dateien & Mails','<span class="stat">'+(recent||[]).length+'</span>','<div class="inner">'+renderAktivitaet(recent||[])+'</div>');
   // Vorgänge
-  h+=sec('vorgaenge','','✉','Nachhaken & Vorgänge','Worauf gewartet wird — Antworten, Fristen, Angebote','<span class="stat'+(cOver?' alert':'')+'">'+cOver+' überfällig</span>',renderComms(C));
+  h+=sec('vorgaenge','','✉',gl('Nachhaken')+' & Vorgänge','Worauf gewartet wird — Antworten, Fristen, Angebote','<span class="stat'+(cOver?' alert':'')+'">'+cOver+' überfällig</span>',renderComms(C));
   // Beteiligte
   const ppl=beteiligte(C);
   h+=sec('beteiligte','','👤','Beteiligte','Kontakte aus den Vorgängen','<span class="stat">'+ppl.length+'</span>','<div class="inner"><div class="ppl-grid">'+(ppl.length?ppl.map(p=>'<div class="ppl-card"><div class="ppl-name">'+esc(p.name)+'</div>'+(p.mail?'<div class="ppl-mail">'+esc(p.mail)+'</div>':'')+'<div class="ppl-cnt">'+p.n+' Vorgang(e)</div></div>').join(''):'<div class="empty">Keine Kontakte erfasst.</div>')+'</div></div>');
@@ -702,14 +755,14 @@ function renderVorausschau(vs){
   const zp=vs.zwangspunkte||[],reife=vs.phasen_reife||null,week=vs.diese_woche||[],jf=vs.jour_fixe||null,sst=vs.schnittstellen||[],hot=vs.hotspots||[];
   let left='';
   if(zp.length){
-    left='<div class="vs-block-c"><div class="vs-h">'+icoClock()+'Termin-Radar · Rückwärtsterminierung<span class="vs-tag">'+zp.length+' Zwangspunkt'+(zp.length>1?'e':'')+'</span></div>';
+    left='<div class="vs-block-c"><div class="vs-h">'+icoClock()+'Termin-Radar · '+gl('Rückwärtsterminierung')+'<span class="vs-tag">'+zp.length+' '+gl('Zwangspunkt')+(zp.length>1?'e':'')+'</span></div>';
     for(const z of zp){const st=z.status||'warn',pw=Math.max(0,+z.puffer_wochen||0),fill=Math.min(98,Math.max(6,Math.round((26-pw)/26*100)));
-      left+='<div class="vs-zp-wrap"><div class="vs-zp"><div><div class="vs-zp-name">'+esc(z.name||'')+'</div><div class="vs-zp-sub">'+esc(z.quelle||'')+'</div></div><div><div class="vs-track"><div class="vs-track-fill '+st+'" style="width:'+fill+'%"></div><div class="vs-track-need" style="left:'+fill+'%"></div></div><div class="vs-track-labels"><span>heute</span><span>Frist '+esc(fmtFrist(z.frist))+'</span></div></div><div class="vs-puffer '+st+'"><div class="vs-puffer-d">'+pw+' Wo</div><div class="vs-puffer-l">Puffer</div></div></div>'+(z.erlaeuterung?'<div class="vs-zp-erl">'+esc(z.erlaeuterung)+'</div>':'')+'</div>';}
+      left+='<div class="vs-zp-wrap"><div class="vs-zp"><div><div class="vs-zp-name">'+esc(z.name||'')+'</div><div class="vs-zp-sub">'+esc(z.quelle||'')+'</div></div><div><div class="vs-track"><div class="vs-track-fill '+st+'" style="width:'+fill+'%"></div><div class="vs-track-need" style="left:'+fill+'%"></div></div><div class="vs-track-labels"><span>heute</span><span>Frist '+esc(fmtFrist(z.frist))+'</span></div></div><div class="vs-puffer '+st+'"><div class="vs-puffer-d">'+pw+' Wo</div><div class="vs-puffer-l">'+gl('Puffer')+'</div></div></div>'+(z.erlaeuterung?'<div class="vs-zp-erl">'+esc(z.erlaeuterung)+'</div>':'')+'</div>';}
     left+='</div>';
   }
   let right='';
   if(reife&&reife.pct!=null){const pct=Math.max(0,Math.min(100,Math.round(+reife.pct)));
-    right='<div class="vs-block-c"><div class="vs-h">'+icoCheck()+'Phasen-Reife</div><div class="vs-reife"><div class="vs-ring" style="background:conic-gradient(var(--c-blue-600) '+pct+'%,var(--c-slate-200) 0)"><div class="vs-ring-v"><div class="vs-ring-pct">'+pct+'%</div><div class="vs-ring-l">reif</div></div></div><div class="vs-reife-side">'+(reife.hinweis?'<div class="vs-prog">'+esc(reife.hinweis)+'</div>':'')+(reife.fehlend&&reife.fehlend.length?'<ul class="vs-miss">'+reife.fehlend.map(f=>'<li><span class="dot'+(f.status==='teilweise'?' part':'')+'"></span>'+esc(f.text)+'</li>').join('')+'</ul>':'')+'</div></div></div>';
+    right='<div class="vs-block-c"><div class="vs-h">'+icoCheck()+gl('Phasen-Reife')+'</div><div class="vs-reife"><div class="vs-ring" style="background:conic-gradient(var(--c-blue-600) '+pct+'%,var(--c-slate-200) 0)"><div class="vs-ring-v"><div class="vs-ring-pct">'+pct+'%</div><div class="vs-ring-l">reif</div></div></div><div class="vs-reife-side">'+(reife.hinweis?'<div class="vs-prog">'+esc(reife.hinweis)+'</div>':'')+(reife.fehlend&&reife.fehlend.length?'<ul class="vs-miss">'+reife.fehlend.map(f=>'<li><span class="dot'+(f.status==='teilweise'?' part':'')+'"></span>'+esc(f.text)+'</li>').join('')+'</ul>':'')+'</div></div></div>';
   }
   if(left||right)h+='<div class="vs-row">'+(left||'<div></div>')+(right||'<div></div>')+'</div>';
   if(week.length||(jf&&((jf.punkte&&jf.punkte.length)||jf.datum))){
@@ -722,7 +775,7 @@ function renderVorausschau(vs){
     h+='<div class="vs-week-grid">'+acts+(jfh||'<div></div>')+'</div>';
   }
   let s3l='';
-  if(sst.length){s3l='<div class="vs-block-c"><div class="vs-h">'+icoLink()+'Schnittstellen-Stillstand</div>';
+  if(sst.length){s3l='<div class="vs-block-c"><div class="vs-h">'+icoLink()+gl('Schnittstellen-Stillstand',GLOSS['Schnittstelle'])+'</div>';
     for(const s of sst)s3l+='<div class="vs-block-row"><div class="vs-idle '+(s.status==='danger'?'':'warn')+'"><div class="vs-idle-d">'+(+s.tage_still||0)+'</div><div class="vs-idle-l">Tage</div></div><div class="vs-block-main"><div class="vs-block-name">'+esc(s.name||'')+'</div><div class="vs-chain">'+esc(s.kette||'')+'</div></div></div>';
     s3l+='</div>';
   }
