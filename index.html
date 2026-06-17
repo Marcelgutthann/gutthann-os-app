@@ -401,7 +401,8 @@ async function renderProject(){
   currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;renderSidebar();
   el('crumb').innerHTML='<a id="toC">Cockpit</a><span class="sep">›</span>'+esc(short(proj.name));
   const T=tasks||[],C=comms||[],D=proj.dashboard||null;
-  const offen=T.filter(t=>t.status!=='erledigt').length,p1=T.filter(t=>t.status!=='erledigt'&&t.prio==='P1').length;
+  const AL=getAufgaben(D,T);
+  const offen=AL.filter(t=>t.status!=='erledigt').length,p1=AL.filter(t=>t.status!=='erledigt'&&t.prio==='P1').length;
   const cOpen=C.filter(c=>!['beantwortet','erledigt'].includes(c.status)).length,cOver=C.filter(c=>c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status)).length;
   const nr=(proj.name.match(/(\d{4})/)||[])[1]||'',lph=proj.lph||0;
   const kostenVal=D&&D.kosten&&D.kosten.summe_brutto?D.kosten.summe_brutto:null;
@@ -423,10 +424,12 @@ async function renderProject(){
   // Vorausschau · denkt voraus (Flaggschiff)
   h+=renderVorausschauSection(D);
   // Aufgaben-Zentrale
-  const cats={};T.forEach(t=>{if(t.status!=='erledigt'){const k=t.kategorie||'Sonstige';cats[k]=(cats[k]||0)+1;}});
-  h+=sec('aufgaben','prominent','⚡','Aufgaben-Zentrale',offen+' offen · '+p1+' kritisch','<span class="stat'+(p1?' alert':'')+'">'+p1+' P1</span>',
-    '<nav class="tasks-tabs">'+tabBtn('alle','Alle',offen)+Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).map(k=>tabBtn(slug(k),k,cats[k])).join('')+'</nav>'+
-    '<div class="tasks-filters"><span class="filter-label">Priorität</span><button class="fc s1" data-p="P1">P1</button><button class="fc s2" data-p="P2">P2</button><button class="fc" data-p="P3">P3</button></div>'+renderTasks(T));
+  const cats={};AL.forEach(t=>{if(t.status!=='erledigt'){const k=t.kategorie||'sonstige';cats[k]=(cats[k]||0)+1;}});
+  const aufgBody=AL.length
+    ? '<nav class="tasks-tabs">'+tabBtn('alle','Alle',offen)+Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).map(k=>tabBtn(slug(k),k,cats[k])).join('')+'</nav>'+
+      '<div class="tasks-filters"><span class="filter-label">Priorität</span><button class="fc s1" data-p="P1">P1</button><button class="fc s2" data-p="P2">P2</button><button class="fc" data-p="P3">P3</button></div>'+renderTasks(AL)
+    : '<div class="inner"><div class="cta"><p>Die <strong>Aufgaben-Zentrale</strong> zieht offene Punkte direkt aus deinen Jour-Fixe-Protokollen und Mails (mit Quelle „PS-JF …, Pkt. …"). Noch nicht analysiert.</p><button class="btn-sm" data-agent="dashboard-analyse">Aufgaben aus Protokollen ziehen</button></div></div>';
+  h+=sec('aufgaben','prominent','⚡','Aufgaben-Zentrale',offen+' offen · '+p1+' kritisch'+(D&&D.aufgaben?' · aus Protokollen':''),'<span class="stat'+(p1?' alert':'')+'">'+p1+' P1</span>',aufgBody);
   // Kosten (Pflicht)
   h+=sec('kosten','','€','Kosten-Übersicht',D&&D.kosten?'aus Tiefenanalyse':'noch nicht analysiert',(D&&D.kosten?'<span class="stat ok">analysiert</span>':'<span class="stat warn">offen</span>'),'<div class="inner">'+renderKosten(D,costDocs||[])+'</div>');
   // LPH-Bewertung
@@ -451,9 +454,24 @@ function chev(){return '<svg class="sec-chevron" viewBox="0 0 24 24"><path strok
 function sec(id,extra,icon,title,summary,meta,body){const open=openSecs.has(id);return '<section class="sec '+extra+(open?' open':'')+'" data-sec="'+id+'"><button class="sec-head"><div class="sec-icon">'+icon+'</div><div><div class="sec-title">'+title+'</div><div class="sec-summary">'+esc(summary)+'</div></div><div class="sec-meta">'+meta+'</div>'+chev()+'</button><div class="sec-body">'+body+'</div></section>';}
 function tabBtn(id,label,cnt){return '<button class="tab-btn'+(tab===id?' active':'')+'" data-tab="'+id+'">'+esc(label)+'<span class="tab-count">'+cnt+'</span></button>';}
 function chevT(){return '<svg class="task-chevron" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>';}
-function renderTasks(T){const list=T.slice().sort((a,b)=>(a.status==='erledigt')-(b.status==='erledigt')||prioN(a.prio)-prioN(b.prio));if(!list.length)return '<div class="empty">Keine Aufgaben.</div>';let h='';
+function doneKey(){return 'aufg_done_'+current;}
+function getDone(){try{return new Set(JSON.parse(localStorage.getItem(doneKey())||'[]'));}catch{return new Set();}}
+function toggleDone(key,on){const s=getDone();on?s.add(key):s.delete(key);localStorage.setItem(doneKey(),JSON.stringify([...s]));}
+function getAufgaben(D,T){
+  if(D&&D.aufgaben&&D.aufgaben.length){const done=getDone();
+    return D.aufgaben.map((a,i)=>{const key=(slug((a.quelle||'')+'|'+(a.titel||'')).slice(0,90))||('a'+i);
+      return {key,id:null,source:'D',title:a.titel||'',status:done.has(key)?'erledigt':'offen',prio:'P'+(a.prio||3),kategorie:(a.kategorie||'sonstige'),assignee:a.verantwortlich||'',meta:{quelle:a.quelle,problem:a.problem,zu_tun:a.zu_tun,frist:a.frist}};});
+  }
+  return (T||[]).map(t=>({key:'t'+t.id,id:t.id,source:'T',title:t.title,status:t.status,prio:t.prio||'P3',kategorie:t.kategorie||'sonstige',assignee:t.assignee||'',meta:t.meta||{}}));
+}
+function renderTasks(list){list=list.slice().sort((a,b)=>(a.status==='erledigt')-(b.status==='erledigt')||prioN(a.prio)-prioN(b.prio));if(!list.length)return '<div class="empty">Keine Aufgaben.</div>';let h='';
   for(const t of list){const done=t.status==='erledigt',pn=prioN(t.prio),m=t.meta||{},mail=m.email_entwurf;
-    h+='<article class="task-card'+(done?' done':'')+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><div class="task-head"><input type="checkbox" class="tcheck" data-task="'+t.id+'"'+(done?' checked':'')+'><div><div class="task-title">'+esc(t.title)+'</div><div class="task-meta-row">'+(t.kategorie?'<span class="task-chip">'+esc(t.kategorie)+'</span>':'')+(t.assignee?'<span>'+esc(t.assignee)+'</span>':'')+'</div></div><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span>'+chevT()+'</div><div class="task-body">'+(mail?'<div class="task-section"><h4>E-Mail-Entwurf</h4><div class="task-context-box">Betreff: '+esc(mail.betreff||'')+'\n\n'+esc(mail.text||'')+'</div><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div>':'')+'<div class="task-resp"><strong>Verantwortlich:</strong> '+esc(t.assignee||'—')+((m.kontakt&&m.kontakt.email)?' · '+esc(m.kontakt.name||'')+' ('+esc(m.kontakt.email)+')':'')+'</div></div></article>';}
+    const chk=t.source==='D'?('data-key="'+t.key+'"'):('data-task="'+t.id+'"');
+    h+='<article class="task-card'+(done?' done':'')+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><div class="task-head"><input type="checkbox" class="tcheck" '+chk+(done?' checked':'')+'><div><div class="task-title">'+esc(t.title)+'</div><div class="task-meta-row">'+(t.kategorie?'<span class="task-chip">'+esc(t.kategorie)+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+(m.frist?'<span class="mono">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+'</div></div><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span>'+chevT()+'</div><div class="task-body">'+
+      (m.problem?'<div class="task-section"><h4>Problem</h4><div class="task-context-box">'+esc(m.problem)+'</div></div>':'')+
+      (m.zu_tun?'<div class="task-section"><h4>Zu tun</h4><div class="task-context-box" style="background:var(--c-slate-50);border-color:var(--c-slate-200)">'+esc(m.zu_tun)+'</div></div>':'')+
+      (mail?'<div class="task-section"><h4>E-Mail-Entwurf</h4><div class="task-context-box">Betreff: '+esc(mail.betreff||'')+'\n\n'+esc(mail.text||'')+'</div><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div>':'')+
+      '<div class="task-resp"><strong>Verantwortlich:</strong> '+esc(t.assignee||'—')+((m.kontakt&&m.kontakt.email)?' · '+esc(m.kontakt.name||'')+' ('+esc(m.kontakt.email)+')':'')+'</div></div></article>';}
   return h;}
 function fmtFrist(d){if(!d)return '—';const m=String(d).match(/(\d{4})-(\d{2})-(\d{2})/);return m?m[3]+'.'+m[2]+'.'+m[1]:String(d);}
 function icoClock(){return '<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';}
@@ -594,7 +612,7 @@ function wire(T,C){
   el('main').querySelectorAll('.sec-head').forEach(hd=>hd.onclick=()=>{const s=hd.closest('.sec'),id=s.dataset.sec;s.classList.toggle('open');s.classList.contains('open')?openSecs.add(id):openSecs.delete(id);});
   el('main').querySelectorAll('.pilgrim-station').forEach(st=>st.onclick=async()=>{await sb.from('projects').update({lph:+st.dataset.lph}).eq('id',current);render();});
   el('main').querySelectorAll('.task-head').forEach(hd=>hd.onclick=e=>{if(e.target.classList.contains('tcheck'))return;hd.closest('.task-card').classList.toggle('expanded');});
-  el('main').querySelectorAll('.tcheck').forEach(cb=>cb.onchange=()=>toggleTask(cb.dataset.task,cb));
+  el('main').querySelectorAll('.tcheck').forEach(cb=>cb.onchange=()=>{ if(cb.dataset.key){ toggleDone(cb.dataset.key,cb.checked); cb.closest('.task-card').classList.toggle('done',cb.checked); } else { toggleTask(cb.dataset.task,cb); } });
   el('main').querySelectorAll('button[data-mail]').forEach(b=>b.onclick=e=>{e.stopPropagation();queueAgent('email-draft',{task_id:b.dataset.mail},b);});
   el('main').querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
   el('main').querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;applyTaskFilter();el('main').querySelectorAll('.tab-btn').forEach(x=>x.classList.toggle('active',x===b));});
