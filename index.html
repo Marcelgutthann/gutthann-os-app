@@ -548,6 +548,7 @@ function renderAgentPanel(viewId,D,ex){
   el('main').innerHTML='<section class="av-panel active"><div class="av-hero"><div class="av-hero-ico">'+navIco(cfg.ico)+'</div><div><div class="av-hero-kicker">'+esc(cfg.kicker)+'</div><div class="av-hero-title">'+esc(cfg.title)+'</div><div class="av-hero-desc">'+esc(cfg.desc)+'</div></div><div class="av-hero-side">'+side+'</div></div>'+body+'</section>';
   el('main').querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
   const dq=el('docq'),dg=el('docgo');if(dg)dg.onclick=docSearch;if(dq)dq.onkeydown=e=>{if(e.key==='Enter')docSearch();};
+  const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
 }
 function panelCTA(){return '<div class="cta" style="margin-top:18px"><p>Dieser Agent füllt sich aus der <strong>Dashboard-Analyse</strong>. Sie ist für dieses Projekt noch nicht gelaufen.</p><button class="btn-sm" data-agent="dashboard-analyse">Analyse starten</button></div>';}
 function dcCls(s){return s==='vollstaendig'?'ok':s==='teilweise'?'warn':s==='fehlend'?'bad':'off';}
