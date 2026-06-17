@@ -93,6 +93,12 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .task-prio.p1{background:var(--c-danger)}.task-prio.p2{background:var(--c-amber)}.task-prio.p3{background:var(--c-navy-700)}
 .task-chevron{width:15px;height:15px;stroke:var(--c-slate-400);stroke-width:2;fill:none;transition:transform .2s}.task-card.expanded .task-chevron{transform:rotate(180deg)}
 .task-body{display:none;padding:0 var(--s5) var(--s4) 46px}.task-card.expanded .task-body{display:block}
+.done-sec{border-top:1px solid var(--c-slate-200)}
+.done-sum{list-style:none;cursor:pointer;padding:11px var(--s5);font-size:12px;font-weight:600;color:var(--c-success);display:flex;align-items:center;gap:8px}
+.done-sum::-webkit-details-marker{display:none}.done-sum:hover{background:var(--c-slate-50)}
+.done-sum svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.done-cnt{font-family:var(--f-mono);font-size:10px;background:var(--c-success-bg);color:var(--c-success);padding:2px 8px;border-radius:10px}
+.done-body{background:var(--c-slate-50)}.done-body .task-title{color:var(--c-slate-500)}
 .task-section h4{font-family:var(--f-mono);font-size:9.5px;color:var(--c-slate-500);text-transform:uppercase;letter-spacing:.7px;font-weight:600;margin:var(--s3) 0 6px}
 .task-context-box{background:var(--c-blue-50);border:1px solid var(--c-blue-200);border-radius:var(--r-md);padding:var(--s3);font-size:12px;color:var(--c-navy-800);white-space:pre-wrap;line-height:1.55;max-height:230px;overflow:auto}
 .task-resp{font-size:10.5px;color:var(--c-slate-500);margin-top:var(--s3)}.task-resp strong{color:var(--c-navy-900)}
@@ -265,6 +271,10 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
 .av-act{display:flex;gap:var(--s3);padding:10px 0;border-bottom:1px solid var(--c-slate-100)}.av-act:last-child{border:none}
 .av-act-date{font-family:var(--f-mono);font-size:10.5px;color:var(--c-slate-500);white-space:nowrap;flex-shrink:0;width:78px}
 .av-act-t{font-size:12.5px;font-weight:600;color:var(--c-navy-900)}.av-act-c{font-size:11px;color:var(--c-slate-600);margin-top:2px}
+.vf-banner{background:var(--c-blue-50);border:1px solid var(--c-blue-200);border-radius:var(--r-md);padding:11px 14px;font-size:12.5px;color:var(--c-navy-800);margin-bottom:var(--s4);line-height:1.5;display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.vf-tag{font-family:var(--f-mono);font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:var(--c-blue-600);padding:2px 8px;border-radius:9px;margin-right:6px}
+.av-secrow.vf-focus{color:var(--c-blue-700)}
+.vf-now{font-size:8.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--c-blue-700);background:var(--c-blue-100);padding:1px 7px;border-radius:8px;margin-left:8px}
 /* Doku-Check · LPH-Vollständigkeit */
 .dc-strip{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-bottom:var(--s4)}
 .dc-chip{height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;font-weight:700;border:1px solid}
@@ -446,7 +456,7 @@ async function renderProject(){
   const nr=(proj.name.match(/(\d{4})/)||[])[1]||'',lph=proj.lph||0;
   const kostenVal=D&&D.kosten&&D.kosten.summe_brutto?D.kosten.summe_brutto:null;
   const honVal=D&&D.honorare?D.honorare:null;
-  if(pview!=='dashboard'){renderAgentPanel(pview,D,{recent:recent||[],costDocs:costDocs||[],folders:folders||[],docCount:docCount||0,dokuCheck:proj.doku_check});return;}
+  if(pview!=='dashboard'){renderAgentPanel(pview,D,{recent:recent||[],costDocs:costDocs||[],folders:folders||[],docCount:docCount||0,dokuCheck:proj.doku_check,lph:proj.lph||0});return;}
 
   let h='<header class="hdr"><div><div class="hdr-brand">Gutthann HIW · Projekt-Dashboard · Live</div><h1 class="hdr-title">'+esc(short(proj.name))+'</h1>'+
     '<div class="hdr-meta">'+(nr?'<span><strong>Nr.</strong> '+nr+'</span>':'')+'<span><strong>Phase</strong> '+(lph?'LPH '+lph:'—')+'</span><span><strong>Dokumente</strong> '+(docCount||0)+'</span><span><strong>Aufgaben</strong> '+offen+' offen</span></div></div>'+
@@ -509,15 +519,20 @@ async function createTask(){const title=el('nt-title').value.trim();if(!title)re
   const{error}=await sb.from('tasks').insert({project_id:current,title,prio:el('nt-prio').value,kategorie:el('nt-kat').value,assignee:el('nt-assignee').value.trim()||null,due_date:el('nt-frist').value||null,status:'offen',meta:{source:'manuell'}});
   if(error){alert('Konnte Aufgabe nicht anlegen: '+error.message);return;}
   el('nt-title').value='';el('nt-assignee').value='';el('addtaskform').hidden=true;}
-function renderTasks(list){list=list.slice().sort((a,b)=>(a.status==='erledigt')-(b.status==='erledigt')||prioN(a.prio)-prioN(b.prio));if(!list.length)return '<div class="empty">Keine Aufgaben.</div>';let h='';
-  for(const t of list){const done=t.status==='erledigt',pn=prioN(t.prio),m=t.meta||{},mail=m.email_entwurf;
-    const chk=t.source==='D'?('data-key="'+t.key+'"'):('data-task="'+t.id+'"');
-    h+='<article class="task-card'+(done?' done':'')+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><div class="task-head"><input type="checkbox" class="tcheck" '+chk+(done?' checked':'')+'><div><div class="task-title">'+esc(t.title)+'</div><div class="task-meta-row">'+(t.kategorie?'<span class="task-chip">'+esc(t.kategorie)+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+(m.frist?'<span class="mono">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+'</div></div><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span>'+chevT()+'</div><div class="task-body">'+
-      (m.problem?'<div class="task-section"><h4>Problem</h4><div class="task-context-box">'+esc(m.problem)+'</div></div>':'')+
-      (m.zu_tun?'<div class="task-section"><h4>Zu tun</h4><div class="task-context-box" style="background:var(--c-slate-50);border-color:var(--c-slate-200)">'+esc(m.zu_tun)+'</div></div>':'')+
-      (mail?'<div class="task-section"><h4>E-Mail-Entwurf</h4><div class="task-context-box">Betreff: '+esc(mail.betreff||'')+'\n\n'+esc(mail.text||'')+'</div><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div>':'')+
-      '<div class="task-resp"><strong>Verantwortlich:</strong> '+esc(t.assignee||'—')+((m.kontakt&&m.kontakt.email)?' · '+esc(m.kontakt.name||'')+' ('+esc(m.kontakt.email)+')':'')+(m.source==='manuell'?' · <span style="color:var(--c-slate-400)">manuell</span>':'')+'</div>'+
-      (m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'" style="margin-top:10px">Löschen</button>':'')+'</div></article>';}
+function taskCard(t){const done=t.status==='erledigt',pn=prioN(t.prio),m=t.meta||{},mail=m.email_entwurf;
+  const chk=t.source==='D'?('data-key="'+t.key+'"'):('data-task="'+t.id+'"');
+  return '<article class="task-card'+(done?' done':'')+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><div class="task-head"><input type="checkbox" class="tcheck" '+chk+(done?' checked':'')+'><div><div class="task-title">'+esc(t.title)+'</div><div class="task-meta-row">'+(t.kategorie?'<span class="task-chip">'+esc(t.kategorie)+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+(m.frist?'<span class="mono">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+'</div></div><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span>'+chevT()+'</div><div class="task-body">'+
+    (m.problem?'<div class="task-section"><h4>Problem</h4><div class="task-context-box">'+esc(m.problem)+'</div></div>':'')+
+    (m.zu_tun?'<div class="task-section"><h4>Zu tun</h4><div class="task-context-box" style="background:var(--c-slate-50);border-color:var(--c-slate-200)">'+esc(m.zu_tun)+'</div></div>':'')+
+    (mail?'<div class="task-section"><h4>E-Mail-Entwurf</h4><div class="task-context-box">Betreff: '+esc(mail.betreff||'')+'\n\n'+esc(mail.text||'')+'</div><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div>':'')+
+    '<div class="task-resp"><strong>Verantwortlich:</strong> '+esc(t.assignee||'—')+((m.kontakt&&m.kontakt.email)?' · '+esc(m.kontakt.name||'')+' ('+esc(m.kontakt.email)+')':'')+(m.source==='manuell'?' · <span style="color:var(--c-slate-400)">manuell</span>':'')+'</div>'+
+    (m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'" style="margin-top:10px">Löschen</button>':'')+'</div></article>';
+}
+function renderTasks(list){
+  const open=list.filter(t=>t.status!=='erledigt').sort((a,b)=>prioN(a.prio)-prioN(b.prio));
+  const done=list.filter(t=>t.status==='erledigt');
+  let h=open.length?open.map(taskCard).join(''):'<div class="empty">Keine offenen Aufgaben — alles erledigt oder noch nichts angelegt.</div>';
+  if(done.length)h+='<details class="done-sec"><summary class="done-sum"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Erledigt <span class="done-cnt">'+done.length+'</span><span style="flex:1"></span><span class="mono" style="font-size:10px;color:var(--c-slate-400)">auf-/zuklappen</span></summary><div class="done-body">'+done.map(taskCard).join('')+'</div></details>';
   return h;}
 function fmtFrist(d){if(!d)return '—';const m=String(d).match(/(\d{4})-(\d{2})-(\d{2})/);return m?m[3]+'.'+m[2]+'.'+m[1]:String(d);}
 function icoClock(){return '<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';}
@@ -559,9 +574,21 @@ function panelBody(id,D,ex){
     if(!f.length)return '<div class="empty">Keine Fachplaner erfasst.</div>';
     return '<div class="av-secrow">'+f.length+' Beteiligte / Schnittstellen</div><div class="av-grid">'+f.map(p=>'<div class="av-card'+(p.status==='ruht'?' ruht':'')+'"><div class="av-card-role">'+esc(p.rolle||'Beteiligte')+'</div><div class="av-card-name">'+esc(p.name||'—')+'</div>'+(p.firma?'<div class="av-card-firma">'+esc(p.firma)+'</div>':'')+((p.status||p.letzter_kontakt)?'<div class="av-card-foot">'+(p.status?'<span class="av-tag '+slug(p.status)+'">'+esc(p.status)+'</span>':'')+(p.letzter_kontakt?'<span>zuletzt '+esc(fmtFrist(p.letzter_kontakt))+'</span>':'')+'</div>':'')+'</div>').join('')+'</div>';
   }
-  if(id==='angebote'){const a=(D.angebote&&D.angebote.length)?D.angebote:null;
-    if(a)return '<div class="av-secrow">'+a.length+' Vorgänge</div><table class="av-table"><tr><th>Gegenstand</th><th>Bieter / Firma</th><th>Status</th><th style="text-align:right">Betrag</th><th>Datum</th></tr>'+a.map(x=>'<tr><td>'+esc(x.gegenstand||'')+'</td><td>'+esc(x.firma||'')+'</td><td><span class="av-tag '+slug(x.status||'offen')+'">'+esc(x.status||'offen')+'</span></td><td class="num">'+(x.betrag!=null?Number(x.betrag).toLocaleString('de-DE')+' €':'—')+'</td><td>'+esc(fmtFrist(x.datum))+'</td></tr>').join('')+'</table>';
-    return '<div class="av-secrow">Gefundene Kosten-/Vergabe-Dokumente</div>'+(ex.costDocs.length?ex.costDocs.map(d=>'<div class="av-act"><div class="av-act-date">'+esc(fmtD(d.modified_at))+'</div><div class="av-act-t">'+esc(d.filename)+'</div></div>').join(''):'<div class="empty">Keine Angebote/Nachträge erfasst.</div>');
+  if(id==='angebote'){const a=(D.angebote&&D.angebote.length)?D.angebote:null;const vf=D.vergabe_fokus||null,lph=ex.lph||0;
+    if(!a)return '<div class="av-secrow">Gefundene Kosten-/Vergabe-Dokumente</div>'+(ex.costDocs.length?ex.costDocs.map(d=>'<div class="av-act"><div class="av-act-date">'+esc(fmtD(d.modified_at))+'</div><div class="av-act-t">'+esc(d.filename)+'</div></div>').join(''):'<div class="empty">Keine Angebote/Nachträge erfasst.</div>');
+    const groups={'fachplaner-honorar':[],'bau-lv':[],'nachtrag':[],'sonstige':[]};
+    a.forEach(x=>{const art=(x.art&&groups[x.art]!==undefined)?x.art:'sonstige';groups[art].push(x);});
+    const labels={'fachplaner-honorar':'Fachplaner & Honorar (KG 700)','bau-lv':'Leistungsverzeichnisse & Bauangebote','nachtrag':'Nachträge & Mehrkosten','sonstige':'Sonstiges'};
+    const schwerMap={'fachplaner':'fachplaner-honorar','lv':'bau-lv','nachtraege':'nachtrag'};
+    const focusGrp=vf&&schwerMap[vf.schwerpunkt]?schwerMap[vf.schwerpunkt]:null;
+    let h='';
+    if(vf&&vf.hinweis)h+='<div class="vf-banner"><span class="vf-tag">Fokus LPH '+(lph||'?')+'</span>'+esc(vf.hinweis)+'</div>';
+    const order=Object.keys(groups).sort((g1,g2)=>(g1===focusGrp?0:1)-(g2===focusGrp?0:1));
+    for(const g of order){if(!groups[g].length)continue;const isF=g===focusGrp;
+      h+='<div class="av-secrow'+(isF?' vf-focus':'')+'">'+esc(labels[g])+(isF?'<span class="vf-now">jetzt relevant</span>':'')+' · '+groups[g].length+'</div>';
+      h+='<table class="av-table"><tr><th>Gegenstand</th><th>Bieter / Firma</th><th>KG</th><th>Status</th><th style="text-align:right">Betrag</th><th>Datum</th></tr>'+groups[g].map(x=>'<tr><td>'+esc(x.gegenstand||'')+'</td><td>'+esc(x.firma||'')+'</td><td class="mono" style="font-size:10.5px">'+(x.kg?'KG '+esc(''+x.kg):'—')+'</td><td><span class="av-tag '+slug(x.status||'offen')+'">'+esc(x.status||'offen')+'</span></td><td class="num">'+(x.betrag!=null?Number(x.betrag).toLocaleString('de-DE')+' €':'—')+'</td><td>'+esc(fmtFrist(x.datum))+'</td></tr>').join('')+'</table>';
+    }
+    return h;
   }
   if(id==='doku'){const docs=(D.dokumentationen&&D.dokumentationen.length)?D.dokumentationen:null;
     const dc=ex.dokuCheck,dcHtml=renderDokuCheck(dc);
