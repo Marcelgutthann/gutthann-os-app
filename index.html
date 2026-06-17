@@ -131,6 +131,9 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
 .run .rp{font-size:10px;color:var(--c-slate-500);margin-top:4px}
 .run pre{font-family:var(--f-mono);font-size:9.5px;line-height:1.45;color:var(--c-slate-700);background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-sm);padding:7px;margin-top:7px;max-height:160px;overflow:auto;white-space:pre-wrap;word-break:break-word}
 .pulse{width:7px;height:7px;border-radius:50%;background:var(--c-warning);animation:p 1.3s infinite}@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.runbanner{position:sticky;top:47px;z-index:15;background:var(--c-amber-bg);border-bottom:1px solid #E6D29A;color:var(--c-warning);font-size:12px;font-weight:600;padding:9px 22px;display:flex;align-items:center;gap:10px}
+.runbanner .pulse{background:var(--c-warning)}.runbanner .mono{font-family:var(--f-mono);font-weight:500;color:var(--c-slate-600)}
+.runbanner.done{background:var(--c-success-bg);border-color:#BfDcc6;color:var(--c-success)}.runbanner.done .pulse{background:var(--c-success);animation:none}
 .empty{color:var(--c-slate-500);padding:22px;text-align:center;font-size:12px}
 /* Vorausschau · denkt voraus */
 .vs-inner{padding:var(--s5);display:flex;flex-direction:column;gap:var(--s5)}
@@ -224,6 +227,7 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
 <div id="shell" hidden>
   <div class="top"><span class="brand">Gutthann HIW · Agentic OS</span><span class="crumb" id="crumb"></span>
     <span class="right"><span class="rstatus off" id="rstatus"><span class="d"></span><span id="rstext">Runner aus</span></span><span class="user" id="useremail"></span><button class="lnk" id="logout">abmelden</button></span></div>
+  <div id="runbanner" class="runbanner" hidden></div>
   <div class="layout">
     <aside class="sidebar">
       <div class="sb-proj-label" id="sbproj">Agentic OS</div>
@@ -458,10 +462,15 @@ async function docSearch(){const q=el('docq').value.trim();const box=el('sres');
   box.innerHTML='<div class="page-sub" style="margin:4px 0 8px">'+data.length+' Treffer</div>'+data.map(d=>'<div class="sres"><div class="sf">'+esc(d.filename)+'</div><div class="sp">'+esc(d.unc_path)+'</div></div>').join('');}
 async function toggleTask(id,cb){const ck=cb.checked;const{error}=await sb.from('tasks').update({status:ck?'erledigt':'offen',done_at:ck?new Date().toISOString():null}).eq('id',id);if(error){cb.checked=!ck;alert('Fehler: '+error.message);}else cb.closest('.task-card').classList.toggle('done',ck);}
 async function queueAgent(agent,meta,btn){const lbl=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='… eingereiht';}const{error}=await sb.from('agent_runs').insert({project_id:current,agent,status:'queued',meta});if(error){alert('Konnte Agent nicht starten: '+error.message);if(btn){btn.disabled=false;btn.textContent=lbl;}return;}loadRuns();if(btn)setTimeout(()=>{btn.disabled=false;btn.textContent=lbl;},1600);}
-async function loadRuns(){const{data,error}=await sb.from('agent_runs').select('id,agent,status,result,log,started_at,projects(name)').order('created_at',{ascending:false}).limit(14);
+async function loadRuns(){const{data,error}=await sb.from('agent_runs').select('id,agent,status,result,log,started_at,project_id,projects(name)').order('created_at',{ascending:false}).limit(14);
   // Runner-Status: lief in den letzten 3 Min ein Agent oder gibt es running?
   const active=(data||[]).some(r=>r.status==='running'||(r.started_at&&Date.now()-new Date(r.started_at).getTime()<180000));
   const rs=el('rstatus');if(rs){rs.className='rstatus '+(active?'on':'off');el('rstext').textContent=active?'Runner aktiv':'Runner aus?';}
+  // In-Dashboard-Banner: läuft gerade ein Agent auf DIESEM Projekt?
+  const bn=el('runbanner');
+  if(bn){const live=(view==='project'&&current)?(data||[]).find(r=>r.project_id===current&&(r.status==='running'||r.status==='queued')):null;
+    if(live){bn.hidden=false;bn.className='runbanner';bn.innerHTML='<span class="pulse"></span>Agent läuft: <strong>'+esc(AL[live.agent]||live.agent)+'</strong> · '+(live.status==='queued'?'in Warteschlange…':'arbeitet…')+' <span class="mono">live · Fortschritt links in der Agenten-Leiste</span>';}
+    else bn.hidden=true;}
   if(error){el('runs').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return;}
   if(!data.length){el('runs').innerHTML='<div class="empty">Noch keine Agenten-Läufe.</div>';return;}
   let h='';for(const r of data){const pn=r.projects?short(r.projects.name):'';h+='<div class="run" data-run="'+r.id+'"><div class="rh">'+(r.status==='running'?'<span class="pulse"></span>':'')+'<span class="ra">'+esc(AL[r.agent]||r.agent)+'</span><span class="rst '+r.status+'">'+r.status+'</span></div><div class="rp">'+esc(pn)+(r.result?' · '+esc(r.result):'')+'</div>'+(openRun===r.id&&r.log?'<pre>'+esc(r.log)+'</pre>':'')+'</div>';}
