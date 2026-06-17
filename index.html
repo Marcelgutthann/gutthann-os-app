@@ -24,7 +24,15 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .main{flex:1;min-width:0;padding:22px 24px 60px;max-width:1180px;margin:0 auto}
 .sidebar{width:300px;flex:0 0 300px;border-right:1px solid var(--c-slate-200);background:var(--c-slate-50);min-height:calc(100vh - 47px);padding:18px 15px;position:sticky;top:47px;overflow-y:auto;max-height:calc(100vh - 47px)}
 .sb-proj-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--c-slate-500);margin:0 2px 14px;font-weight:600;line-height:1.3}
-@media(max-width:980px){.sidebar{display:none}}
+.menu-btn{display:none;background:none;border:1px solid var(--c-slate-300);border-radius:var(--r-md);padding:5px 10px;font-size:15px;color:var(--c-slate-700);line-height:1}
+.sb-backdrop{display:none}
+@media(max-width:980px){
+  .sidebar{position:fixed;top:47px;left:0;bottom:0;z-index:40;width:290px;transform:translateX(-100%);transition:transform .22s ease;box-shadow:3px 0 16px rgba(22,24,29,.18);overflow-y:auto}
+  .sidebar.open{transform:translateX(0)}
+  .menu-btn{display:inline-flex;align-items:center}
+  .main{padding:16px 14px 60px}
+  .sb-backdrop.open{display:block;position:fixed;inset:47px 0 0 0;background:rgba(22,24,29,.35);z-index:35}
+}
 .hdr{background:var(--c-white);border:1px solid var(--c-slate-200);border-radius:var(--r-lg);padding:18px 24px;margin-bottom:var(--s4);display:grid;grid-template-columns:1fr auto;gap:var(--s5);align-items:end;box-shadow:var(--sh)}
 .hdr-brand{font-family:var(--f-mono);font-size:11px;color:var(--c-blue-600);letter-spacing:1.1px;text-transform:uppercase;font-weight:600}
 .hdr-title{font-size:26px;font-weight:700;letter-spacing:-.4px;line-height:1.15;margin-top:7px;color:var(--c-navy-900)}
@@ -134,6 +142,7 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
 .runbanner{position:sticky;top:47px;z-index:15;background:var(--c-amber-bg);border-bottom:1px solid #E6D29A;color:var(--c-warning);font-size:12px;font-weight:600;padding:9px 22px;display:flex;align-items:center;gap:10px}
 .runbanner .pulse{background:var(--c-warning)}.runbanner .mono{font-family:var(--f-mono);font-weight:500;color:var(--c-slate-600)}
 .runbanner.done{background:var(--c-success-bg);border-color:#BfDcc6;color:var(--c-success)}.runbanner.done .pulse{background:var(--c-success);animation:none}
+.runbanner.off{background:var(--c-danger-bg);border-color:#E3B7B6;color:var(--c-danger)}
 .empty{color:var(--c-slate-500);padding:22px;text-align:center;font-size:12px}
 /* Vorausschau · denkt voraus */
 .vs-inner{padding:var(--s5);display:flex;flex-direction:column;gap:var(--s5)}
@@ -301,9 +310,10 @@ h1.page{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;co
   <button type="submit">Anmelden</button><div class="err" id="loginerr"></div>
 </form>
 <div id="shell" hidden>
-  <div class="top"><span class="brand">Gutthann HIW · Agentic OS</span><span class="crumb" id="crumb"></span>
+  <div class="top"><button class="menu-btn" id="menubtn" aria-label="Menü">☰</button><span class="brand">Gutthann HIW · Agentic OS</span><span class="crumb" id="crumb"></span>
     <span class="right"><span class="rstatus off" id="rstatus"><span class="d"></span><span id="rstext">Runner aus</span></span><span class="user" id="useremail"></span><button class="lnk" id="logout">abmelden</button></span></div>
   <div id="runbanner" class="runbanner" hidden></div>
+  <div class="sb-backdrop" id="sbbackdrop"></div>
   <div class="layout">
     <aside class="sidebar">
       <div class="sb-proj-label" id="sbproj">Agentic OS</div>
@@ -339,7 +349,7 @@ const AGENT_VIEWS=[
   {id:'doku',key:'dokumentationen',ico:'doc',kicker:'Agent · Dokumenten-Volltext',title:'Dokumentationen',desc:'Die wichtigsten Dokumente je Kategorie — plus Volltextsuche über alle Dateien.'},
   {id:'historie',key:'historie',ico:'clock',kicker:'Agent · Wissensbasis chronologisch',title:'Projekt-Historie',desc:'Zeitstrahl der Meilensteine — chronologisch aus Protokollen und Mails.'},
   {id:'termine',key:null,ico:'cal',kicker:'Agent · Bauzeitenplan & Zwangspunkte',title:'Termine & Fristen',desc:'Zwangspunkte, Fristen und anstehende Termine — knüpft an den Bauzeitplan an.'}];
-function icoPath(n){return({grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',users:'<circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6a3 3 0 010 6M20.5 20c0-2-1-3.7-2.8-4.4"/>',euro:'<circle cx="12" cy="12" r="9"/><path d="M15.5 9a4 4 0 100 6M7.5 11h6M7.5 13.5h5"/>',doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>'}[n]||'');}
+function icoPath(n){return({grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',users:'<circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6a3 3 0 010 6M20.5 20c0-2-1-3.7-2.8-4.4"/>',euro:'<circle cx="12" cy="12" r="9"/><path d="M15.5 9a4 4 0 100 6M7.5 11h6M7.5 13.5h5"/>',doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'}[n]||'');}
 function navIco(n){return '<svg viewBox="0 0 24 24">'+icoPath(n)+'</svg>';}
 function navItem(id,label,ic,badge){return '<button class="sb-nav'+(pview===id?' active':'')+'" data-pview="'+id+'"><span class="ni">'+ic+'</span><span class="nt">'+esc(label)+'</span>'+(badge?'<span class="nb">'+badge+'</span>':'')+'</button>';}
 const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
@@ -349,14 +359,39 @@ function showAuthed(s){el('login').hidden=!!s;el('shell').hidden=!s;if(s){el('us
 sb.auth.getSession().then(({data})=>showAuthed(data.session));sb.auth.onAuthStateChange((_e,s)=>showAuthed(s));
 el('login').addEventListener('submit',async e=>{e.preventDefault();el('loginerr').textContent='';const{error}=await sb.auth.signInWithPassword({email:el('email').value.trim(),password:el('pw').value});if(error)el('loginerr').textContent='Anmeldung fehlgeschlagen: '+error.message;});
 el('logout').addEventListener('click',()=>sb.auth.signOut());
+function setDrawer(open){const s=document.querySelector('.sidebar'),b=el('sbbackdrop');if(s)s.classList.toggle('open',open);if(b)b.classList.toggle('open',open);}
 function boot(){if(started){render();return;}started=true;render();loadRuns();
+  const mb=el('menubtn'),bd=el('sbbackdrop');
+  if(mb)mb.onclick=()=>setDrawer(!document.querySelector('.sidebar').classList.contains('open'));
+  if(bd)bd.onclick=()=>setDrawer(false);
+  setInterval(()=>loadRuns(),15000);  // Runner-Status + Läufe regelmäßig auffrischen
   sb.channel('os-rt').on('postgres_changes',{event:'*',schema:'public',table:'agent_runs'},()=>loadRuns())
    .on('postgres_changes',{event:'*',schema:'public',table:'tasks'},()=>{if(view==='project')render();})
    .on('postgres_changes',{event:'*',schema:'public',table:'communications'},()=>render())
    .on('postgres_changes',{event:'*',schema:'public',table:'projects'},()=>{if(view==='project')render();})
    .subscribe(st=>{if(st==='SUBSCRIBED')el('runlive').textContent='● live';});}
-function go(v,id){view=v;current=id||null;if(v==='project'){pview='dashboard';tab='alle';prioFilters.clear();openSecs=new Set(['vorausschau','aufgaben']);}render();}
-async function render(){renderSidebar();if(view==='cockpit')await renderCockpit();else await renderProject();}
+function go(v,id){view=v;current=id||null;if(v==='project'){pview='dashboard';tab='alle';prioFilters.clear();openSecs=new Set(['vorausschau','aufgaben']);}setDrawer(false);render();}
+async function render(){renderSidebar();if(view==='cockpit')await renderCockpit();else if(view==='project'&&pview==='system')await renderSystemPanel();else await renderProject();}
+function timeAgo(d){if(!d)return '—';const s=(Date.now()-new Date(d).getTime())/1000;if(s<90)return 'gerade';if(s<5400)return 'vor '+Math.round(s/60)+' min';if(s<172800)return 'vor '+Math.round(s/3600)+' h';return 'vor '+Math.round(s/86400)+' d';}
+async function queueAgentFor(projectId,agent,btn){if(btn){btn.disabled=true;btn.textContent='…';}const{error}=await sb.from('agent_runs').insert({project_id:projectId,agent,status:'queued',meta:{trigger:'manuell'}});if(error)alert('Konnte nicht starten: '+error.message);if(btn)setTimeout(()=>{btn.disabled=false;btn.textContent='Aktualisieren';},1600);loadRuns();}
+async function renderSystemPanel(){
+  el('crumb').innerHTML='<a id="toC">Cockpit</a><span class="sep">›</span>System & Automatik';
+  const[{data:hb},{data:projs},{data:runs}]=await Promise.all([
+    sb.from('runner_heartbeat').select('last_seen,host').eq('id',1),
+    sb.from('projects').select('id,name,lph,dashboard_stand,last_sync').order('name'),
+    sb.from('agent_runs').select('agent,status,result,meta,created_at,projects(name)').order('created_at',{ascending:false}).limit(18)]);
+  const lastSeen=hb&&hb[0]?hb[0].last_seen:null,active=lastSeen&&(Date.now()-new Date(lastSeen).getTime()<20000);
+  let h='<section class="av-panel active"><div class="av-hero"><div class="av-hero-ico">'+navIco('cog')+'</div><div><div class="av-hero-kicker">System · Automatik</div><div class="av-hero-title">Steuerung & Selbstlauf</div><div class="av-hero-desc">Der Manager-Loop hält alle Projekte automatisch aktuell (alle 6 h, max 3 Jobs/Durchlauf). Hier siehst du den Status — und kannst jedes Projekt jederzeit selbst aktualisieren.</div></div><div class="av-hero-side"><span class="rstatus '+(active?'on':'off')+'" style="display:inline-flex"><span class="d"></span>'+(active?'Runner aktiv':'Runner aus')+'</span><div class="av-lastrun">'+(lastSeen?'Heartbeat '+timeAgo(lastSeen):'kein Heartbeat')+(hb&&hb[0]&&hb[0].host?' · '+esc(hb[0].host):'')+'</div></div></div>';
+  h+='<div class="av-secrow">Projekte · Aktualität</div><table class="av-table"><tr><th>Projekt</th><th>Phase</th><th>Analyse</th><th>Letzter Scan</th><th></th></tr>';
+  for(const p of (projs||[]))h+='<tr><td>'+esc(short(p.name))+'</td><td>'+(p.lph?'LPH '+p.lph:'—')+'</td><td>'+(p.dashboard_stand?timeAgo(p.dashboard_stand):'<span style="color:var(--c-danger)">nie</span>')+'</td><td>'+(p.last_sync?timeAgo(p.last_sync):'—')+'</td><td style="text-align:right"><button class="btn-sm" data-refresh="'+p.id+'">Aktualisieren</button></td></tr>';
+  h+='</table>';
+  h+='<div class="av-secrow">Letzte Agenten-Läufe · Nachweise (Control Plane)</div><table class="av-table"><tr><th>Projekt</th><th>Agent</th><th>Auslöser</th><th>Status</th><th>Ergebnis</th><th>Zeit</th></tr>';
+  for(const r of (runs||[])){const trg=(r.meta&&r.meta.trigger)||'manuell';h+='<tr><td>'+esc(short(r.projects?r.projects.name:''))+'</td><td>'+esc(AL[r.agent]||r.agent)+'</td><td><span class="av-tag '+(trg==='manager'?'ok':'offen')+'">'+esc(trg)+'</span></td><td><span class="rst '+r.status+'">'+r.status+'</span></td><td style="font-size:11px;color:var(--c-slate-600)">'+esc((r.result||'').slice(0,60))+'</td><td class="mono" style="font-size:10px;white-space:nowrap">'+timeAgo(r.created_at)+'</td></tr>';}
+  h+='</table></section>';
+  el('main').innerHTML=h;
+  const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
+  el('main').querySelectorAll('button[data-refresh]').forEach(b=>b.onclick=()=>queueAgentFor(b.dataset.refresh,'dashboard-analyse',b));
+}
 function renderSidebar(){
   const box=el('sbagents'),lbl=el('sbproj');if(!box)return;
   if(view!=='project'||!current){
@@ -369,12 +404,13 @@ function renderSidebar(){
   let h='<div class="sb-group"><div class="sb-group-h">Ansicht<span class="ln"></span></div>';
   h+=navItem('dashboard','Dashboard',navIco('grid'),null);
   for(const v of AGENT_VIEWS){let cnt=v.key&&D[v.key]?D[v.key].length:0;if(v.id==='termine'&&D.vorausschau)cnt=(D.vorausschau.zwangspunkte||[]).length+(D.vorausschau.diese_woche||[]).length;h+=navItem(v.id,v.title,navIco(v.ico),cnt||null);}
+  h+=navItem('system','System & Automatik',navIco('cog'),null);
   h+='</div>';
   h+='<div class="sb-group"><div class="sb-group-h">Werkzeuge<span class="ln"></span></div>';
   for(const g of AGENT_GROUPS)for(const a of g.items)h+='<button class="sb-ag'+(a.doku?' doku':'')+'" data-agent="'+a.id+'"><span class="ai">'+a.ic+'</span><span class="sb-ag-tx"><span class="at">'+esc(a.t)+'</span><span class="as">'+esc(a.s)+'</span></span></button>';
   h+='</div><div class="page-sub" style="font-size:10px;padding:0 2px 10px;line-height:1.4">Läuft, wenn der <strong>Runner</strong> aktiv ist (Status oben rechts).</div>';
   box.innerHTML=h;
-  box.querySelectorAll('.sb-nav').forEach(b=>b.onclick=()=>{pview=b.dataset.pview;renderSidebar();renderProject();window.scrollTo(0,0);});
+  box.querySelectorAll('.sb-nav').forEach(b=>b.onclick=()=>{pview=b.dataset.pview;setDrawer(false);renderSidebar();render();window.scrollTo(0,0);});
   box.querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
 }
 
@@ -391,8 +427,8 @@ async function renderProject(){
   const td=today();
   const[{data:proj},{data:tasks},{data:comms},{count:docCount},{data:recent},{data:folders},{data:costDocs}]=await Promise.all([
     sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check').eq('id',current).single(),
-    sb.from('tasks').select('id,title,status,prio,kategorie,assignee,meta').eq('project_id',current),
-    sb.from('communications').select('id,typ,betreff,empfaenger,empfaenger_email,status,frist,betrag').eq('project_id',current),
+    sb.from('tasks').select('id,title,status,prio,kategorie,assignee,due_date,meta').eq('project_id',current).order('prio'),
+    sb.from('communications').select('id,typ,betreff,empfaenger,empfaenger_email,status,frist,betrag,meta').eq('project_id',current),
     sb.from('documents').select('id',{count:'exact',head:true}).eq('project_id',current),
     sb.from('documents').select('filename,doctype,modified_at').eq('project_id',current).not('modified_at','is',null).order('modified_at',{ascending:false}).limit(12),
     sb.rpc('folder_stats',{pid:current}),
@@ -403,7 +439,7 @@ async function renderProject(){
   const T=tasks||[],C=comms||[],D=proj.dashboard||null;
   const AL=getAufgaben(D,T);
   const offen=AL.filter(t=>t.status!=='erledigt').length,p1=AL.filter(t=>t.status!=='erledigt'&&t.prio==='P1').length;
-  const cOpen=C.filter(c=>!['beantwortet','erledigt'].includes(c.status)).length,cOver=C.filter(c=>c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status)).length;
+  const cOpen=C.filter(c=>!['beantwortet','erledigt'].includes(c.status)).length,cOver=C.filter(c=>c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))).length;
   const nr=(proj.name.match(/(\d{4})/)||[])[1]||'',lph=proj.lph||0;
   const kostenVal=D&&D.kosten&&D.kosten.summe_brutto?D.kosten.summe_brutto:null;
   const honVal=D&&D.honorare?D.honorare:null;
@@ -425,11 +461,10 @@ async function renderProject(){
   h+=renderVorausschauSection(D);
   // Aufgaben-Zentrale
   const cats={};AL.forEach(t=>{if(t.status!=='erledigt'){const k=t.kategorie||'sonstige';cats[k]=(cats[k]||0)+1;}});
-  const aufgBody=AL.length
-    ? '<nav class="tasks-tabs">'+tabBtn('alle','Alle',offen)+Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).map(k=>tabBtn(slug(k),k,cats[k])).join('')+'</nav>'+
-      '<div class="tasks-filters"><span class="filter-label">Priorität</span><button class="fc s1" data-p="P1">P1</button><button class="fc s2" data-p="P2">P2</button><button class="fc" data-p="P3">P3</button></div>'+renderTasks(AL)
-    : '<div class="inner"><div class="cta"><p>Die <strong>Aufgaben-Zentrale</strong> zieht offene Punkte direkt aus deinen Jour-Fixe-Protokollen und Mails (mit Quelle „PS-JF …, Pkt. …"). Noch nicht analysiert.</p><button class="btn-sm" data-agent="dashboard-analyse">Aufgaben aus Protokollen ziehen</button></div></div>';
-  h+=sec('aufgaben','prominent','⚡','Aufgaben-Zentrale',offen+' offen · '+p1+' kritisch'+(D&&D.aufgaben?' · aus Protokollen':''),'<span class="stat'+(p1?' alert':'')+'">'+p1+' P1</span>',aufgBody);
+  const tabsRow='<nav class="tasks-tabs">'+tabBtn('alle','Alle',offen)+Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).map(k=>tabBtn(slug(k),k,cats[k])).join('')+'</nav>';
+  const filtRow='<div class="tasks-filters"><span class="filter-label">Priorität</span><button class="fc s1" data-p="P1">P1</button><button class="fc s2" data-p="P2">P2</button><button class="fc" data-p="P3">P3</button><span style="flex:1"></span><button class="btn-sm ghost" id="addtaskbtn" style="margin:0;padding:5px 11px">+ Aufgabe</button></div>';
+  const aufgBody=tabsRow+filtRow+addTaskForm()+(AL.length?renderTasks(AL):'<div class="empty">Noch keine Aufgaben — lege oben eine an, oder die Analyse zieht sie aus den Protokollen.</div>');
+  h+=sec('aufgaben','prominent','⚡','Aufgaben-Zentrale',offen+' offen · '+p1+' kritisch','<span class="stat'+(p1?' alert':'')+'">'+p1+' P1</span>',aufgBody);
   // Kosten (Pflicht)
   h+=sec('kosten','','€','Kosten-Übersicht',D&&D.kosten?'aus Tiefenanalyse':'noch nicht analysiert',(D&&D.kosten?'<span class="stat ok">analysiert</span>':'<span class="stat warn">offen</span>'),'<div class="inner">'+renderKosten(D,costDocs||[])+'</div>');
   // LPH-Bewertung
@@ -439,7 +474,7 @@ async function renderProject(){
   // Aktivität
   h+=sec('aktivitaet','','◷','Aktivität (zuletzt geändert)','neueste Dateien & Mails','<span class="stat">'+(recent||[]).length+'</span>','<div class="inner">'+renderAktivitaet(recent||[])+'</div>');
   // Vorgänge
-  h+=sec('vorgaenge','','✉','Vorgänge','Angebote, Mahnungen, E-Mails mit Frist','<span class="stat'+(cOver?' alert':'')+'">'+cOver+' überfällig</span>',renderComms(C));
+  h+=sec('vorgaenge','','✉','Nachhaken & Vorgänge','Worauf gewartet wird — Antworten, Fristen, Angebote','<span class="stat'+(cOver?' alert':'')+'">'+cOver+' überfällig</span>',renderComms(C));
   // Beteiligte
   const ppl=beteiligte(C);
   h+=sec('beteiligte','','👤','Beteiligte','Kontakte aus den Vorgängen','<span class="stat">'+ppl.length+'</span>','<div class="inner"><div class="ppl-grid">'+(ppl.length?ppl.map(p=>'<div class="ppl-card"><div class="ppl-name">'+esc(p.name)+'</div>'+(p.mail?'<div class="ppl-mail">'+esc(p.mail)+'</div>':'')+'<div class="ppl-cnt">'+p.n+' Vorgang(e)</div></div>').join(''):'<div class="empty">Keine Kontakte erfasst.</div>')+'</div></div>');
@@ -454,16 +489,23 @@ function chev(){return '<svg class="sec-chevron" viewBox="0 0 24 24"><path strok
 function sec(id,extra,icon,title,summary,meta,body){const open=openSecs.has(id);return '<section class="sec '+extra+(open?' open':'')+'" data-sec="'+id+'"><button class="sec-head"><div class="sec-icon">'+icon+'</div><div><div class="sec-title">'+title+'</div><div class="sec-summary">'+esc(summary)+'</div></div><div class="sec-meta">'+meta+'</div>'+chev()+'</button><div class="sec-body">'+body+'</div></section>';}
 function tabBtn(id,label,cnt){return '<button class="tab-btn'+(tab===id?' active':'')+'" data-tab="'+id+'">'+esc(label)+'<span class="tab-count">'+cnt+'</span></button>';}
 function chevT(){return '<svg class="task-chevron" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>';}
-function doneKey(){return 'aufg_done_'+current;}
-function getDone(){try{return new Set(JSON.parse(localStorage.getItem(doneKey())||'[]'));}catch{return new Set();}}
-function toggleDone(key,on){const s=getDone();on?s.add(key):s.delete(key);localStorage.setItem(doneKey(),JSON.stringify([...s]));}
 function getAufgaben(D,T){
-  if(D&&D.aufgaben&&D.aufgaben.length){const done=getDone();
-    return D.aufgaben.map((a,i)=>{const key=(slug((a.quelle||'')+'|'+(a.titel||'')).slice(0,90))||('a'+i);
-      return {key,id:null,source:'D',title:a.titel||'',status:done.has(key)?'erledigt':'offen',prio:'P'+(a.prio||3),kategorie:(a.kategorie||'sonstige'),assignee:a.verantwortlich||'',meta:{quelle:a.quelle,problem:a.problem,zu_tun:a.zu_tun,frist:a.frist}};});
-  }
-  return (T||[]).map(t=>({key:'t'+t.id,id:t.id,source:'T',title:t.title,status:t.status,prio:t.prio||'P3',kategorie:t.kategorie||'sonstige',assignee:t.assignee||'',meta:t.meta||{}}));
+  // Quelle der Wahrheit = geteilte tasks-Tabelle (vom Agenten befuellt + manuelle); team-weit, realtime, Abhaken persistent.
+  return (T||[]).map(t=>({key:'t'+t.id,id:t.id,source:'T',title:t.title,status:t.status,prio:t.prio||'P3',kategorie:t.kategorie||'sonstige',assignee:t.assignee||'',meta:Object.assign({},t.meta||{},t.due_date?{frist:t.due_date}:{})}));
 }
+function addTaskForm(){const inp='font:inherit;font-size:12px;padding:6px 9px;border:1px solid var(--c-slate-300);border-radius:var(--r-md);background:#fff';
+  return '<form id="addtaskform" hidden style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:11px var(--s5);background:var(--c-blue-50);border-bottom:1px solid var(--c-slate-200)">'+
+    '<input id="nt-title" placeholder="Neue Aufgabe…" required style="flex:1;min-width:220px;'+inp+'">'+
+    '<select id="nt-kat" style="'+inp+'"><option value="intern">intern</option><option value="bauherr">Bauherr</option><option value="behoerde">Behörde</option><option value="nachhaken">Nachhaken</option><option value="technisch">technisch</option></select>'+
+    '<select id="nt-prio" style="'+inp+'"><option>P1</option><option selected>P2</option><option>P3</option></select>'+
+    '<input id="nt-assignee" placeholder="Verantwortlich" style="width:130px;'+inp+'">'+
+    '<input id="nt-frist" type="date" title="Frist" style="'+inp+'">'+
+    '<button class="btn-sm" type="submit" style="margin:0">Anlegen</button></form>';
+}
+async function createTask(){const title=el('nt-title').value.trim();if(!title)return;
+  const{error}=await sb.from('tasks').insert({project_id:current,title,prio:el('nt-prio').value,kategorie:el('nt-kat').value,assignee:el('nt-assignee').value.trim()||null,due_date:el('nt-frist').value||null,status:'offen',meta:{source:'manuell'}});
+  if(error){alert('Konnte Aufgabe nicht anlegen: '+error.message);return;}
+  el('nt-title').value='';el('nt-assignee').value='';el('addtaskform').hidden=true;}
 function renderTasks(list){list=list.slice().sort((a,b)=>(a.status==='erledigt')-(b.status==='erledigt')||prioN(a.prio)-prioN(b.prio));if(!list.length)return '<div class="empty">Keine Aufgaben.</div>';let h='';
   for(const t of list){const done=t.status==='erledigt',pn=prioN(t.prio),m=t.meta||{},mail=m.email_entwurf;
     const chk=t.source==='D'?('data-key="'+t.key+'"'):('data-task="'+t.id+'"');
@@ -471,7 +513,8 @@ function renderTasks(list){list=list.slice().sort((a,b)=>(a.status==='erledigt')
       (m.problem?'<div class="task-section"><h4>Problem</h4><div class="task-context-box">'+esc(m.problem)+'</div></div>':'')+
       (m.zu_tun?'<div class="task-section"><h4>Zu tun</h4><div class="task-context-box" style="background:var(--c-slate-50);border-color:var(--c-slate-200)">'+esc(m.zu_tun)+'</div></div>':'')+
       (mail?'<div class="task-section"><h4>E-Mail-Entwurf</h4><div class="task-context-box">Betreff: '+esc(mail.betreff||'')+'\n\n'+esc(mail.text||'')+'</div><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div>':'')+
-      '<div class="task-resp"><strong>Verantwortlich:</strong> '+esc(t.assignee||'—')+((m.kontakt&&m.kontakt.email)?' · '+esc(m.kontakt.name||'')+' ('+esc(m.kontakt.email)+')':'')+'</div></div></article>';}
+      '<div class="task-resp"><strong>Verantwortlich:</strong> '+esc(t.assignee||'—')+((m.kontakt&&m.kontakt.email)?' · '+esc(m.kontakt.name||'')+' ('+esc(m.kontakt.email)+')':'')+(m.source==='manuell'?' · <span style="color:var(--c-slate-400)">manuell</span>':'')+'</div>'+
+      (m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'" style="margin-top:10px">Löschen</button>':'')+'</div></article>';}
   return h;}
 function fmtFrist(d){if(!d)return '—';const m=String(d).match(/(\d{4})-(\d{2})-(\d{2})/);return m?m[3]+'.'+m[2]+'.'+m[1]:String(d);}
 function icoClock(){return '<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';}
@@ -604,20 +647,24 @@ function renderAktivitaet(recent){if(!recent.length)return '<div class="empty">K
 function beteiligte(C){const m={};C.forEach(c=>{const k=(c.empfaenger_email||c.empfaenger||'').toLowerCase();if(!k)return;if(!m[k])m[k]={name:c.empfaenger||c.empfaenger_email,mail:c.empfaenger_email||'',n:0};m[k].n++;});return Object.values(m).sort((a,b)=>b.n-a.n);}
 function renderFolders(F,total){if(!F.length)return '<div class="empty">Keine Ordner.</div>';const max=Math.max(...F.map(f=>+f.anzahl));return F.map(f=>'<div class="fld-row"><div><div>'+esc(f.ordner||'(Wurzel)')+'</div><div class="fld-bar"><i style="width:'+Math.round(+f.anzahl/max*100)+'%"></i></div></div><div class="fc2">'+f.anzahl+'</div></div>').join('');}
 function renderComms(C){if(!C.length)return '<div class="inner"><div class="empty">Keine Vorgänge erfasst.</div></div>';const td=today();const list=C.slice().sort((a,b)=>(a.frist||'9999')<(b.frist||'9999')?-1:1);let h='<div class="inner">';
-  for(const c of list){const od=c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status);const st=c.status==='beantwortet'?'<span class="stat ok">beantwortet</span>':od?'<span class="stat alert">überfällig</span>':'<span class="stat warn">'+esc(c.status)+'</span>';
-    h+='<div class="vrow'+(od?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(c.betreff)+'</div><div class="vmeta"><span class="task-chip">'+esc(c.typ)+'</span>'+st+(c.empfaenger?'<span>→ '+esc(c.empfaenger)+'</span>':'')+(c.frist?'<span class="mono">Frist '+c.frist+'</span>':'')+'</div></div></div>';}
+  for(const c of list){const m=c.meta||{};const od=(c.status==='ueberfaellig')||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status));const st=c.status==='beantwortet'?'<span class="stat ok">beantwortet</span>':od?'<span class="stat alert">überfällig</span>':'<span class="stat warn">'+esc(c.status)+'</span>';
+    h+='<div class="vrow'+(od?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(c.betreff)+'</div><div class="vmeta"><span class="task-chip">'+esc(c.typ)+'</span>'+st+(c.empfaenger?'<span>→ '+esc(c.empfaenger)+'</span>':'')+(m.tage_offen!=null?'<span class="mono">'+m.tage_offen+' T offen</span>':'')+(c.frist?'<span class="mono">Frist '+esc(fmtFrist(c.frist))+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+'</div></div></div>';}
   return h+'</div>';}
 function wire(T,C){
   const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
   el('main').querySelectorAll('.sec-head').forEach(hd=>hd.onclick=()=>{const s=hd.closest('.sec'),id=s.dataset.sec;s.classList.toggle('open');s.classList.contains('open')?openSecs.add(id):openSecs.delete(id);});
   el('main').querySelectorAll('.pilgrim-station').forEach(st=>st.onclick=async()=>{await sb.from('projects').update({lph:+st.dataset.lph}).eq('id',current);render();});
   el('main').querySelectorAll('.task-head').forEach(hd=>hd.onclick=e=>{if(e.target.classList.contains('tcheck'))return;hd.closest('.task-card').classList.toggle('expanded');});
-  el('main').querySelectorAll('.tcheck').forEach(cb=>cb.onchange=()=>{ if(cb.dataset.key){ toggleDone(cb.dataset.key,cb.checked); cb.closest('.task-card').classList.toggle('done',cb.checked); } else { toggleTask(cb.dataset.task,cb); } });
+  el('main').querySelectorAll('.tcheck').forEach(cb=>cb.onchange=()=>toggleTask(cb.dataset.task,cb));
   el('main').querySelectorAll('button[data-mail]').forEach(b=>b.onclick=e=>{e.stopPropagation();queueAgent('email-draft',{task_id:b.dataset.mail},b);});
   el('main').querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
   el('main').querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;applyTaskFilter();el('main').querySelectorAll('.tab-btn').forEach(x=>x.classList.toggle('active',x===b));});
   el('main').querySelectorAll('.fc').forEach(f=>f.onclick=()=>{const p=f.dataset.p;prioFilters.has(p)?prioFilters.delete(p):prioFilters.add(p);f.classList.toggle('active');applyTaskFilter();});
   const dq=el('docq'),dg=el('docgo');if(dg)dg.onclick=docSearch;if(dq)dq.onkeydown=e=>{if(e.key==='Enter')docSearch();};
+  const atb=el('addtaskbtn'),atf=el('addtaskform');
+  if(atb&&atf)atb.onclick=()=>{atf.hidden=!atf.hidden;if(!atf.hidden)el('nt-title').focus();};
+  if(atf)atf.onsubmit=e=>{e.preventDefault();createTask();};
+  el('main').querySelectorAll('button[data-deltask]').forEach(b=>b.onclick=async e=>{e.stopPropagation();if(confirm('Aufgabe löschen?')){const{error}=await sb.from('tasks').delete().eq('id',b.dataset.deltask);if(error)alert('Fehler: '+error.message);}});
   applyTaskFilter();
 }
 function applyTaskFilter(){el('main').querySelectorAll('.task-card').forEach(c=>{let show=true;if(tab!=='alle'&&c.dataset.category!==tab)show=false;if(prioFilters.size&&!prioFilters.has('P'+c.dataset.priority))show=false;c.classList.toggle('hide',!show);});}
@@ -628,14 +675,19 @@ async function docSearch(){const q=el('docq').value.trim();const box=el('sres');
   box.innerHTML='<div class="page-sub" style="margin:4px 0 8px">'+data.length+' Treffer</div>'+data.map(d=>'<div class="sres"><div class="sf">'+esc(d.filename)+'</div><div class="sp">'+esc(d.unc_path)+'</div></div>').join('');}
 async function toggleTask(id,cb){const ck=cb.checked;const{error}=await sb.from('tasks').update({status:ck?'erledigt':'offen',done_at:ck?new Date().toISOString():null}).eq('id',id);if(error){cb.checked=!ck;alert('Fehler: '+error.message);}else cb.closest('.task-card').classList.toggle('done',ck);}
 async function queueAgent(agent,meta,btn){const lbl=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='… eingereiht';}const{error}=await sb.from('agent_runs').insert({project_id:current,agent,status:'queued',meta});if(error){alert('Konnte Agent nicht starten: '+error.message);if(btn){btn.disabled=false;btn.textContent=lbl;}return;}loadRuns();if(btn)setTimeout(()=>{btn.disabled=false;btn.textContent=lbl;},1600);}
-async function loadRuns(){const{data,error}=await sb.from('agent_runs').select('id,agent,status,result,log,started_at,project_id,projects(name)').order('created_at',{ascending:false}).limit(14);
-  // Runner-Status: lief in den letzten 3 Min ein Agent oder gibt es running?
-  const active=(data||[]).some(r=>r.status==='running'||(r.started_at&&Date.now()-new Date(r.started_at).getTime()<180000));
-  const rs=el('rstatus');if(rs){rs.className='rstatus '+(active?'on':'off');el('rstext').textContent=active?'Runner aktiv':'Runner aus?';}
-  // In-Dashboard-Banner: läuft gerade ein Agent auf DIESEM Projekt?
+async function loadRuns(){const[{data,error},{data:hb}]=await Promise.all([
+    sb.from('agent_runs').select('id,agent,status,result,log,started_at,project_id,projects(name)').order('created_at',{ascending:false}).limit(14),
+    sb.from('runner_heartbeat').select('last_seen').eq('id',1)]);
+  // Echter Runner-Status aus dem Heartbeat (nicht geraten)
+  const hbAge=hb&&hb[0]?Date.now()-new Date(hb[0].last_seen).getTime():9e12;
+  const runnerOn=hbAge<20000;
+  const rs=el('rstatus');if(rs){rs.className='rstatus '+(runnerOn?'on':'off');el('rstext').textContent=runnerOn?'Runner aktiv':'Runner offline';}
+  // Banner: läuft gerade ein Agent? ODER Runner offline + Aufträge warten?
   const bn=el('runbanner');
   if(bn){const live=(view==='project'&&current)?(data||[]).find(r=>r.project_id===current&&(r.status==='running'||r.status==='queued')):null;
-    if(live){bn.hidden=false;bn.className='runbanner';bn.innerHTML='<span class="pulse"></span>Agent läuft: <strong>'+esc(AL[live.agent]||live.agent)+'</strong> · '+(live.status==='queued'?'in Warteschlange…':'arbeitet…')+' <span class="mono">live · Fortschritt links in der Agenten-Leiste</span>';}
+    const waiting=(data||[]).filter(r=>r.status==='queued').length;
+    if(live&&runnerOn){bn.hidden=false;bn.className='runbanner';bn.innerHTML='<span class="pulse"></span>Agent läuft: <strong>'+esc(AL[live.agent]||live.agent)+'</strong> · '+(live.status==='queued'?'in Warteschlange…':'arbeitet…')+' <span class="mono">live · Fortschritt links in der Agenten-Leiste</span>';}
+    else if(!runnerOn&&waiting){bn.hidden=false;bn.className='runbanner off';bn.innerHTML='<span style="font-size:14px">⚠</span> <strong>Runner offline</strong> — '+waiting+' Auftrag/Aufträge warten und laufen automatisch, sobald der Büro-PC aktiv ist. <span class="mono">Daten im Dashboard bleiben sichtbar.</span>';}
     else bn.hidden=true;}
   if(error){el('runs').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return;}
   if(!data.length){el('runs').innerHTML='<div class="empty">Noch keine Agenten-Läufe.</div>';return;}
