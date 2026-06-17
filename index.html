@@ -122,6 +122,9 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .mail-box{background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:var(--s3) var(--s4);font-size:12px;margin-bottom:var(--s3)}
 .mail-line{padding:2px 0;color:var(--c-slate-700)}.mail-line span{font-weight:600;color:var(--c-navy-900);display:inline-block;min-width:54px}
 .mail-body{white-space:pre-wrap;line-height:1.55;color:var(--c-navy-800);margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-slate-200)}
+.mail-gen{font-size:10.5px;color:var(--c-warning);background:var(--c-amber-bg);border-radius:var(--r-sm);padding:5px 9px;margin-bottom:8px;line-height:1.4}
+.mail-noaddr{color:var(--c-slate-400);font-style:italic;font-size:11px}
+.mail-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .det-actions{display:flex;gap:var(--s2);margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--c-slate-100)}
 @media(max-width:760px){.aufg-split{flex-direction:column}.aufg-list{flex:none;max-width:none;max-height:280px;border-right:none;border-bottom:1px solid var(--c-slate-200)}.aufg-detail{max-height:none}}
 .task-section h4{font-family:var(--f-mono);font-size:9.5px;color:var(--c-slate-500);text-transform:uppercase;letter-spacing:.7px;font-weight:600;margin:var(--s3) 0 6px}
@@ -134,6 +137,30 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .lrow .ls{font-family:var(--f-mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
 .ls.vollstaendig{background:var(--c-success-bg);color:var(--c-success)}.ls.teilweise{background:var(--c-warning-bg);color:var(--c-warning)}.ls.fehlend{background:var(--c-danger-bg);color:var(--c-danger)}
 .kg-table{width:100%;border-collapse:collapse;font-size:12px}.kg-table td,.kg-table th{padding:6px 8px;border-bottom:1px solid var(--c-slate-100);text-align:left}.kg-table td.n{font-family:var(--f-mono);text-align:right}.kg-table th{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;color:var(--c-slate-500);letter-spacing:.5px}
+.kt{margin:14px 0 4px}
+.kt-h{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--c-slate-500);margin-bottom:9px}
+.kt-budget{display:flex;justify-content:space-between;align-items:center;background:var(--c-navy-900);color:#fff;border-radius:var(--r-md);padding:9px 14px;margin-bottom:10px}
+.kt-budget-l{font-size:11.5px;font-weight:600;opacity:.9}.kt-budget-v{font-size:15px;font-weight:600}
+.kt-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}
+.kt-step{border:1px solid var(--c-slate-200);border-left:3px solid var(--c-slate-300);border-radius:var(--r-md);padding:9px 11px;background:var(--c-white)}
+.kt-step.over{border-left-color:var(--c-danger)}.kt-step.under{border-left-color:var(--c-success)}.kt-step.on{border-left-color:var(--c-blue-600)}
+.kt-step-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:5px}
+.kt-stufe{font-size:11.5px;font-weight:600;color:var(--c-navy-900)}
+.kt-lph{font-family:var(--f-mono);font-size:8.5px;font-weight:600;color:var(--c-blue-700);background:var(--c-blue-50);padding:1px 5px;border-radius:7px;white-space:nowrap}
+.kt-betrag{font-size:17px;font-weight:600;color:var(--c-navy-900);line-height:1.1}
+.kt-foot{font-size:10px;color:var(--c-slate-500);margin-top:4px;line-height:1.5}
+.kt-delta.over{color:var(--c-danger);font-weight:600}.kt-delta.under{color:var(--c-success);font-weight:600}.kt-delta.on{color:var(--c-slate-500)}
+.kt-q{color:var(--c-slate-400);font-size:9.5px}
+.hon{margin:16px 0 4px}
+.hon-sum{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.hon-cell{flex:1;min-width:110px;background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:9px 11px}
+.hon-v{font-size:15px;font-weight:600;color:var(--c-navy-900)}.hon-v.r{color:var(--c-danger)}
+.hon-l{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--c-slate-500);margin-top:3px}
+.hon-list{display:flex;flex-direction:column;gap:6px}
+.hon-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--c-slate-100);border-radius:var(--r-md)}
+.hon-row-m{flex:1;min-width:0}.hon-geg{font-size:12px;font-weight:600;color:var(--c-navy-900)}.hon-partei{font-size:10.5px;color:var(--c-slate-500)}
+.hon-betr{font-size:12.5px;color:var(--c-navy-800);white-space:nowrap}
+.ent-ctx{font-size:11.5px;color:var(--c-slate-600);margin:3px 0 5px;line-height:1.45}
 .cta{background:var(--c-slate-50);border:1px dashed var(--c-slate-300);border-radius:var(--r-md);padding:var(--s4);text-align:center}
 .cta p{font-size:12px;color:var(--c-slate-600);margin-bottom:var(--s3);line-height:1.5}
 .act-row{display:grid;grid-template-columns:1fr auto;gap:var(--s3);padding:7px 0;border-bottom:1px solid var(--c-slate-100);font-size:12px;align-items:center}.act-row:last-child{border:none}
@@ -455,7 +482,7 @@ function navIco(n){return '<svg viewBox="0 0 24 24">'+icoPath(n)+'</svg>';}
 function navItem(id,label,ic,badge){return '<button class="sb-nav'+(pview===id?' active':'')+'" data-pview="'+id+'"><span class="ni">'+ic+'</span><span class="nt">'+esc(label)+'</span>'+(badge?'<span class="nb">'+badge+'</span>':'')+'</button>';}
 const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
 let view='cockpit',current=null,currentName='',pview='dashboard',lastD={},lastStand=null,started=false,openRun=null,tab='alle',prioFilters=new Set(),openSecs=new Set(['vorausschau','aufgaben']);
-let selTask=null,taskMap={};
+let selTask=null,taskMap={},peopleMail={};
 
 function showAuthed(s){el('login').hidden=!!s;el('shell').hidden=!s;if(s){el('useremail').textContent=s.user.email;boot();}else started=false;}
 sb.auth.getSession().then(({data})=>showAuthed(data.session));sb.auth.onAuthStateChange((_e,s)=>showAuthed(s));
@@ -552,6 +579,8 @@ async function renderProject(){
   currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;renderSidebar();
   el('crumb').innerHTML='<a id="toC">Cockpit</a><span class="sep">›</span>'+esc(short(proj.name));
   const T=tasks||[],C=comms||[],D=proj.dashboard||null;
+  peopleMail={};((D&&D.beteiligte)||[]).forEach(p=>{if(p&&p.name&&p.email)peopleMail[String(p.name).toLowerCase().trim()]=p.email;});
+  (C||[]).forEach(c=>{if(c.empfaenger&&c.empfaenger_email)peopleMail[String(c.empfaenger).toLowerCase().trim()]=c.empfaenger_email;});
   const AL=getAufgaben(D,T);
   const offen=AL.filter(t=>t.status!=='erledigt').length,p1=AL.filter(t=>t.status!=='erledigt'&&t.prio==='P1').length;
   const cOpen=C.filter(c=>!['beantwortet','erledigt'].includes(c.status)).length,cOver=C.filter(c=>c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))).length;
@@ -584,6 +613,9 @@ async function renderProject(){
   h+=sec('kosten','','€','Kosten-Übersicht',D&&D.kosten?'aus Tiefenanalyse':'noch nicht analysiert',(D&&D.kosten?'<span class="stat ok">analysiert</span>':'<span class="stat warn">offen</span>'),'<div class="inner">'+renderKosten(D,costDocs||[])+'</div>');
   // LPH-Bewertung
   h+=sec('lphbew','','✓','LPH-Bewertung',(lph?'LPH '+lph+' Grundleistungen':'')+(D&&D.lph_bewertung?'':' · noch nicht analysiert'),'','<div class="inner">'+renderLphBew(D)+'</div>');
+  // Offene Entscheidungen (getrennt von gefassten Beschlüssen)
+  const eo=(D&&D.entscheidungen_offen)||[];
+  if(eo.length)h+=sec('entscheidungen','','◇','Offene Entscheidungen',eo.length+' anstehend · noch nicht getroffen','<span class="stat warn">'+eo.length+'</span>','<div class="inner">'+renderEntscheidungen(eo)+'</div>');
   // Beschlüsse
   h+=sec('beschluesse','','§','Wesentliche Beschlüsse',D&&D.beschluesse?(D.beschluesse.length+' Beschlüsse'):'noch nicht analysiert','','<div class="inner">'+renderBeschluesse(D)+'</div>');
   // Aktivität
@@ -636,15 +668,26 @@ function renderTasks(list){
   let h=open.length?open.map(taskCard).join(''):'<div class="empty">Keine offenen Aufgaben — alles erledigt oder noch nichts angelegt.</div>';
   if(done.length)h+='<details class="done-sec"><summary class="done-sum"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Erledigt <span class="done-cnt">'+done.length+'</span><span style="flex:1"></span><span class="mono" style="font-size:10px;color:var(--c-slate-400)">auf-/zuklappen</span></summary><div class="done-body">'+done.map(taskCard).join('')+'</div></details>';
   return h;}
+function taskNeedsMail(t){const m=t.meta||{},k=(t.kategorie||'').toLowerCase();return !!(m.email_entwurf||k==='nachhaken'||k==='bauherr'||k==='behoerde'||(m.kontakt&&m.kontakt.email));}
+function composeMail(t){const m=t.meta||{};
+  const recName=(m.kontakt&&m.kontakt.name)||t.assignee||m.an||'';
+  const recMail=(m.kontakt&&m.kontakt.email)||(recName&&peopleMail[String(recName).toLowerCase().trim()])||'';
+  const proj=short(currentName||'');
+  const L=['Sehr geehrte Damen und Herren,','','im Projekt „'+proj+'" ist folgender Punkt offen'+(m.quelle?' ('+m.quelle+')':'')+':','',(m.problem||t.title)];
+  if(m.zu_tun)L.push('','konkret bitte ich Sie um Folgendes: '+m.zu_tun);
+  if(m.frist)L.push('','Über eine Rückmeldung bis zum '+fmtFrist(m.frist)+' würde ich mich freuen.');
+  L.push('','Vielen Dank vorab und freundliche Grüße','Gutthann HIW Architekten');
+  return {an:recName,email:recMail,betreff:'['+proj+'] '+t.title,text:L.join('\n'),generated:true};}
 function taskRow(t){const pn=prioN(t.prio),m=t.meta||{},id=t.id||t.key,sel=(id===selTask);
-  return '<div class="task-row'+(sel?' sel':'')+(t.status==='erledigt'?' done':'')+'" data-trow="'+id+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><input type="checkbox" class="tcheck" '+(t.source==='D'?'data-key="'+t.key+'"':'data-task="'+t.id+'"')+(t.status==='erledigt'?' checked':'')+'><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span><div class="tr-main"><div class="tr-title">'+esc(t.title)+'</div><div class="tr-meta">'+(t.kategorie?esc(t.kategorie):'')+(m.frist?' · Frist '+esc(fmtFrist(m.frist)):'')+(t.assignee?' · '+esc(t.assignee):'')+'</div></div>'+(m.email_entwurf?'<span class="tr-mail" title="Mail-Entwurf vorhanden">✉</span>':'')+'</div>';}
+  return '<div class="task-row'+(sel?' sel':'')+(t.status==='erledigt'?' done':'')+'" data-trow="'+id+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><input type="checkbox" class="tcheck" '+(t.source==='D'?'data-key="'+t.key+'"':'data-task="'+t.id+'"')+(t.status==='erledigt'?' checked':'')+'><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span><div class="tr-main"><div class="tr-title">'+esc(t.title)+'</div><div class="tr-meta">'+(t.kategorie?esc(t.kategorie):'')+(m.frist?' · Frist '+esc(fmtFrist(m.frist)):'')+(t.assignee?' · '+esc(t.assignee):'')+'</div></div>'+(taskNeedsMail(t)?'<span class="tr-mail" title="E-Mail vorformuliert">✉</span>':'')+'</div>';}
 function renderTaskDetail(t){if(!t)return '<div class="empty" style="padding:34px">← Aufgabe links wählen</div>';
-  const pn=prioN(t.prio),m=t.meta||{},mail=m.email_entwurf,done=t.status==='erledigt';
+  const pn=prioN(t.prio),m=t.meta||{},done=t.status==='erledigt';
+  const mail=m.email_entwurf||(taskNeedsMail(t)?composeMail(t):null);
   let h='<div class="det-head"><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span><h3 class="det-title">'+esc(t.title)+'</h3></div>';
   h+='<div class="det-meta">'+(t.kategorie?'<span class="task-chip">'+esc(t.kategorie)+'</span>':'')+(t.assignee?'<span><strong>Verantw.:</strong> '+esc(t.assignee)+'</span>':'')+(m.frist?'<span class="mono">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+'</div>';
   if(m.problem)h+='<div class="det-sec"><h4>Problem</h4><p>'+esc(m.problem)+'</p></div>';
   if(m.zu_tun)h+='<div class="det-sec"><h4>Zu tun</h4><p>'+esc(m.zu_tun)+'</p></div>';
-  if(mail)h+='<div class="det-sec"><h4>E-Mail-Entwurf'+(mail.an?' · an '+esc(mail.an):'')+'</h4><div class="mail-box">'+((mail.an||mail.email)?'<div class="mail-line"><span>An:</span> '+esc(mail.an||'')+(mail.email?' <'+esc(mail.email)+'>':'')+'</div>':'')+'<div class="mail-line"><span>Betreff:</span> '+esc(mail.betreff||'')+'</div><div class="mail-body">'+esc(mail.text||'')+'</div></div><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div>';
+  if(mail&&t.id)h+='<div class="det-sec"><h4>E-Mail-Entwurf'+(mail.an?' · an '+esc(mail.an):'')+'</h4>'+(mail.generated?'<div class="mail-gen">Automatisch aus Problem &amp; nächstem Schritt vorformuliert — vor dem Senden bitte prüfen.</div>':'')+'<div class="mail-box">'+((mail.an||mail.email)?'<div class="mail-line"><span>An:</span> '+esc(mail.an||'')+(mail.email?' &lt;'+esc(mail.email)+'&gt;':' <em class="mail-noaddr">(Adresse prüfen)</em>')+'</div>':'')+'<div class="mail-line"><span>Betreff:</span> '+esc(mail.betreff||'')+'</div><div class="mail-body">'+esc(mail.text||'')+'</div></div><div class="mail-actions"><button class="btn-sm ghost" data-mailcopy="'+t.id+'">Text kopieren</button><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div></div>';
   h+='<div class="det-actions"><button class="btn-sm'+(done?' ghost':'')+'" data-done="'+(t.id||t.key)+'">'+(done?'↺ Wieder öffnen':'✓ Erledigt')+'</button>'+(m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'">Löschen</button>':'')+'</div>';
   return h;}
 function renderAufgSplit(list){
@@ -656,7 +699,10 @@ function renderAufgSplit(list){
   if(done.length)listH+='<details class="done-sec"><summary class="done-sum"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Erledigt <span class="done-cnt">'+done.length+'</span></summary><div class="done-body">'+done.map(taskRow).join('')+'</div></details>';
   return '<div class="aufg-split"><div class="aufg-list">'+listH+'</div><div class="aufg-detail" id="aufgdetail">'+renderTaskDetail(taskMap[selTask])+'</div></div>';}
 function wireDetail(){const d=el('aufgdetail');if(!d)return;
-  d.querySelectorAll('button[data-mail]').forEach(b=>b.onclick=e=>{e.stopPropagation();queueAgent('email-draft',{task_id:b.dataset.mail},b);});
+  d.querySelectorAll('button[data-mail]').forEach(b=>b.onclick=async e=>{e.stopPropagation();const id=b.dataset.mail,t=taskMap[id];if(!t)return;const m=t.meta||{};
+    if(!m.email_entwurf){const cm=composeMail(t);const nm=Object.assign({},m,{email_entwurf:{an:cm.an,email:cm.email,betreff:cm.betreff,text:cm.text}});await sb.from('tasks').update({meta:nm}).eq('id',id);t.meta=nm;}
+    queueAgent('email-draft',{task_id:id},b);});
+  d.querySelectorAll('button[data-mailcopy]').forEach(b=>b.onclick=e=>{e.stopPropagation();const t=taskMap[b.dataset.mailcopy];if(!t)return;const m=t.meta||{},mail=m.email_entwurf||composeMail(t);const txt='An: '+(mail.an||'')+(mail.email?' <'+mail.email+'>':'')+'\nBetreff: '+(mail.betreff||'')+'\n\n'+(mail.text||'');const done=()=>{const o=b.textContent;b.textContent='✓ kopiert';setTimeout(()=>b.textContent=o,1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,()=>done());}else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();done();}});
   d.querySelectorAll('button[data-done]').forEach(b=>b.onclick=()=>toggleDoneBtn(b.dataset.done));
   d.querySelectorAll('button[data-deltask]').forEach(b=>b.onclick=async()=>{if(confirm('Aufgabe löschen?')){const{error}=await sb.from('tasks').delete().eq('id',b.dataset.deltask);if(error)alert('Fehler: '+error.message);}});}
 async function toggleDoneBtn(id){const t=taskMap[id];if(!t||!t.id)return;const nd=t.status!=='erledigt';const{error}=await sb.from('tasks').update({status:nd?'erledigt':'offen',done_at:nd?new Date().toISOString():null}).eq('id',t.id);if(error)alert('Fehler: '+error.message);}
@@ -787,10 +833,38 @@ function renderVorausschau(vs){
   if(s3l||s3r)h+='<div class="vs-row">'+(s3l||'<div></div>')+(s3r||'<div></div>')+'</div>';
   return h;
 }
+function eur(n){return (Number(n)||0).toLocaleString('de-DE')+' €';}
+function renderKostenTrend(k){
+  const v=(k.verlauf||[]).filter(s=>s&&s.betrag!=null).slice().sort((a,b)=>(a.lph||0)-(b.lph||0));
+  const budget=(k.budget!=null&&!isNaN(+k.budget))?+k.budget:null;
+  if(!v.length&&budget==null)return '';
+  let h='<div class="kt"><div class="kt-h">'+gl('Kosten-Verlauf','Die HOAI-Kostenstufen über die Zeit: Kostenrahmen → Schätzung → Berechnung → Anschlag → Feststellung. Zeigt, ob das Projekt im Budget bleibt.')+' · Schätzung → Feststellung</div>';
+  if(budget!=null)h+='<div class="kt-budget"><span class="kt-budget-l">'+gl('Budget','Vom Bauherrn vorgegebener Kostenrahmen, an dem die Stufen gemessen werden.')+' / Kostenrahmen</span><span class="kt-budget-v mono">'+eur(budget)+'</span></div>';
+  if(v.length){h+='<div class="kt-steps">';
+    for(const s of v){let cls='',dlt='';if(budget!=null&&budget>0){const over=+s.betrag-budget;cls=over>budget*0.02?'over':over<-budget*0.02?'under':'on';dlt=' · <span class="kt-delta '+cls+'">'+(over>=0?'+':'')+eur(over)+' vs. Budget</span>';}
+      h+='<div class="kt-step '+cls+'"><div class="kt-step-top"><span class="kt-stufe">'+esc(s.stufe||'')+'</span>'+(s.lph?'<span class="kt-lph">LPH '+esc(''+s.lph)+'</span>':'')+'</div><div class="kt-betrag mono">'+eur(s.betrag)+'</div><div class="kt-foot">'+(s.stand?esc(fmtFrist(s.stand)):'')+dlt+(s.quelle?'<div class="kt-q">Quelle: '+esc(s.quelle)+'</div>':'')+'</div></div>';}
+    h+='</div>';}
+  return h+'</div>';
+}
+function renderHonorar(D){const ho=D&&D.honorare?D.honorare:null;if(!ho)return '';
+  const hasNum=ho.summe!=null||ho.abgerechnet!=null||ho.offen!=null;
+  const vt=(ho.vertraege||[]).filter(x=>x&&(x.gegenstand||x.partei));
+  if(!hasNum&&!vt.length&&!ho.anzahl_vertraege)return '';
+  let h='<div class="hon"><div class="kt-h">Honorar &amp; Verträge</div><div class="hon-sum">';
+  if(ho.summe!=null)h+='<div class="hon-cell"><div class="hon-v mono">'+eur(ho.summe)+'</div><div class="hon-l">Gesamthonorar</div></div>';
+  if(ho.abgerechnet!=null)h+='<div class="hon-cell"><div class="hon-v mono">'+eur(ho.abgerechnet)+'</div><div class="hon-l">abgerechnet</div></div>';
+  if(ho.offen!=null)h+='<div class="hon-cell"><div class="hon-v mono r">'+eur(ho.offen)+'</div><div class="hon-l">noch offen</div></div>';
+  if(ho.offene_nachtraege)h+='<div class="hon-cell"><div class="hon-v mono">'+esc(''+ho.offene_nachtraege)+'</div><div class="hon-l">offene Nachträge</div></div>';
+  h+='</div>';
+  if(vt.length)h+='<div class="hon-list">'+vt.map(x=>'<div class="hon-row"><div class="hon-row-m"><div class="hon-geg">'+esc(x.gegenstand||'')+'</div>'+(x.partei?'<div class="hon-partei">'+esc(x.partei)+'</div>':'')+'</div>'+(x.summe!=null?'<div class="hon-betr mono">'+eur(x.summe)+'</div>':'')+'<span class="stat '+(x.status==='beauftragt'?'ok':x.status==='offen'?'warn':'')+'">'+esc(x.status||'')+'</span></div>').join('')+'</div>';
+  return h+'</div>';
+}
 function renderKosten(D,costDocs){
   if(D&&D.kosten){const k=D.kosten;let h='';
     if(k.summe_brutto)h+='<div style="font-family:var(--f-mono);font-size:22px;font-weight:600;color:var(--c-navy-900)">'+(k.summe_brutto).toLocaleString('de-DE')+' € <span style="font-size:12px;color:var(--c-slate-500)">brutto · Stand '+esc(k.stand||'?')+'</span></div>';
-    if(k.kg&&k.kg.length){h+='<table class="kg-table"><tr><th>Kostengruppe</th><th style="text-align:right">Betrag</th></tr>'+k.kg.map(r=>'<tr><td>KG '+esc(''+r.kg)+'</td><td class="n">'+(Number(r.betrag)||0).toLocaleString('de-DE')+' €</td></tr>').join('')+'</table>';}
+    h+=renderKostenTrend(k);
+    if(k.kg&&k.kg.length){h+='<table class="kg-table"><tr><th>'+gl('KG','Kostengruppe nach DIN 276 — z. B. KG 300 Bauwerk, KG 400 Technik.')+' (DIN 276)</th><th style="text-align:right">Betrag</th></tr>'+k.kg.map(r=>'<tr><td>KG '+esc(''+r.kg)+'</td><td class="n">'+(Number(r.betrag)||0).toLocaleString('de-DE')+' €</td></tr>').join('')+'</table>';}
+    h+=renderHonorar(D);
     if(k.quelle)h+='<div class="page-sub" style="margin-top:10px">Quelle: '+esc(k.quelle)+'</div>';
     return h||'<div class="empty">Analyse ohne Kostenwerte.</div>';}
   let h='<div class="cta"><p>Kosten (KG 200–700), Verträge und Trend werden von der <strong>Dashboard-Analyse</strong> aus deinen Kosten-Dokumenten ermittelt. Noch nicht gelaufen.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';
@@ -800,6 +874,7 @@ function renderLphBew(D){if(D&&D.lph_bewertung&&D.lph_bewertung.length)return D.
   return '<div class="cta"><p>Die Bewertung der HOAI-Grundleistungen (vollständig / teilweise / fehlend) kommt aus der Dashboard-Analyse.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';}
 function renderBeschluesse(D){if(D&&D.beschluesse&&D.beschluesse.length)return D.beschluesse.map(b=>'<div class="vrow"><div style="flex:1"><div class="vtitle">'+esc(b.text)+'</div><div class="vmeta"><span class="mono">'+esc(b.datum||'')+'</span>'+(b.quelle?'<span>'+esc(b.quelle)+'</span>':'')+'</div></div></div>').join('');
   return '<div class="cta"><p>Wesentliche Beschlüsse (Varianten, Vergaben, Freigaben) werden aus Protokollen und Mails extrahiert.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';}
+function renderEntscheidungen(eo){const td=today();return eo.map(e=>{const ov=e.bis&&e.bis<td;return '<div class="vrow'+(ov?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(e.thema||'')+'</div>'+(e.kontext?'<div class="ent-ctx">'+esc(e.kontext)+'</div>':'')+'<div class="vmeta">'+(e.wer?'<span class="task-chip">'+esc(e.wer)+'</span>':'')+(e.bis?'<span class="mono'+(ov?'':'')+'">bis '+esc(fmtFrist(e.bis))+'</span>':'<span class="mono" style="color:var(--c-slate-400)">Termin offen</span>')+'</div></div></div>';}).join('');}
 function renderAktivitaet(recent){if(!recent.length)return '<div class="empty">Keine datierten Dateien.</div>';return recent.map(d=>'<div class="act-row"><span class="af">'+esc(d.filename)+'</span><span class="ad">'+esc(d.doctype||'')+' · '+fmtD(d.modified_at)+'</span></div>').join('');}
 function beteiligte(C){const m={};C.forEach(c=>{const k=(c.empfaenger_email||c.empfaenger||'').toLowerCase();if(!k)return;if(!m[k])m[k]={name:c.empfaenger||c.empfaenger_email,mail:c.empfaenger_email||'',n:0};m[k].n++;});return Object.values(m).sort((a,b)=>b.n-a.n);}
 function renderFolders(F,total){if(!F.length)return '<div class="empty">Keine Ordner.</div>';const max=Math.max(...F.map(f=>+f.anzahl));return F.map(f=>'<div class="fld-row"><div><div>'+esc(f.ordner||'(Wurzel)')+'</div><div class="fld-bar"><i style="width:'+Math.round(+f.anzahl/max*100)+'%"></i></div></div><div class="fc2">'+f.anzahl+'</div></div>').join('');}
