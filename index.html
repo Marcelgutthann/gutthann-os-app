@@ -1038,21 +1038,23 @@ function renderLph1(L){
 }
 function rpmList(t,arr,cls){if(!arr||!arr.length)return '';return '<div class="l1-rpm-grp"><div class="l1-rpm-gh '+cls+'">'+esc(t)+'</div><ul class="l1-rpm-ul">'+arr.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>';}
 function renderRaumGrafik(rp){const raeume=(rp.raeume||[]).filter(r=>r&&r.name&&(+r.flaeche_m2>0));if(!raeume.length)return '';
-  // Funktionsdiagramm: jeder Raum = Rechteck mit Flaeche masstaeblich zur m2-Zahl (Seite ~ sqrt(m2)), gruppiert/gefaerbt nach Nutzungsbereich.
-  const maxA=Math.max(...raeume.map(r=>+r.flaeche_m2||0),1);const k=118/Math.sqrt(maxA); // px je sqrt(m2)
+  // Funktionsdiagramm: jeder Raum = Rechteck, Flaeche masstaeblich zur EINZELRAUM-m2 (flaeche_m2 ist Gesamtflaeche der anzahl Raeume).
+  const per=r=>(+r.flaeche_m2||0)/Math.max(1,+r.anzahl||1);
+  // Skala robust: 85%-Perzentil als Bezug, damit grosse Sammel-/Verkehrsflaechen nicht alles plattdruecken
+  const pers=raeume.map(per).sort((a,b)=>a-b);const cap=Math.max(pers[Math.min(pers.length-1,Math.floor(pers.length*0.85))]||1,1);
+  const k=112/Math.sqrt(cap); // px je sqrt(m2)
   const cl={};raeume.forEach(r=>{const c=r.cluster||'Sonstige';(cl[c]=cl[c]||[]).push(r);});
   const pal=['#5FA8B5','#5FA86F','#9B6FA0','#B57C7C','#E3E36F','#8A9C7C','#E08A8A','#E0B85F','#6FA89B','#B5C9C2'];let ci=0;
   let h='<div class="rg2">';
   for(const c in cl){const col=pal[ci%pal.length];ci++;
-    const sum=cl[c].reduce((s,r)=>s+(+r.flaeche_m2||0)*(+r.anzahl||1),0);
-    // pro distinktem Raumtyp eine Schattierung
+    const sum=cl[c].reduce((s,r)=>s+(+r.flaeche_m2||0),0);
     const names=[...new Set(cl[c].map(r=>r.name))];
     h+='<div class="rg2-cl"><div class="rg2-cl-h">'+esc(c)+' <span class="rg2-cl-sum">'+Math.round(sum)+' m²</span></div><div class="rg2-boxes">';
-    cl[c].forEach(r=>{const n=Math.max(1,Math.min(+r.anzahl||1,40));const side=Math.max(24,Math.round(Math.sqrt(+r.flaeche_m2||0)*k));
+    cl[c].forEach(r=>{const n=Math.max(1,Math.min(+r.anzahl||1,40));const pa=per(r);const side=Math.max(22,Math.min(128,Math.round(Math.sqrt(Math.min(pa,cap*1.25))*k)));
       const br=(0.80+(names.indexOf(r.name)%5)*0.09).toFixed(2);
-      for(let i=0;i<n;i++)h+='<div class="rg2-box" style="width:'+side+'px;height:'+side+'px;background:'+col+';filter:brightness('+br+')" title="'+esc(r.name)+' · '+r.flaeche_m2+' m²'+((+r.anzahl||1)>1?' (Raum '+(i+1)+'/'+n+')':'')+'"></div>';});
+      for(let i=0;i<n;i++)h+='<div class="rg2-box" style="width:'+side+'px;height:'+side+'px;background:'+col+';filter:brightness('+br+')" title="'+esc(r.name)+' · ~'+Math.round(pa)+' m²/Raum'+(n>1?' (Raum '+(i+1)+'/'+n+', '+Math.round(+r.flaeche_m2)+' m² gesamt)':'')+'"></div>';});
     h+='</div></div>';}
-  return h+'</div>'+(rp.summe_nf_m2?'<div class="rg-total">Summe Nutzfläche: <strong>'+Math.round(rp.summe_nf_m2).toLocaleString('de-DE')+' m²</strong> · Flächen maßstäblich, Hover zeigt den Raum</div>':'<div class="rg-total" style="border:none">Flächen maßstäblich · Hover zeigt den Raum</div>');
+  return h+'</div>'+(rp.summe_nf_m2?'<div class="rg-total">Summe Nutzfläche: <strong>'+Math.round(rp.summe_nf_m2).toLocaleString('de-DE')+' m²</strong> · Blöcke flächen­maßstäblich (Einzelraum), Hover zeigt Details</div>':'<div class="rg-total" style="border:none">Blöcke flächenmaßstäblich · Hover zeigt Details</div>');
 }
 function lph1FragenText(){const L=lastL1||{};const f=L.fragenkatalog||[];
   const lines=['Bauherren-Fragenkatalog · '+short(currentName||'')+' · LPH 1 Grundlagen',''];
