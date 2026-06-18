@@ -225,6 +225,43 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .cl-item{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:12.5px;color:var(--c-navy-800);cursor:pointer;line-height:1.4}
 .cl-item input{margin-top:1px;width:15px;height:15px;flex-shrink:0;accent-color:var(--c-blue-600);cursor:pointer}
 .cl-item.done span{color:var(--c-slate-400);text-decoration:line-through}
+.l1-frag{background:var(--c-white);border:1px solid #E3B7B6;border-left:3px solid var(--c-danger);border-radius:var(--r-md);box-shadow:var(--sh);padding:13px 16px;margin-bottom:var(--s4)}
+.l1-frag-h{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:var(--c-navy-900);margin-bottom:8px}
+.l1-fg{margin-top:8px}.l1-fg-h{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--c-slate-500);margin:8px 0 4px}
+.l1-fg.muss .l1-fg-h{color:var(--c-danger)}.l1-fg.soll .l1-fg-h{color:var(--c-warning)}
+.l1-frage{display:flex;align-items:baseline;gap:9px;padding:4px 0;font-size:12.5px;color:var(--c-navy-800);line-height:1.45}
+.l1-frage-dot{width:6px;height:6px;border-radius:50%;background:var(--c-slate-300);flex-shrink:0;transform:translateY(-1px)}
+.l1-fg.muss .l1-frage-dot{background:var(--c-danger)}.l1-fg.soll .l1-frage-dot{background:var(--c-amber)}
+.l1-frage-t{flex:1}.l1-frage-a{font-family:var(--f-mono);font-size:9px;color:var(--c-slate-400);text-transform:uppercase;flex-shrink:0}
+.l1-rp{background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:13px 16px;margin-bottom:var(--s4)}
+.l1-rp-h{font-size:12.5px;font-weight:700;color:var(--c-navy-900);margin-bottom:10px}
+.rg{display:flex;flex-direction:column;gap:14px;margin-bottom:12px}
+.rg-cluster{}
+.rg-cl-h{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--c-slate-700);margin-bottom:7px}
+.rg-cl-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}.rg-cl-sum{color:var(--c-slate-400);font-family:var(--f-mono);font-size:10px}
+.rg-bubbles{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.rg-bub{flex:0 0 auto;box-sizing:border-box;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:4px;box-shadow:inset 0 -8px 16px rgba(0,0,0,.12);overflow:hidden}
+.rg-bub-n{font-size:9.5px;font-weight:600;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.rg-bub-a{font-size:8.5px;opacity:.85;font-family:var(--f-mono);margin-top:1px}
+.rg-total{font-size:12px;color:var(--c-slate-700);padding-top:8px;border-top:1px solid var(--c-slate-200)}
+.l1-rpm{margin-top:4px}.l1-rpm-ges{font-size:12.5px;color:var(--c-navy-900);font-weight:600;line-height:1.5;margin-bottom:10px;padding:9px 12px;background:var(--c-white);border-radius:var(--r-sm);border-left:3px solid var(--c-navy-700)}
+.l1-rpm-grp{margin-bottom:8px}.l1-rpm-gh{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.l1-rpm-gh.bad{color:var(--c-danger)}.l1-rpm-gh.warn{color:var(--c-warning)}.l1-rpm-gh.ok{color:var(--c-success)}
+.l1-rpm-ul{margin:0;padding-left:18px}.l1-rpm-ul li{font-size:12px;color:var(--c-slate-700);line-height:1.5;padding:1px 0}
+.l1-kat-h{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--c-slate-500);margin:6px 0 8px}
+.l1-sec{border:1px solid var(--c-slate-200);border-radius:var(--r-md);margin-bottom:6px;overflow:hidden}
+.l1-sec-sum{display:flex;align-items:center;gap:10px;padding:9px 13px;cursor:pointer;list-style:none;background:var(--c-white)}.l1-sec-sum::-webkit-details-marker{display:none}
+.l1-sec-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}.l1-sec-dot.ok{background:var(--c-success)}.l1-sec-dot.warn{background:var(--c-amber)}.l1-sec-dot.bad{background:var(--c-danger)}
+.l1-sec-t{flex:1;font-size:12.5px;font-weight:600;color:var(--c-navy-900)}
+.l1-sec-st{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:7px;background:var(--c-slate-100);color:var(--c-slate-500)}
+.l1-sec-st.ok{background:var(--c-success-bg);color:var(--c-success)}.l1-sec-st.warn{background:var(--c-amber-bg);color:var(--c-warning)}.l1-sec-st.bad{background:var(--c-danger-bg);color:var(--c-danger)}
+.l1-sec-b{padding:4px 13px 10px;border-top:1px solid var(--c-slate-100)}
+.l1-feld{display:flex;align-items:baseline;gap:9px;padding:5px 0;font-size:12px;border-bottom:1px solid var(--c-slate-50)}
+.l1-feld-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transform:translateY(-1px)}.l1-feld-dot.ok{background:var(--c-success)}.l1-feld-dot.warn{background:var(--c-amber)}.l1-feld-dot.bad{background:var(--c-slate-300)}
+.l1-feld-l{width:200px;flex-shrink:0;color:var(--c-slate-600);font-weight:500}
+.l1-feld-w{flex:1;color:var(--c-navy-900)}.l1-feld-w.leer{color:var(--c-slate-400);font-style:italic}
+.l1-feld-q{font-family:var(--f-mono);font-size:9px;color:var(--c-slate-400);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+@media(max-width:760px){.l1-feld{flex-wrap:wrap}.l1-feld-l{width:auto}}
 .cta{background:var(--c-slate-50);border:1px dashed var(--c-slate-300);border-radius:var(--r-md);padding:var(--s4);text-align:center}
 .cta p{font-size:12px;color:var(--c-slate-600);margin-bottom:var(--s3);line-height:1.5}
 .act-row{display:grid;grid-template-columns:1fr auto;gap:var(--s3);padding:7px 0;border-bottom:1px solid var(--c-slate-100);font-size:12px;align-items:center}.act-row:last-child{border:none}
@@ -561,7 +598,7 @@ function navIco(n){return '<svg viewBox="0 0 24 24">'+icoPath(n)+'</svg>';}
 function navItem(id,label,ic,badge){return '<button class="sb-nav'+(pview===id?' active':'')+'" data-pview="'+id+'"><span class="ni">'+ic+'</span><span class="nt">'+esc(label)+'</span>'+(badge?'<span class="nb">'+badge+'</span>':'')+'</button>';}
 const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
 let view='cockpit',current=null,currentName='',pview='dashboard',lastD={},lastStand=null,started=false,openRun=null,tab='alle',prioFilters=new Set(),openSecs=new Set(['vorausschau','aufgaben']);
-let selTask=null,taskMap={},peopleMail={},lastChecklist={},openCl=new Set();
+let selTask=null,taskMap={},peopleMail={},lastChecklist={},openCl=new Set(),lastL1=null;
 
 function showAuthed(s){el('login').hidden=!!s;el('shell').hidden=!s;if(s){el('useremail').textContent=s.user.email;boot();}else started=false;}
 sb.auth.getSession().then(({data})=>showAuthed(data.session));sb.auth.onAuthStateChange((_e,s)=>showAuthed(s));
@@ -648,7 +685,7 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
 async function renderProject(){
   const td=today();
   const[{data:proj},{data:tasks},{data:comms},{count:docCount},{data:recent},{data:folders},{data:costDocs}]=await Promise.all([
-    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist').eq('id',current).single(),
+    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist,lph1,lph1_stand').eq('id',current).single(),
     sb.from('tasks').select('id,title,status,prio,kategorie,assignee,due_date,meta').eq('project_id',current).order('prio'),
     sb.from('communications').select('id,typ,betreff,empfaenger,empfaenger_email,status,frist,betrag,meta').eq('project_id',current),
     sb.from('documents').select('id',{count:'exact',head:true}).eq('project_id',current),
@@ -656,7 +693,7 @@ async function renderProject(){
     sb.rpc('folder_stats',{pid:current}),
     sb.from('documents').select('filename,modified_at').eq('project_id',current).or('filename.ilike.%kosten%,filename.ilike.%din%276%,filename.ilike.%honorar%,filename.ilike.%angebot%,filename.ilike.%nachtrag%').order('modified_at',{ascending:false}).limit(15)]);
   if(!proj){go('cockpit');return;}
-  currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;lastChecklist=proj.checklist||{};renderSidebar();
+  currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;lastChecklist=proj.checklist||{};lastL1=proj.lph1||null;renderSidebar();
   el('crumb').innerHTML='<a id="toC">Cockpit</a><span class="sep">›</span>'+esc(short(proj.name));
   const T=tasks||[],C=comms||[],D=proj.dashboard||null;
   peopleMail={};((D&&D.beteiligte)||[]).forEach(p=>{if(p&&p.name&&p.email)peopleMail[String(p.name).toLowerCase().trim()]=p.email;});
@@ -681,6 +718,12 @@ async function renderProject(){
     kpi(cOver?'alert':'','Überfällige Vorgänge',cOver,'','Nachhaken nötig')+
     kpi('','Offene Aufgaben P1',p1,'','höchste Priorität')+
     kpi('','Honorare / Verträge',honVal&&honVal.anzahl_vertraege!=null?honVal.anzahl_vertraege:'—','',honVal?(honVal.offene_nachtraege||0)+' offene Nachträge':'Tiefenanalyse nötig')+'</div>';
+  // Grundlagen LPH 1 — nur in LPH 1 (oder wenn schon erfasst): verhindert planloses Planen
+  if((lph||0)<=1 || (proj.lph1&&Object.keys(proj.lph1).length)){
+    const L1=proj.lph1||null;const muss=L1?((L1.fragenkatalog||[]).filter(x=>x&&x.prioritaet==='muss').length):0;
+    const absL=L1?(L1.abschnitte||[]):[];const gekl=absL.filter(a=>a.status==='geklaert').length;
+    h+=sec('lph1','prominent','◔','Grundlagen LPH 1 · Bauherren-Fragenkatalog',L1?(gekl+'/'+absL.length+' Abschnitte geklärt · Stand '+(proj.lph1_stand?fmtD(proj.lph1_stand):'—')):'Grundlagen aus den Unterlagen erfassen',(L1?'<span class="stat'+(muss?' alert':' ok')+'">'+muss+' Muss-Fragen</span>':'<span class="stat warn">offen</span>'),renderLph1(L1));
+  }
   // Vorausschau · denkt voraus (Flaggschiff)
   h+=renderVorausschauSection(D);
   // Aufgaben-Zentrale
@@ -974,6 +1017,46 @@ function renderKosten(D,costDocs){
   let h='<div class="cta"><p>Kosten (KG 200–700), Verträge und Trend werden von der <strong>Dashboard-Analyse</strong> aus deinen Kosten-Dokumenten ermittelt. Noch nicht gelaufen.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';
   if(costDocs.length)h+='<h4 style="font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;color:var(--c-slate-500);letter-spacing:.6px;margin:16px 0 6px">Gefundene Kosten-Dokumente ('+costDocs.length+')</h4>'+costDocs.map(d=>'<div class="act-row"><span class="af">'+esc(d.filename)+'</span><span class="ad">'+fmtD(d.modified_at)+'</span></div>').join('');
   return h;}
+function renderLph1(L){
+  if(!L)return '<div class="inner"><div class="cta"><p>Ein <strong>erfahrener Architekt</strong> füllt aus deinen Unterlagen den LPH-1-Grundlagenkatalog vor (Aufgabenstellung, Rahmenbedingungen, Bauordnung, Standort, Raumprogramm …), beurteilt das Raumprogramm und leitet die offenen <strong>Bauherren-Fragen</strong> ab — damit niemand zeichnet, bevor die Grundlagen klar sind.</p><button class="btn-sm" data-agent="lph1-grundlagen">Grundlagen jetzt erfassen</button></div></div>';
+  const abs=L.abschnitte||[],fragen=L.fragenkatalog||[],rp=L.raumprogramm||{};
+  let h='<div class="inner">';
+  if(fragen.length){const grp={muss:[],soll:[],kann:[]};fragen.forEach(f=>{(grp[f&&f.prioritaet]||grp.kann).push(f);});
+    const tl={muss:'Muss vor Planungsbeginn geklärt sein',soll:'Sollte geklärt werden',kann:'Optional / später'};
+    h+='<div class="l1-frag"><div class="l1-frag-h"><span>Bauherren-Fragenkatalog · '+fragen.length+' offene Punkte</span><button class="btn-sm ghost" data-fragcopy="1">Katalog kopieren</button></div>';
+    ['muss','soll','kann'].forEach(p=>{if(grp[p].length)h+='<div class="l1-fg '+p+'"><div class="l1-fg-h">'+tl[p]+' ('+grp[p].length+')</div>'+grp[p].map(f=>'<div class="l1-frage"><span class="l1-frage-dot"></span><span class="l1-frage-t">'+esc(f.frage||'')+'</span>'+(f.abschnitt?'<span class="l1-frage-a">'+esc(f.abschnitt)+'</span>':'')+'</div>').join('')+'</div>';});
+    h+='</div>';}
+  if(rp.manager||((rp.raeume||[]).length)){h+='<div class="l1-rp"><div class="l1-rp-h">Raumprogramm</div>';
+    if((rp.raeume||[]).length)h+=renderRaumGrafik(rp);
+    if(rp.manager){const m=rp.manager;h+='<div class="l1-rpm">'+(m.gesamtbewertung?'<div class="l1-rpm-ges">'+esc(m.gesamtbewertung)+'</div>':'')+rpmList('Schwächen / Probleme',m.schwaechen,'bad')+rpmList('Tatsächliche Bedarfe',m.bedarfe,'warn')+rpmList('Vorschläge',m.vorschlaege,'ok')+'</div>';}
+    h+='</div>';}
+  h+='<div class="l1-kat-h">Grundlagen-Katalog '+(abs.filter(a=>a.status==='geklaert').length)+'/'+abs.length+' geklärt</div>';
+  abs.forEach(a=>{const fel=a.felder||[];const cls=a.status==='geklaert'?'ok':a.status==='teilweise'?'warn':'bad';const op=a.status!=='geklaert';
+    h+='<details class="l1-sec"'+(op?' open':'')+'><summary class="l1-sec-sum"><span class="l1-sec-dot '+cls+'"></span><span class="l1-sec-t">'+esc(a.titel||a.id||'')+'</span><span class="l1-sec-st '+cls+'">'+esc(a.status||'')+'</span></summary><div class="l1-sec-b">'+
+      (fel.length?fel.map(f=>{const fc=f.status==='geklaert'?'ok':f.status==='unklar'?'warn':'bad';return '<div class="l1-feld"><span class="l1-feld-dot '+fc+'"></span><span class="l1-feld-l">'+esc(f.label||'')+'</span><span class="l1-feld-w'+(f.wert==null||f.wert===''?' leer':'')+'">'+(f.wert==null||f.wert===''?'— offen —':esc(''+f.wert))+'</span>'+(f.quelle?'<span class="l1-feld-q">'+esc(f.quelle)+'</span>':'')+'</div>';}).join(''):'<div class="empty" style="padding:8px">—</div>')+
+      '</div></details>';});
+  return h+'</div>';
+}
+function rpmList(t,arr,cls){if(!arr||!arr.length)return '';return '<div class="l1-rpm-grp"><div class="l1-rpm-gh '+cls+'">'+esc(t)+'</div><ul class="l1-rpm-ul">'+arr.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>';}
+function renderRaumGrafik(rp){const raeume=(rp.raeume||[]).filter(r=>r&&r.name);if(!raeume.length)return '';
+  const cl={};raeume.forEach(r=>{const c=r.cluster||'sonstige';(cl[c]=cl[c]||[]).push(r);});
+  const area=r=>(+r.flaeche_m2||0)*(+r.anzahl||1);const maxA=Math.max(...raeume.map(area),1);
+  const pal=['#3E5C8A','#3E7A53','#B8860B','#8A4B6B','#4B7A8A','#7A5C3E','#6B6B8A','#8A6B4B'];let ci=0;
+  let h='<div class="rg">';
+  for(const c in cl){const col=pal[ci%pal.length];ci++;const sum=cl[c].reduce((s,r)=>s+area(r),0);
+    h+='<div class="rg-cluster"><div class="rg-cl-h"><span class="rg-cl-dot" style="background:'+col+'"></span>'+esc(c)+(sum?' <span class="rg-cl-sum">'+Math.round(sum)+' m²</span>':'')+'</div><div class="rg-bubbles">';
+    h+=cl[c].map(r=>{const a=area(r);const d=Math.max(40,Math.min(124,Math.round(40+Math.sqrt(a/maxA)*84)));
+      return '<div class="rg-bub" style="width:'+d+'px;height:'+d+'px;background:'+col+'"><span class="rg-bub-n">'+esc(r.name)+'</span>'+(r.flaeche_m2?'<span class="rg-bub-a">'+((+r.anzahl||1)>1?r.anzahl+'× ':'')+r.flaeche_m2+'m²</span>':'')+'</div>';}).join('');
+    h+='</div></div>';}
+  return h+'</div>'+(rp.summe_nf_m2?'<div class="rg-total">Summe Nutzfläche: <strong>'+Math.round(rp.summe_nf_m2).toLocaleString('de-DE')+' m²</strong></div>':'');
+}
+function lph1FragenText(){const L=lastL1||{};const f=L.fragenkatalog||[];
+  const lines=['Bauherren-Fragenkatalog · '+short(currentName||'')+' · LPH 1 Grundlagen',''];
+  const grp={muss:[],soll:[],kann:[]};f.forEach(x=>{(grp[x&&x.prioritaet]||grp.kann).push(x);});
+  const tl={muss:'MUSS vor Planungsbeginn geklärt sein:',soll:'Sollte geklärt werden:',kann:'Optional / später:'};
+  ['muss','soll','kann'].forEach(p=>{if(grp[p].length){lines.push(tl[p]);grp[p].forEach(x=>lines.push('• '+(x.frage||'')));lines.push('');}});
+  return lines.join('\n').trim();
+}
 function renderFachplaner(D){
   const f=(D.fachplaner&&D.fachplaner.length)?D.fachplaner:(D.beteiligte||[]).map(b=>({rolle:b.rolle,name:b.name,firma:b.firma}));
   const koll=D.kollisionspruefung||null;const td=today();let h='';
@@ -1038,6 +1121,7 @@ function renderComms(C){if(!C.length)return '<div class="inner"><div class="empt
 function wire(T,C){
   const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
   el('main').querySelectorAll('[data-jfcopy]').forEach(b=>b.onclick=()=>copyToClip(jfBriefingText(),b));
+  el('main').querySelectorAll('[data-fragcopy]').forEach(b=>b.onclick=()=>copyToClip(lph1FragenText(),b));
   el('main').querySelectorAll('.cl-cb').forEach(cb=>cb.onchange=()=>toggleChecklist(cb.dataset.clkey,cb.checked));
   el('main').querySelectorAll('.cl-ph').forEach(d=>d.addEventListener('toggle',()=>{const l=+d.dataset.cllph;d.open?openCl.add(l):openCl.delete(l);}));
   el('main').querySelectorAll('.sec-head').forEach(hd=>hd.onclick=()=>{const s=hd.closest('.sec'),id=s.dataset.sec;s.classList.toggle('open');s.classList.contains('open')?openSecs.add(id):openSecs.delete(id);});
