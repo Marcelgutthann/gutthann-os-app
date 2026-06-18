@@ -179,6 +179,52 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .mg-meta .mono.over{color:var(--c-danger);font-weight:600}
 .mg-status{flex-shrink:0;font-family:var(--f-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 8px;border-radius:9px}
 .mg-status.bad{background:var(--c-danger-bg);color:var(--c-danger)}.mg-status.warn{background:var(--c-amber-bg);color:var(--c-warning)}.mg-status.ok{background:var(--c-success-bg);color:var(--c-success)}
+.koll{background:var(--c-white);border:1px solid var(--c-slate-200);border-left:3px solid var(--c-blue-600);border-radius:var(--r-md);padding:13px 16px;margin-bottom:var(--s4);box-shadow:var(--sh)}
+.koll.bad{border-left-color:var(--c-danger)}.koll.warn{border-left-color:var(--c-amber)}.koll.ok{border-left-color:var(--c-success)}.koll.off{border-left-color:var(--c-slate-300);opacity:.75}
+.koll-h{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--c-navy-900)}
+.koll-h .ico{width:15px;height:15px;stroke:var(--c-blue-600)}
+.koll-st{margin-left:auto;font-family:var(--f-mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:8px;background:var(--c-slate-100);color:var(--c-slate-600)}
+.koll-st.bad{background:var(--c-danger-bg);color:var(--c-danger)}.koll-st.warn{background:var(--c-amber-bg);color:var(--c-warning)}.koll-st.ok{background:var(--c-success-bg);color:var(--c-success)}
+.koll-hint{font-size:12px;color:var(--c-slate-600);line-height:1.5;margin-top:7px}
+.koll-need-h{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--c-slate-500);margin:10px 0 5px}
+.koll-need{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:12px;border-top:1px solid var(--c-slate-100)}
+.koll-dot{width:8px;height:8px;border-radius:50%;background:var(--c-amber);flex-shrink:0}.koll-dot.ok{background:var(--c-success)}.koll-dot.bad{background:var(--c-danger)}
+.koll-what{flex:1;color:var(--c-navy-900)}.koll-from{color:var(--c-slate-500);font-size:11px}
+.koll-have-l{font-size:9.5px;color:var(--c-success);font-weight:600}.koll-open-l{font-size:9.5px;color:var(--c-slate-400)}
+.mono.over{color:var(--c-danger);font-weight:600}
+.fp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.fp-card{background:var(--c-white);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:13px 15px;box-shadow:var(--sh)}.fp-card.ruht{opacity:.62}
+.fp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.fp-role{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--c-blue-700)}
+.fp-name{font-size:13px;font-weight:600;color:var(--c-navy-900);margin-top:2px;line-height:1.3}
+.fp-work{font-size:11.5px;color:var(--c-slate-700);margin-top:8px;line-height:1.45}.fp-work-l{font-weight:600;color:var(--c-slate-500)}
+.fp-zl-h{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--c-slate-500);margin:11px 0 5px;display:flex;align-items:center;gap:7px}
+.fp-zl-cnt{font-weight:700;color:var(--c-danger);background:var(--c-danger-bg);padding:1px 6px;border-radius:7px;letter-spacing:0}
+.fp-zl{display:flex;gap:10px;align-items:flex-start;padding:6px 8px;border:1px solid var(--c-slate-100);border-left:2px solid var(--c-slate-300);border-radius:var(--r-sm);margin-bottom:5px}
+.fp-zl.over{border-left-color:var(--c-danger);background:var(--c-danger-bg)}
+.fp-zl-m{flex:1;min-width:0}.fp-zl-was{font-size:12px;font-weight:600;color:var(--c-navy-900);line-height:1.35}
+.fp-versch{font-family:var(--f-mono);font-size:8.5px;color:var(--c-warning);background:var(--c-amber-bg);padding:1px 5px;border-radius:6px;white-space:nowrap;font-weight:600}
+.fp-versch-h{font-size:10px;color:var(--c-warning);margin-top:2px;font-style:italic}
+.fp-zl-fuer{font-size:10.5px;color:var(--c-slate-500);margin-top:1px}
+.fp-zl-r{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.fp-zl-r .mono{font-size:11px;color:var(--c-slate-600)}.fp-zl-r .mono.off{color:var(--c-slate-400)}
+.fp-zl-st{font-family:var(--f-mono);font-size:8px;text-transform:uppercase;letter-spacing:.4px;padding:2px 6px;border-radius:6px;background:var(--c-slate-100);color:var(--c-slate-500)}
+.fp-zl-st.ok{background:var(--c-success-bg);color:var(--c-success)}.fp-zl-st.bad{background:var(--c-danger-bg);color:var(--c-danger)}.fp-zl-st.warn{background:var(--c-amber-bg);color:var(--c-warning)}
+.fp-themen{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.fp-thema{font-size:10px;background:var(--c-slate-100);color:var(--c-slate-600);padding:3px 8px;border-radius:9px}
+.fp-foot{font-size:10px;color:var(--c-slate-400);margin-top:8px}
+.cl-note{font-size:11px;color:var(--c-slate-500);line-height:1.5;margin-bottom:11px;padding:9px 11px;background:var(--c-slate-50);border-radius:var(--r-sm)}.cl-note em{color:var(--c-warning);font-style:normal}
+.cl-ph{border:1px solid var(--c-slate-200);border-radius:var(--r-md);margin-bottom:7px;overflow:hidden}
+.cl-sum{display:flex;align-items:center;gap:11px;padding:9px 13px;cursor:pointer;list-style:none;background:var(--c-white)}
+.cl-sum::-webkit-details-marker{display:none}
+.cl-lph{font-family:var(--f-mono);font-size:9.5px;font-weight:700;color:var(--c-slate-500);background:var(--c-slate-100);padding:2px 8px;border-radius:7px;flex-shrink:0}
+.cl-lph.part{background:var(--c-amber-bg);color:var(--c-warning)}.cl-lph.ok{background:var(--c-success-bg);color:var(--c-success)}
+.cl-name{flex:1;font-size:12.5px;font-weight:600;color:var(--c-navy-900)}
+.cl-prog{font-family:var(--f-mono);font-size:11px;color:var(--c-slate-500)}
+.cl-body{padding:4px 13px 11px;border-top:1px solid var(--c-slate-100)}
+.cl-item{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:12.5px;color:var(--c-navy-800);cursor:pointer;line-height:1.4}
+.cl-item input{margin-top:1px;width:15px;height:15px;flex-shrink:0;accent-color:var(--c-blue-600);cursor:pointer}
+.cl-item.done span{color:var(--c-slate-400);text-decoration:line-through}
 .cta{background:var(--c-slate-50);border:1px dashed var(--c-slate-300);border-radius:var(--r-md);padding:var(--s4);text-align:center}
 .cta p{font-size:12px;color:var(--c-slate-600);margin-bottom:var(--s3);line-height:1.5}
 .act-row{display:grid;grid-template-columns:1fr auto;gap:var(--s3);padding:7px 0;border-bottom:1px solid var(--c-slate-100);font-size:12px;align-items:center}.act-row:last-child{border:none}
@@ -195,6 +241,19 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .search-box input:focus{outline:none;border-color:var(--c-blue-600);background:#fff}
 .search-box button{padding:0 16px;background:var(--c-blue-600);color:#fff;border:none;border-radius:var(--r-md);font-weight:600;font-size:12px}
 .sres{padding:7px 0;border-bottom:1px solid var(--c-slate-100);font-size:12px}.sres:last-child{border:none}.sres .sf{font-weight:600;color:var(--c-navy-900)}.sres .sp{font-family:var(--f-mono);font-size:10px;color:var(--c-slate-500);margin-top:2px;word-break:break-all}
+.sres-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 12px}
+.sres-cnt{font-size:11px;color:var(--c-slate-500);font-weight:600;margin-right:6px}
+.sres-chip{font-size:10.5px;padding:3px 9px;border:1px solid var(--c-slate-200);background:#fff;border-radius:11px;cursor:pointer;color:var(--c-slate-600)}
+.sres-chip:hover{border-color:var(--c-blue-600)}.sres-chip.on{background:var(--c-navy-900);color:#fff;border-color:var(--c-navy-900)}.sres-chip.clr{color:var(--c-blue-700)}
+.sres-item{padding:10px 0;border-bottom:1px solid var(--c-slate-100)}.sres-item:last-child{border:none}
+.sres-head{display:flex;align-items:baseline;gap:8px}
+.sres-fn{font-weight:600;font-size:12.5px;color:var(--c-navy-900);word-break:break-word;flex:1}
+.sres-dt{font-family:var(--f-mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--c-slate-500);background:var(--c-slate-100);padding:2px 6px;border-radius:5px;flex-shrink:0}
+.sres-snip{font-size:11.5px;color:var(--c-slate-600);line-height:1.5;margin:4px 0 0}.sres-snip mark{background:var(--c-amber-bg);color:var(--c-navy-900);padding:0 2px;border-radius:2px;font-weight:600}
+.sres-snip.nomatch{font-style:italic;color:var(--c-slate-400)}
+.sres-foot{display:flex;align-items:center;gap:12px;margin-top:6px;font-size:10px;color:var(--c-slate-500)}
+.sres-folder{color:var(--c-slate-600)}
+.sres-copy{font-size:10px;padding:3px 9px;border:1px solid var(--c-slate-200);background:#fff;border-radius:var(--r-sm);color:var(--c-slate-600);cursor:pointer;flex-shrink:0}.sres-copy:hover{border-color:var(--c-blue-600);color:var(--c-blue-700)}
 .vrow{display:flex;gap:var(--s3);align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--c-slate-100)}.vrow:last-child{border:none}
 .vrow.overdue{padding-left:10px;border-left:3px solid var(--c-danger);margin-left:-10px;background:var(--c-danger-bg)}
 .vtitle{font-size:12.5px;font-weight:600;color:var(--c-navy-900)}.vmeta{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center;font-size:10.5px;color:var(--c-slate-500);margin-top:4px}
@@ -502,7 +561,7 @@ function navIco(n){return '<svg viewBox="0 0 24 24">'+icoPath(n)+'</svg>';}
 function navItem(id,label,ic,badge){return '<button class="sb-nav'+(pview===id?' active':'')+'" data-pview="'+id+'"><span class="ni">'+ic+'</span><span class="nt">'+esc(label)+'</span>'+(badge?'<span class="nb">'+badge+'</span>':'')+'</button>';}
 const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
 let view='cockpit',current=null,currentName='',pview='dashboard',lastD={},lastStand=null,started=false,openRun=null,tab='alle',prioFilters=new Set(),openSecs=new Set(['vorausschau','aufgaben']);
-let selTask=null,taskMap={},peopleMail={};
+let selTask=null,taskMap={},peopleMail={},lastChecklist={},openCl=new Set();
 
 function showAuthed(s){el('login').hidden=!!s;el('shell').hidden=!s;if(s){el('useremail').textContent=s.user.email;boot();}else started=false;}
 sb.auth.getSession().then(({data})=>showAuthed(data.session));sb.auth.onAuthStateChange((_e,s)=>showAuthed(s));
@@ -573,7 +632,8 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
   const warn=[];
   (ps||[]).forEach(p=>{const vs=(p.dashboard||{}).vorausschau||{};
     (vs.zwangspunkte||[]).forEach(z=>{if(z.status==='danger'||(z.puffer_wochen!=null&&z.puffer_wochen<=2))warn.push({pid:p.id,pn:short(p.name),typ:'Zwangspunkt',titel:z.name,frist:z.frist,lvl:'danger'});});
-    (vs.diese_woche||[]).forEach(w=>{if(w.dringlichkeit==='jetzt')warn.push({pid:p.id,pn:short(p.name),typ:'Diese Woche',titel:w.titel,frist:w.frist,lvl:'warn'});});});
+    (vs.diese_woche||[]).forEach(w=>{if(w.dringlichkeit==='jetzt')warn.push({pid:p.id,pn:short(p.name),typ:'Diese Woche',titel:w.titel,frist:w.frist,lvl:'warn'});});
+    ((p.dashboard||{}).fachplaner||[]).forEach(fp=>{(fp.zulieferungen||[]).forEach(z=>{if(z&&z.was&&z.status!=='geliefert'&&(z.status==='ueberfaellig'||(z.frist&&z.frist<td)))warn.push({pid:p.id,pn:short(p.name),typ:'Zulieferung '+(fp.rolle||'Fachplaner'),titel:z.was,frist:z.frist,lvl:'danger'});});});});
   (ts||[]).forEach(t=>{if(t.status!=='erledigt'&&t.prio==='P1'&&t.due_date&&t.due_date<td&&m[t.project_id])warn.push({pid:t.project_id,pn:short(m[t.project_id].name),typ:'Aufgabe P1 überfällig',titel:t.title,frist:t.due_date,lvl:'danger'});});
   (cs||[]).forEach(c=>{if(c.status==='ueberfaellig'&&m[c.project_id])warn.push({pid:c.project_id,pn:short(m[c.project_id].name),typ:'Nachhaken überfällig',titel:c.betreff,frist:c.frist,lvl:'danger'});});
   warn.sort((a,b)=>(a.lvl==='danger'?0:1)-(b.lvl==='danger'?0:1)||((a.frist||'9999')<(b.frist||'9999')?-1:1));
@@ -588,7 +648,7 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
 async function renderProject(){
   const td=today();
   const[{data:proj},{data:tasks},{data:comms},{count:docCount},{data:recent},{data:folders},{data:costDocs}]=await Promise.all([
-    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check').eq('id',current).single(),
+    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist').eq('id',current).single(),
     sb.from('tasks').select('id,title,status,prio,kategorie,assignee,due_date,meta').eq('project_id',current).order('prio'),
     sb.from('communications').select('id,typ,betreff,empfaenger,empfaenger_email,status,frist,betrag,meta').eq('project_id',current),
     sb.from('documents').select('id',{count:'exact',head:true}).eq('project_id',current),
@@ -596,7 +656,7 @@ async function renderProject(){
     sb.rpc('folder_stats',{pid:current}),
     sb.from('documents').select('filename,modified_at').eq('project_id',current).or('filename.ilike.%kosten%,filename.ilike.%din%276%,filename.ilike.%honorar%,filename.ilike.%angebot%,filename.ilike.%nachtrag%').order('modified_at',{ascending:false}).limit(15)]);
   if(!proj){go('cockpit');return;}
-  currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;renderSidebar();
+  currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;lastChecklist=proj.checklist||{};renderSidebar();
   el('crumb').innerHTML='<a id="toC">Cockpit</a><span class="sep">›</span>'+esc(short(proj.name));
   const T=tasks||[],C=comms||[],D=proj.dashboard||null;
   peopleMail={};((D&&D.beteiligte)||[]).forEach(p=>{if(p&&p.name&&p.email)peopleMail[String(p.name).toLowerCase().trim()]=p.email;});
@@ -633,6 +693,8 @@ async function renderProject(){
   h+=sec('kosten','','€','Kosten-Übersicht',D&&D.kosten?'aus Tiefenanalyse':'noch nicht analysiert',(D&&D.kosten?'<span class="stat ok">analysiert</span>':'<span class="stat warn">offen</span>'),'<div class="inner">'+renderKosten(D,costDocs||[])+'</div>');
   // LPH-Bewertung
   h+=sec('lphbew','','✓','LPH-Bewertung',(lph?'LPH '+lph+' Grundleistungen':'')+(D&&D.lph_bewertung?'':' · noch nicht analysiert'),'','<div class="inner">'+renderLphBew(D)+'</div>');
+  // LPH-Checkliste (HOAI-Grundleistungen + Vergabe/ZVB) — abhakbar, persistent
+  {const cdone=clCounts(lastChecklist);h+=sec('checkliste','','☑','LPH-Checkliste','HOAI-Grundleistungen + Vergabe/ZVB je Phase · '+cdone.done+'/'+cdone.total+' erledigt','<span class="stat">'+cdone.done+'/'+cdone.total+'</span>','<div class="inner">'+renderChecklist(lph)+'</div>');}
   // Offene Entscheidungen (getrennt von gefassten Beschlüssen)
   const eo=(D&&D.entscheidungen_offen)||[];
   if(eo.length)h+=sec('entscheidungen','','◇','Offene Entscheidungen',eo.length+' anstehend · noch nicht getroffen','<span class="stat warn">'+eo.length+'</span>','<div class="inner">'+renderEntscheidungen(eo)+'</div>');
@@ -788,10 +850,7 @@ function panelBody(id,D,ex){
     if(a)return '<div class="av-secrow">Chronologie · neueste zuerst · '+a.length+' Einträge</div>'+a.map(x=>'<div class="av-act"><div class="av-act-date">'+esc(fmtFrist(x.datum))+'</div><div><div class="av-act-t">'+esc(x.titel||'')+'</div>'+(x.kontext?'<div class="av-act-c">'+esc(x.kontext)+'</div>':'')+'</div></div>').join('');
     return '<div class="av-secrow">Zuletzt geänderte Dateien</div>'+(ex.recent.length?ex.recent.map(d=>'<div class="av-act"><div class="av-act-date">'+esc(fmtD(d.modified_at))+'</div><div><div class="av-act-t">'+esc(d.filename)+'</div><div class="av-act-c">'+esc(d.doctype||'')+'</div></div></div>').join(''):'<div class="empty">Keine Aktivität erfasst.</div>');
   }
-  if(id==='fachplaner'){let f=(D.fachplaner&&D.fachplaner.length)?D.fachplaner:(D.beteiligte||[]).map(b=>({rolle:b.rolle,name:b.name,firma:b.firma,status:null,letzter_kontakt:null}));
-    if(!f.length)return '<div class="empty">Keine Fachplaner erfasst.</div>';
-    return '<div class="av-secrow">'+f.length+' Beteiligte / Schnittstellen</div><div class="av-grid">'+f.map(p=>'<div class="av-card'+(p.status==='ruht'?' ruht':'')+'"><div class="av-card-role">'+esc(p.rolle||'Beteiligte')+'</div><div class="av-card-name">'+esc(p.name||'—')+'</div>'+(p.firma?'<div class="av-card-firma">'+esc(p.firma)+'</div>':'')+((p.status||p.letzter_kontakt)?'<div class="av-card-foot">'+(p.status?'<span class="av-tag '+slug(p.status)+'">'+esc(p.status)+'</span>':'')+(p.letzter_kontakt?'<span>zuletzt '+esc(fmtFrist(p.letzter_kontakt))+'</span>':'')+'</div>':'')+'</div>').join('')+'</div>';
-  }
+  if(id==='fachplaner'){return renderFachplaner(D);}
   if(id==='angebote'){const a=(D.angebote&&D.angebote.length)?D.angebote:null;const vf=D.vergabe_fokus||null,lph=ex.lph||0;
     if(!a)return '<div class="av-secrow">Gefundene Kosten-/Vergabe-Dokumente</div>'+(ex.costDocs.length?ex.costDocs.map(d=>'<div class="av-act"><div class="av-act-date">'+esc(fmtD(d.modified_at))+'</div><div class="av-act-t">'+esc(d.filename)+'</div></div>').join(''):'<div class="empty">Keine Angebote/Nachträge erfasst.</div>');
     const groups={'fachplaner-honorar':[],'bau-lv':[],'nachtrag':[],'sonstige':[]};
@@ -915,6 +974,51 @@ function renderKosten(D,costDocs){
   let h='<div class="cta"><p>Kosten (KG 200–700), Verträge und Trend werden von der <strong>Dashboard-Analyse</strong> aus deinen Kosten-Dokumenten ermittelt. Noch nicht gelaufen.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';
   if(costDocs.length)h+='<h4 style="font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;color:var(--c-slate-500);letter-spacing:.6px;margin:16px 0 6px">Gefundene Kosten-Dokumente ('+costDocs.length+')</h4>'+costDocs.map(d=>'<div class="act-row"><span class="af">'+esc(d.filename)+'</span><span class="ad">'+fmtD(d.modified_at)+'</span></div>').join('');
   return h;}
+function renderFachplaner(D){
+  const f=(D.fachplaner&&D.fachplaner.length)?D.fachplaner:(D.beteiligte||[]).map(b=>({rolle:b.rolle,name:b.name,firma:b.firma}));
+  const koll=D.kollisionspruefung||null;const td=today();let h='';
+  if(koll&&(koll.hinweis||(koll.benoetigt&&koll.benoetigt.length)||koll.status)){
+    const kst=koll.status||'offen';const kcls=kst==='abgeschlossen'?'ok':kst==='laeuft'?'warn':kst==='nicht-relevant'?'off':'bad';
+    h+='<div class="koll '+kcls+'"><div class="koll-h">'+icoLink()+gl('Kollisionsprüfung','Abgleich der Fachplanungen (Tragwerk/TGA/Elektro …) auf räumliche Konflikte. Braucht die aktuellen Pläne aller Gewerke.')+' · Plan-Koordination <span class="koll-st '+kcls+'">'+esc(kst)+'</span></div>';
+    if(koll.hinweis)h+='<div class="koll-hint">'+esc(koll.hinweis)+'</div>';
+    if(koll.benoetigt&&koll.benoetigt.length)h+='<div class="koll-need-h">Dafür gebraucht:</div>'+koll.benoetigt.map(b=>{const ov=!b.vorhanden&&b.frist&&b.frist<td;return '<div class="koll-need"><span class="koll-dot'+(b.vorhanden?' ok':ov?' bad':'')+'"></span><span class="koll-what">'+esc(b.was||'')+'</span><span class="koll-from">'+esc(b.von||'')+'</span>'+(b.frist?'<span class="mono'+(ov?' over':'')+'">'+esc(fmtFrist(b.frist))+'</span>':'')+(b.vorhanden?'<span class="koll-have-l">liegt vor</span>':'<span class="koll-open-l">offen</span>')+'</div>';}).join('');
+    h+='</div>';
+  }
+  if(!f.length)return h||'<div class="empty">Keine Fachplaner erfasst.</div>';
+  h+='<div class="av-secrow">'+f.length+' Fachplaner / Schnittstellen</div><div class="fp-grid">';
+  for(const p of f){const zl=(p.zulieferungen||[]).filter(z=>z&&z.was);const offen=zl.filter(z=>z.status!=='geliefert').length;
+    h+='<div class="fp-card'+(p.status==='ruht'?' ruht':'')+'"><div class="fp-top"><div><div class="fp-role">'+esc(p.rolle||'Beteiligte')+'</div><div class="fp-name">'+esc(p.name||'—')+(p.firma?' · '+esc(p.firma):'')+'</div></div>'+(p.status?'<span class="av-tag '+slug(p.status)+'">'+esc(p.status)+'</span>':'')+'</div>';
+    if(p.arbeitet_an)h+='<div class="fp-work"><span class="fp-work-l">arbeitet an</span> '+esc(p.arbeitet_an)+'</div>';
+    if(zl.length){h+='<div class="fp-zl-h">Zulieferung an dich'+(offen?' <span class="fp-zl-cnt">'+offen+' offen</span>':'')+'</div>';
+      h+=zl.map(z=>{const st=z.status||'offen';const ov=st==='ueberfaellig'||(st!=='geliefert'&&z.frist&&z.frist<td);const cls=st==='geliefert'?'ok':ov?'bad':st==='zugesagt'?'warn':'';
+        return '<div class="fp-zl'+(ov?' over':'')+'"><div class="fp-zl-m"><div class="fp-zl-was">'+esc(z.was||'')+(z.verschoben?' <span class="fp-versch">↻ verschoben</span>':'')+'</div>'+(z.fuer?'<div class="fp-zl-fuer">für '+esc(z.fuer)+'</div>':'')+(z.verschoben&&z.verschoben_hinweis?'<div class="fp-versch-h">'+esc(z.verschoben_hinweis)+'</div>':'')+'</div><div class="fp-zl-r">'+(z.frist?'<span class="mono'+(ov?' over':'')+'">'+esc(fmtFrist(z.frist))+'</span>':'<span class="mono off">o. Frist</span>')+'<span class="fp-zl-st '+cls+'">'+esc(st)+'</span></div></div>';}).join('');
+    }
+    if(p.schnittstellen_themen&&p.schnittstellen_themen.length)h+='<div class="fp-themen">'+p.schnittstellen_themen.map(t=>'<span class="fp-thema">'+esc(t)+'</span>').join('')+'</div>';
+    if(p.letzter_kontakt&&!zl.length&&!p.arbeitet_an)h+='<div class="fp-foot">zuletzt '+esc(fmtFrist(p.letzter_kontakt))+'</div>';
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+const LPH_CL={
+ 1:['Aufgabenstellung/Bedarf geklärt (Raumprogramm)','Ortsbesichtigung / Bestandsaufnahme','Beratung zum gesamten Leistungsbedarf','Ergebnisse zusammengefasst & dokumentiert'],
+ 2:['Planungskonzept / Vorentwurf erarbeitet','Variantenuntersuchung','Kostenschätzung nach DIN 276','Terminrahmen aufgestellt','Vorabstimmung mit Behörden','Vorentwurf mit Bauherr abgestimmt'],
+ 3:['Entwurfszeichnungen (M 1:100)','Objekt-/Baubeschreibung','Kostenberechnung nach DIN 276','Fachplaner integriert (Tragwerk/TGA/BS/Bauphysik)','Terminplan fortgeschrieben','Entwurf vom Bauherrn freigegeben'],
+ 4:['Bauantrag / Bauvorlagen erstellt','Standsicherheitsnachweis','Brandschutznachweis','GEG-/Energienachweis','Antrag eingereicht','Auflagen erfasst & eingearbeitet'],
+ 5:['Ausführungs-/Detailpläne erstellt','Schlitz-/Durchbruchspläne mit TGA','Raumbuch','Pläne mit Fachplanern kollisionsgeprüft'],
+ 6:['Leistungsverzeichnisse je Gewerk','Mengenermittlung','Vergabeterminplan','AVB/ZVB den Vergabeunterlagen beigefügt','Vergabeart festgelegt (z. B. VOB/A)'],
+ 7:['Angebote eingeholt','Preisspiegel / Angebotsprüfung','Bietergespräche / Verhandlung','Vergabevorschlag & -vermerk','Auftrag erteilt / Vertrag geschlossen'],
+ 8:['Bautagebuch geführt','Terminplan überwacht','Aufmaße geprüft','Abnahmen mit Protokoll durchgeführt','Mängel erfasst & verfolgt','Kostenfeststellung nach DIN 276','Übergabe & Dokumentation an Bauherrn'],
+ 9:['Begehung zur Mängelbeseitigung','Gewährleistungsfristen überwacht','Objektdokumentation übergeben']};
+function clKey(l,i){return 'L'+l+'-'+i;}
+function clCounts(cl){cl=cl||{};let d=0,t=0;for(const l in LPH_CL){LPH_CL[l].forEach((_,i)=>{t++;if(cl[clKey(l,i)])d++;});}return{done:d,total:t};}
+function renderChecklist(activeLph){
+  let h='<div class="cl-note">HOAI §34-Grundleistungen je Leistungsphase, ergänzt um Vergabe-/Vertrags-Prüfpunkte (AVB/ZVB). Abhaken wird teamweit gespeichert. <em>Annahme zu „Havkom/ZVB": Standard-Prüfpunkte — sag Bescheid, wenn du ein bestimmtes Regelwerk gemappt haben willst.</em></div>';
+  for(let l=1;l<=9;l++){const items=LPH_CL[l]||[];const op=openCl.has(l)||l===activeLph;const done=items.filter((_,i)=>lastChecklist[clKey(l,i)]).length;
+    const cls=items.length&&done===items.length?'ok':done>0?'part':'';
+    h+='<details class="cl-ph"'+(op?' open':'')+' data-cllph="'+l+'"><summary class="cl-sum"><span class="cl-lph '+cls+'">LPH '+l+'</span><span class="cl-name">'+esc(LPH[l-1])+(l===activeLph?' · aktiv':'')+'</span><span class="cl-prog">'+done+'/'+items.length+'</span></summary><div class="cl-body">'+
+      items.map((it,i)=>{const k=clKey(l,i),ck=!!lastChecklist[k];return '<label class="cl-item'+(ck?' done':'')+'"><input type="checkbox" class="cl-cb" data-clkey="'+k+'"'+(ck?' checked':'')+'><span>'+esc(it)+'</span></label>';}).join('')+'</div></details>';}
+  return h;}
+async function toggleChecklist(key,val){const nc=Object.assign({},lastChecklist);if(val)nc[key]=true;else delete nc[key];lastChecklist=nc;const{error}=await sb.from('projects').update({checklist:nc}).eq('id',current);if(error)alert('Fehler beim Speichern: '+error.message);}
 function renderLphBew(D){if(D&&D.lph_bewertung&&D.lph_bewertung.length)return D.lph_bewertung.map(r=>'<div class="lrow"><span>'+esc(r.leistung)+'</span><span class="ls '+slug(r.status)+'">'+esc(r.status)+'</span></div>').join('');
   return '<div class="cta"><p>Die Bewertung der HOAI-Grundleistungen (vollständig / teilweise / fehlend) kommt aus der Dashboard-Analyse.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';}
 function renderBeschluesse(D){if(D&&D.beschluesse&&D.beschluesse.length)return D.beschluesse.map(b=>'<div class="vrow"><div style="flex:1"><div class="vtitle">'+esc(b.text)+'</div><div class="vmeta"><span class="mono">'+esc(b.datum||'')+'</span>'+(b.quelle?'<span>'+esc(b.quelle)+'</span>':'')+'</div></div></div>').join('');
@@ -934,12 +1038,13 @@ function renderComms(C){if(!C.length)return '<div class="inner"><div class="empt
 function wire(T,C){
   const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
   el('main').querySelectorAll('[data-jfcopy]').forEach(b=>b.onclick=()=>copyToClip(jfBriefingText(),b));
+  el('main').querySelectorAll('.cl-cb').forEach(cb=>cb.onchange=()=>toggleChecklist(cb.dataset.clkey,cb.checked));
+  el('main').querySelectorAll('.cl-ph').forEach(d=>d.addEventListener('toggle',()=>{const l=+d.dataset.cllph;d.open?openCl.add(l):openCl.delete(l);}));
   el('main').querySelectorAll('.sec-head').forEach(hd=>hd.onclick=()=>{const s=hd.closest('.sec'),id=s.dataset.sec;s.classList.toggle('open');s.classList.contains('open')?openSecs.add(id):openSecs.delete(id);});
   el('main').querySelectorAll('.pilgrim-station').forEach(st=>st.onclick=async()=>{await sb.from('projects').update({lph:+st.dataset.lph}).eq('id',current);render();});
   el('main').querySelectorAll('.task-row').forEach(r=>r.onclick=e=>{if(e.target.classList.contains('tcheck'))return;selTask=r.dataset.trow;el('main').querySelectorAll('.task-row').forEach(x=>x.classList.toggle('sel',x.dataset.trow===selTask));const d=el('aufgdetail');if(d){d.innerHTML=renderTaskDetail(taskMap[selTask]);wireDetail();}});
   el('main').querySelectorAll('.tcheck').forEach(cb=>cb.onchange=()=>toggleTask(cb.dataset.task,cb));
   wireDetail();
-  el('main').querySelectorAll('button[data-mail]').forEach(b=>b.onclick=e=>{e.stopPropagation();queueAgent('email-draft',{task_id:b.dataset.mail},b);});
   el('main').querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
   el('main').querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;applyTaskFilter();el('main').querySelectorAll('.tab-btn').forEach(x=>x.classList.toggle('active',x===b));});
   el('main').querySelectorAll('.fc').forEach(f=>f.onclick=()=>{const p=f.dataset.p;prioFilters.has(p)?prioFilters.delete(p):prioFilters.add(p);f.classList.toggle('active');applyTaskFilter();});
@@ -951,11 +1056,22 @@ function wire(T,C){
   applyTaskFilter();
 }
 function applyTaskFilter(){el('main').querySelectorAll('.task-row').forEach(c=>{let show=true;if(tab!=='alle'&&c.dataset.category!==tab)show=false;if(prioFilters.size&&!prioFilters.has('P'+c.dataset.priority))show=false;c.classList.toggle('hide',!show);});}
-async function docSearch(){const q=el('docq').value.trim();const box=el('sres');if(!q){box.innerHTML='';return;}box.innerHTML='<div class="empty">Suche…</div>';
-  const{data,error}=await sb.from('documents').select('filename,unc_path,doctype').eq('project_id',current).textSearch('fts',q,{type:'websearch',config:'german'}).limit(25);
+let _sres=[],_sfilter='';
+async function docSearch(){const q=el('docq').value.trim();const box=el('sres');if(!q){box.innerHTML='';_sres=[];return;}box.innerHTML='<div class="empty">Suche…</div>';
+  const{data,error}=await sb.rpc('search_documents',{pid:current,q});
   if(error){box.innerHTML='<div class="empty">'+esc(error.message)+'</div>';return;}
-  if(!data.length){box.innerHTML='<div class="empty">Nichts gefunden für „'+esc(q)+'".</div>';return;}
-  box.innerHTML='<div class="page-sub" style="margin:4px 0 8px">'+data.length+' Treffer</div>'+data.map(d=>'<div class="sres"><div class="sf">'+esc(d.filename)+'</div><div class="sp">'+esc(d.unc_path)+'</div></div>').join('');}
+  _sres=data||[];_sfilter='';renderSearchResults();}
+function renderSearchResults(){const box=el('sres');if(!box)return;const all=_sres;
+  if(!all.length){box.innerHTML='<div class="empty">Nichts gefunden.</div>';return;}
+  const types={};all.forEach(d=>{const t=d.doctype||'?';types[t]=(types[t]||0)+1;});
+  const list=_sfilter?all.filter(d=>(d.doctype||'?')===_sfilter):all;
+  let h='<div class="sres-bar"><span class="sres-cnt">'+all.length+' Treffer · nach Relevanz</span>'+Object.keys(types).sort((a,b)=>types[b]-types[a]).map(t=>'<button class="sres-chip'+(_sfilter===t?' on':'')+'" data-stype="'+esc(t)+'">'+esc(t)+' '+types[t]+'</button>').join('')+(_sfilter?'<button class="sres-chip clr" data-stype="">alle</button>':'')+'</div>';
+  h+=list.map(d=>{const parts=(d.unc_path||'').split(/[\\/]/);const folder=parts.length>1?parts[parts.length-2]:'';
+    const snip=d.snippet?('<div class="sres-snip">'+esc(d.snippet).split('⟦H⟧').join('<mark>').split('⟦/H⟧').join('</mark>')+'</div>'):'<div class="sres-snip nomatch">Treffer im Dateinamen</div>';
+    return '<div class="sres-item"><div class="sres-head"><span class="sres-fn">'+esc(d.filename)+'</span><span class="sres-dt">'+esc(d.doctype||'')+'</span></div>'+snip+'<div class="sres-foot">'+(folder?'<span class="sres-folder">📁 '+esc(folder)+'</span>':'')+(d.modified_at?'<span class="mono">'+fmtD(d.modified_at)+'</span>':'')+'<span style="flex:1"></span><button class="sres-copy" data-copypath="'+esc(d.unc_path||'').replace(/"/g,'&quot;')+'">Pfad kopieren</button></div></div>';}).join('');
+  box.innerHTML=h;
+  box.querySelectorAll('[data-stype]').forEach(b=>b.onclick=()=>{_sfilter=b.dataset.stype;renderSearchResults();});
+  box.querySelectorAll('[data-copypath]').forEach(b=>b.onclick=()=>copyToClip(b.dataset.copypath,b));}
 async function toggleTask(id,cb){const ck=cb.checked;const{error}=await sb.from('tasks').update({status:ck?'erledigt':'offen',done_at:ck?new Date().toISOString():null}).eq('id',id);if(error){cb.checked=!ck;alert('Fehler: '+error.message);}}
 async function queueAgent(agent,meta,btn){const lbl=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='… eingereiht';}const{error}=await sb.from('agent_runs').insert({project_id:current,agent,status:'queued',meta});if(error){alert('Konnte Agent nicht starten: '+error.message);if(btn){btn.disabled=false;btn.textContent=lbl;}return;}loadRuns();if(btn)setTimeout(()=>{btn.disabled=false;btn.textContent=lbl;},1600);}
 async function loadRuns(){const[{data,error},{data:hb}]=await Promise.all([
