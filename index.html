@@ -637,7 +637,7 @@ async function renderSystemPanel(){
   h+='</table></section>';
   el('main').innerHTML=h;
   const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
-  el('main').querySelectorAll('button[data-refresh]').forEach(b=>b.onclick=()=>queueAgentFor(b.dataset.refresh,'dashboard-analyse',b));
+  el('main').querySelectorAll('button[data-refresh]').forEach(b=>b.onclick=()=>queueAgentFor(b.dataset.refresh,'scan',b));
 }
 function renderSidebar(){
   const box=el('sbagents'),lbl=el('sbproj');if(!box)return;
