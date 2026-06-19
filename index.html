@@ -132,6 +132,8 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .mail-line{padding:2px 0;color:var(--c-slate-700)}.mail-line span{font-weight:600;color:var(--c-navy-900);display:inline-block;min-width:54px}
 .mail-body{white-space:pre-wrap;line-height:1.55;color:var(--c-navy-800);margin-top:8px;padding-top:8px;border-top:1px dashed var(--c-slate-200)}
 .mail-gen{font-size:10.5px;color:var(--c-warning);background:var(--c-amber-bg);border-radius:var(--r-sm);padding:5px 9px;margin-bottom:8px;line-height:1.4}
+.det-warn{font-size:12px;color:var(--c-danger);background:var(--c-danger-bg);border:1px solid var(--c-danger);border-radius:var(--r-sm);padding:8px 11px;margin:8px 0;line-height:1.45}
+.tr-warn{color:var(--c-danger);font-size:13px;margin-left:4px}
 .mail-noaddr{color:var(--c-slate-400);font-style:italic;font-size:11px}
 .mail-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .mail-hint{font-size:10px;color:var(--c-slate-400);margin-top:6px;line-height:1.4}.mail-hint em{font-style:italic;color:var(--c-slate-500)}
@@ -810,16 +812,17 @@ function composeMail(t){const m=t.meta||{};
   L.push('','Vielen Dank vorab und freundliche Grüße');
   return {an:recName,email:recMail,betreff:'['+proj+'] '+t.title,text:L.join('\n'),generated:true};}
 function taskRow(t){const pn=prioN(t.prio),m=t.meta||{},id=t.id||t.key,sel=(id===selTask);
-  return '<div class="task-row'+(sel?' sel':'')+(t.status==='erledigt'?' done':'')+'" data-trow="'+id+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><input type="checkbox" class="tcheck" '+(t.source==='D'?'data-key="'+t.key+'"':'data-task="'+t.id+'"')+(t.status==='erledigt'?' checked':'')+'><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span><div class="tr-main"><div class="tr-title">'+esc(t.title)+'</div><div class="tr-meta">'+(t.kategorie?esc(t.kategorie):'')+(m.frist?' · Frist '+esc(fmtFrist(m.frist)):'')+(t.assignee?' · '+esc(t.assignee):'')+'</div></div>'+(taskNeedsMail(t)?'<span class="tr-mail" title="E-Mail vorformuliert">✉</span>':'')+'</div>';}
+  return '<div class="task-row'+(sel?' sel':'')+(t.status==='erledigt'?' done':'')+'" data-trow="'+id+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><input type="checkbox" class="tcheck" '+(t.source==='D'?'data-key="'+t.key+'"':'data-task="'+t.id+'"')+(t.status==='erledigt'?' checked':'')+'><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span><div class="tr-main"><div class="tr-title">'+esc(t.title)+'</div><div class="tr-meta">'+(t.kategorie?esc(t.kategorie):'')+(m.frist?' · Frist '+esc(fmtFrist(m.frist)):'')+(t.assignee?' · '+esc(t.assignee):'')+'</div></div>'+(m.gegencheck?'<span class="tr-warn" title="Evtl. bereits vorhanden: '+esc(m.gegencheck.datei||'')+'">⚠</span>':taskNeedsMail(t)?'<span class="tr-mail" title="E-Mail vorformuliert">✉</span>':'')+'</div>';}
 function taskEditForm(t){const m=t.meta||{};const inp='font:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--c-slate-300);border-radius:var(--r-sm);background:#fff';
   const pr=t.prio||'P3',as=t.assignee||'',fr=(m.frist||'');const opt=p=>'<option'+(pr===p?' selected':'')+'>'+p+'</option>';
   return '<div class="det-editform" id="ef'+t.id+'" hidden><div class="ef-row"><label>Priorität</label><select id="efp'+t.id+'" style="'+inp+'">'+opt('P1')+opt('P2')+opt('P3')+'</select></div><div class="ef-row"><label>Verantwortlich</label><input id="efa'+t.id+'" value="'+esc(as)+'" placeholder="Name/Stelle" style="flex:1;'+inp+'"></div><div class="ef-row"><label>Frist</label><input id="eff'+t.id+'" type="date" value="'+esc(fr)+'" style="'+inp+'"></div><div class="ef-actions"><button class="btn-sm" data-savetask="'+t.id+'">Speichern</button><button class="btn-sm ghost" data-canceledit="'+t.id+'">Abbrechen</button></div><div class="ef-hint">Geänderte Felder bleiben bei der nächsten Re-Analyse erhalten (🔒).</div></div>';}
 function renderTaskDetail(t){if(!t)return '<div class="empty" style="padding:34px">← Aufgabe links wählen</div>';
   const pn=prioN(t.prio),m=t.meta||{},done=t.status==='erledigt';
-  const mail=m.email_entwurf||(taskNeedsMail(t)?composeMail(t):null);
+  const mail=m.gegencheck?null:(m.email_entwurf||(taskNeedsMail(t)?composeMail(t):null));
   const locked=m.locked||[];const lk=f=>locked.indexOf(f)>=0?' <span class="lockico" title="manuell gesetzt — bleibt bei Re-Analyse erhalten">🔒</span>':'';
   let h='<div class="det-head"><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span><h3 class="det-title">'+esc(t.title)+'</h3>'+(t.id?'<button class="det-edit" data-edit="'+t.id+'" title="Aufgabe bearbeiten">✎</button>':'')+'</div>';
   h+='<div class="det-meta">'+(t.kategorie?'<span class="task-chip">'+esc(t.kategorie)+'</span>':'')+(t.assignee?'<span><strong>Verantw.:</strong> '+esc(t.assignee)+lk('assignee')+'</span>':'')+(m.frist?'<span class="mono">Frist '+esc(fmtFrist(m.frist))+lk('due_date')+'</span>':'')+(locked.indexOf('prio')>=0?'<span class="mono">Prio '+esc(t.prio||'P3')+lk('prio')+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+'</div>';
+  if(m.gegencheck)h+='<div class="det-warn">⚠ <strong>Vermutlich bereits vorhanden:</strong> '+esc(m.gegencheck.dok)+' liegt in den Projektunterlagen (Datei: <span class="mono">'+esc(m.gegencheck.datei)+'</span>). Bitte zuerst diese Datei prüfen, bevor etwas angefordert oder beauftragt wird — die automatische E-Mail wurde deshalb zurückgehalten.</div>';
   if(t.id)h+=taskEditForm(t);
   if(m.problem)h+='<div class="det-sec"><h4>Problem</h4><p>'+esc(m.problem)+'</p></div>';
   if(m.zu_tun)h+='<div class="det-sec"><h4>Zu tun</h4><p>'+esc(m.zu_tun)+'</p></div>';
