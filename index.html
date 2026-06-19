@@ -134,6 +134,25 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .mail-gen{font-size:10.5px;color:var(--c-warning);background:var(--c-amber-bg);border-radius:var(--r-sm);padding:5px 9px;margin-bottom:8px;line-height:1.4}
 .det-warn{font-size:12px;color:var(--c-danger);background:var(--c-danger-bg);border:1px solid var(--c-danger);border-radius:var(--r-sm);padding:8px 11px;margin:8px 0;line-height:1.45}
 .tr-warn{color:var(--c-danger);font-size:13px;margin-left:4px}
+.nt-wrap{display:flex;gap:14px;align-items:flex-start}
+.nt-list{flex:0 0 200px;display:flex;flex-direction:column;gap:4px}
+.nt-li{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:7px 9px;cursor:pointer}
+.nt-li.sel{border-color:var(--c-danger);background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.nt-li-t{font-size:12px;font-weight:600;color:var(--c-slate-800);line-height:1.3}
+.nt-li-s{font-size:10px;color:var(--c-warning)}.nt-li-s.ok{color:var(--c-success)}
+.nt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.chat{display:flex;flex-direction:column;gap:8px;max-height:58vh;overflow-y:auto;padding:8px;background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md)}
+.chat-intro{font-size:12px;color:var(--c-slate-500);padding:14px;text-align:center;line-height:1.5}
+.cmsg{display:flex}.cmsg.u{justify-content:flex-end}.cmsg.a{justify-content:flex-start}
+.cb{max-width:84%;padding:8px 11px;border-radius:12px;font-size:13px;line-height:1.5}
+.cmsg.u .cb{background:var(--c-danger);color:#fff;border-bottom-right-radius:3px}
+.cmsg.a .cb{background:#fff;border:1px solid var(--c-slate-200);color:var(--c-slate-800);border-bottom-left-radius:3px}
+.cb.typing{color:var(--c-slate-500);font-style:italic}
+.chat-input{display:flex;gap:8px;align-items:flex-end}
+.chat-input textarea{flex:1;resize:vertical;border:1px solid var(--c-slate-300);border-radius:var(--r-md);padding:8px 10px;font:inherit;font-size:13px}
+.nt-doc{border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:10px;background:#fff}
+.nt-doc summary{font-weight:600;font-size:13px;cursor:pointer}
+.nt-doc-body{margin-top:8px;font-size:12.5px;line-height:1.55;max-height:48vh;overflow-y:auto;border-top:1px solid var(--c-slate-100);padding-top:8px}
 .mail-noaddr{color:var(--c-slate-400);font-style:italic;font-size:11px}
 .mail-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .mail-hint{font-size:10px;color:var(--c-slate-400);margin-top:6px;line-height:1.4}.mail-hint em{font-style:italic;color:var(--c-slate-500)}
@@ -595,6 +614,7 @@ const AGENT_VIEWS=[
   {id:'aktivitaet',key:'aktivitaet',ico:'mail',kicker:'Agent · E-Mail-Wissensbasis',title:'Aktivität seit letztem Stand',desc:'Neue Mails & Vorgänge seit dem letzten Dashboard-Stand — chronologisch aus der Mail-Wissensbasis.'},
   {id:'fachplaner',key:'fachplaner',ico:'users',kicker:'Agent · Multi-Persona-Analyse',title:'Fachplaner & Schnittstellen',desc:'Alle beteiligten Fachplaner und Büro-Schnittstellen mit aktuellem Status.'},
   {id:'angebote',key:'angebote',ico:'euro',kicker:'Agent · Vergabe & Honorar',title:'Angebote / Nachträge',desc:'Angebote, Nachträge und Honorar-Vorgänge mit Betrag und Status.'},
+  {id:'nachtraege',key:null,ico:'doc',kicker:'KI-Interview',title:'Nachtrag-Chat',desc:'Per Chat einen Nachtrag erstellen — die KI fragt gezielt nach und lernt das Projekt mit.'},
   {id:'doku',key:'dokumentationen',ico:'doc',kicker:'Agent · Dokumenten-Volltext',title:'Dokumentationen',desc:'Die wichtigsten Dokumente je Kategorie — plus Volltextsuche über alle Dateien.'},
   {id:'historie',key:'historie',ico:'clock',kicker:'Agent · Wissensbasis chronologisch',title:'Projekt-Historie',desc:'Zeitstrahl der Meilensteine — chronologisch aus Protokollen und Mails.'},
   {id:'termine',key:null,ico:'cal',kicker:'Agent · Bauzeitenplan & Zwangspunkte',title:'Termine & Fristen',desc:'Zwangspunkte, Fristen und anstehende Termine — knüpft an den Bauzeitplan an.'}];
@@ -604,6 +624,48 @@ function navItem(id,label,ic,badge){return '<button class="sb-nav'+(pview===id?'
 const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
 let view='cockpit',current=null,currentName='',pview='dashboard',lastD={},lastStand=null,started=false,openRun=null,tab='alle',prioFilters=new Set(),openSecs=new Set(['vorausschau','aufgaben']);
 let selTask=null,taskMap={},peopleMail={},lastChecklist={},openCl=new Set(),lastL1=null;
+let selNachtrag=null,ntPollTimer=null;
+async function renderNachtraege(proj){el('crumb').textContent=short(proj.name||currentName)+' · Nachträge';
+  const{data:list}=await sb.from('nachtraege').select('id,titel,status,created_at').eq('project_id',current).order('created_at',{ascending:false});
+  if(selNachtrag&&!(list||[]).some(n=>n.id===selNachtrag))selNachtrag=null;
+  if(!selNachtrag&&list&&list.length)selNachtrag=list[0].id;
+  let h='<h1 class="page">Nachtrag-Chat</h1><div class="page-sub">Per Chat einen Nachtrag erstellen — die KI fragt gezielt nach und das Wissen fließt zurück ins Projekt.</div>';
+  h+='<div class="nt-wrap"><div class="nt-list"><button class="btn-sm" id="nt-neu" style="width:100%;margin-bottom:8px">+ Neuer Nachtrag</button>';
+  for(const n of(list||[]))h+='<button class="nt-li'+(n.id===selNachtrag?' sel':'')+'" data-nt="'+n.id+'"><span class="nt-li-t">'+esc(n.titel)+'</span><span class="nt-li-s '+(n.status==='fertig'?'ok':'')+'">'+(n.status==='fertig'?'fertig':'läuft')+'</span></button>';
+  if(!list||!list.length)h+='<div class="empty" style="padding:14px;font-size:12px">Noch keiner.</div>';
+  h+='</div><div class="nt-main" id="nt-main"></div></div>';
+  el('main').innerHTML=h;
+  el('nt-neu').onclick=neuerNachtrag;
+  el('main').querySelectorAll('button[data-nt]').forEach(b=>b.onclick=()=>{selNachtrag=b.dataset.nt;renderNachtraege(proj);});
+  if(selNachtrag)await renderNachtragChat(selNachtrag);else el('nt-main').innerHTML='<div class="empty" style="padding:34px">Klick „+ Neuer Nachtrag" und beschreibe kurz, worum es geht.</div>';}
+async function neuerNachtrag(){const{data,error}=await sb.from('nachtraege').insert({project_id:current,titel:'Neuer Nachtrag'}).select('id').single();
+  if(error){alert('Fehler: '+error.message);return;}selNachtrag=data.id;renderNachtraege({name:currentName});}
+async function renderNachtragChat(nid){const main=el('nt-main');if(!main)return;
+  const[{data:nt},{data:msgs},{data:runs}]=await Promise.all([
+    sb.from('nachtraege').select('*').eq('id',nid).single(),
+    sb.from('nachtrag_messages').select('role,content').eq('nachtrag_id',nid).order('created_at'),
+    sb.from('agent_runs').select('status').eq('agent','nachtrag-chat').contains('meta',{nachtrag_id:nid}).in('status',['queued','running'])]);
+  const busy=!!(runs&&runs.length);
+  let h='<div class="chat" id="nt-chat">';
+  if(!msgs||!msgs.length)h+='<div class="chat-intro">Beschreibe kurz, worum es geht — z. B. „Nachtrag wegen Mehraushub Baugrund". Die KI fragt dann gezielt nach.</div>';
+  for(const m of(msgs||[]))h+='<div class="cmsg '+(m.role==='user'?'u':'a')+'"><div class="cb">'+esc(m.content).replace(/\n/g,'<br>')+'</div></div>';
+  if(busy)h+='<div class="cmsg a"><div class="cb typing">KI denkt nach…</div></div>';
+  h+='</div>';
+  h+='<div class="chat-input"><textarea id="nt-inp" rows="2" placeholder="'+(busy?'KI antwortet…':'Nachricht… (Enter sendet, Shift+Enter = Zeile)')+'" '+(busy?'disabled':'')+'></textarea><button class="btn-sm" id="nt-send" '+(busy?'disabled':'')+'>Senden</button></div>';
+  if(nt&&nt.status==='fertig'&&nt.dokument)h+='<details class="nt-doc" open><summary>📄 Erstellter Nachtrag — Entwurf</summary><div class="nt-doc-body">'+esc(nt.dokument).replace(/\n/g,'<br>')+'</div><button class="btn-sm ghost" id="nt-copy" style="margin-top:8px">Text kopieren</button></details>';
+  main.innerHTML=h;
+  const ch=el('nt-chat');if(ch)ch.scrollTop=ch.scrollHeight;
+  const send=()=>sendNachtrag(nid);
+  if(el('nt-send'))el('nt-send').onclick=send;
+  const inp=el('nt-inp');if(inp){inp.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}};if(!busy)inp.focus();}
+  if(el('nt-copy'))el('nt-copy').onclick=()=>{if(navigator.clipboard)navigator.clipboard.writeText(nt.dokument);const b=el('nt-copy');b.textContent='✓ kopiert';setTimeout(()=>b.textContent='Text kopieren',1500);};
+  clearTimeout(ntPollTimer);
+  if(busy)ntPollTimer=setTimeout(()=>{if(view==='project'&&pview==='nachtraege'&&selNachtrag===nid)renderNachtragChat(nid);},3000);}
+async function sendNachtrag(nid){const inp=el('nt-inp');if(!inp)return;const txt=(inp.value||'').trim();if(!txt)return;inp.disabled=true;inp.value='';
+  await sb.from('nachtrag_messages').insert({nachtrag_id:nid,role:'user',content:txt});
+  const{error}=await sb.from('agent_runs').insert({project_id:current,agent:'nachtrag-chat',status:'queued',meta:{nachtrag_id:nid}});
+  if(error&&error.code!=='23505')alert('Konnte nicht senden: '+error.message);
+  renderNachtragChat(nid);}
 
 function showAuthed(s){el('login').hidden=!!s;el('shell').hidden=!s;if(s){el('useremail').textContent=s.user.email;boot();}else started=false;}
 sb.auth.getSession().then(({data})=>showAuthed(data.session));sb.auth.onAuthStateChange((_e,s)=>showAuthed(s));
@@ -709,6 +771,7 @@ async function renderProject(){
   const nr=(proj.name.match(/(\d{4})/)||[])[1]||'',lph=proj.lph||0;
   const kostenVal=D&&D.kosten&&D.kosten.summe_brutto?D.kosten.summe_brutto:null;
   const honVal=D&&D.honorare?D.honorare:null;
+  if(pview==='nachtraege'){await renderNachtraege(proj);return;}
   if(pview!=='dashboard'){renderAgentPanel(pview,D,{recent:recent||[],costDocs:costDocs||[],folders:folders||[],docCount:docCount||0,dokuCheck:proj.doku_check,lph:proj.lph||0});return;}
 
   let h='<header class="hdr"><div><div class="hdr-brand">Gutthann HIW · Projekt-Dashboard · Live</div><h1 class="hdr-title">'+esc(short(proj.name))+'</h1>'+
