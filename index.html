@@ -134,6 +134,7 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .mail-gen{font-size:10.5px;color:var(--c-warning);background:var(--c-amber-bg);border-radius:var(--r-sm);padding:5px 9px;margin-bottom:8px;line-height:1.4}
 .mail-noaddr{color:var(--c-slate-400);font-style:italic;font-size:11px}
 .mail-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
+.mail-hint{font-size:10px;color:var(--c-slate-400);margin-top:6px;line-height:1.4}.mail-hint em{font-style:italic;color:var(--c-slate-500)}
 .det-actions{display:flex;gap:var(--s2);margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--c-slate-100)}
 @media(max-width:760px){.aufg-split{flex-direction:column}.aufg-list{flex:none;max-width:none;max-height:280px;border-right:none;border-bottom:1px solid var(--c-slate-200)}.aufg-detail{max-height:none}}
 .task-section h4{font-family:var(--f-mono);font-size:9.5px;color:var(--c-slate-500);text-transform:uppercase;letter-spacing:.7px;font-weight:600;margin:var(--s3) 0 6px}
@@ -819,7 +820,7 @@ function renderTaskDetail(t){if(!t)return '<div class="empty" style="padding:34p
   if(t.id)h+=taskEditForm(t);
   if(m.problem)h+='<div class="det-sec"><h4>Problem</h4><p>'+esc(m.problem)+'</p></div>';
   if(m.zu_tun)h+='<div class="det-sec"><h4>Zu tun</h4><p>'+esc(m.zu_tun)+'</p></div>';
-  if(mail&&t.id)h+='<div class="det-sec"><h4>E-Mail-Entwurf'+(mail.an?' · an '+esc(mail.an):'')+'</h4>'+(mail.generated?'<div class="mail-gen">Automatisch aus Problem &amp; nächstem Schritt vorformuliert — vor dem Senden bitte prüfen.</div>':'')+'<div class="mail-box">'+((mail.an||mail.email)?'<div class="mail-line"><span>An:</span> '+esc(mail.an||'')+(mail.email?' &lt;'+esc(mail.email)+'&gt;':' <em class="mail-noaddr">(Adresse prüfen)</em>')+'</div>':'')+'<div class="mail-line"><span>Betreff:</span> '+esc(mail.betreff||'')+'</div><div class="mail-body">'+esc(mail.text||'')+'</div></div><div class="mail-actions"><button class="btn-sm ghost" data-mailcopy="'+t.id+'">Text kopieren</button><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div></div>';
+  if(mail&&t.id)h+='<div class="det-sec"><h4>E-Mail-Entwurf'+(mail.an?' · an '+esc(mail.an):'')+'</h4>'+(mail.generated?'<div class="mail-gen">Automatisch aus Problem &amp; nächstem Schritt vorformuliert — vor dem Senden bitte prüfen.</div>':'')+'<div class="mail-box">'+((mail.an||mail.email)?'<div class="mail-line"><span>An:</span> '+esc(mail.an||'')+(mail.email?' &lt;'+esc(mail.email)+'&gt;':' <em class="mail-noaddr">(Adresse prüfen)</em>')+'</div>':'')+'<div class="mail-line"><span>Betreff:</span> '+esc(mail.betreff||'')+'</div><div class="mail-body">'+esc(mail.text||'')+'</div></div><div class="mail-actions"><button class="btn-sm ghost" data-mailcopy="'+t.id+'">Text kopieren</button><button class="btn-sm" data-mail="'+t.id+'">✉ Outlook-Entwurf (.eml)</button></div><div class="mail-hint">Lädt eine .eml-Datei — Doppelklick öffnet sie als Entwurf in <em>deinem</em> Outlook.</div></div>';
   h+='<div class="det-actions"><button class="btn-sm'+(done?' ghost':'')+'" data-done="'+(t.id||t.key)+'">'+(done?'↺ Wieder öffnen':'✓ Erledigt')+'</button>'+(m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'">Löschen</button>':'')+'</div>';
   return h;}
 function renderAufgSplit(list){
@@ -831,9 +832,7 @@ function renderAufgSplit(list){
   if(done.length)listH+='<details class="done-sec"><summary class="done-sum"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Erledigt <span class="done-cnt">'+done.length+'</span></summary><div class="done-body">'+done.map(taskRow).join('')+'</div></details>';
   return '<div class="aufg-split"><div class="aufg-list">'+listH+'</div><div class="aufg-detail" id="aufgdetail">'+renderTaskDetail(taskMap[selTask])+'</div></div>';}
 function wireDetail(){const d=el('aufgdetail');if(!d)return;
-  d.querySelectorAll('button[data-mail]').forEach(b=>b.onclick=async e=>{e.stopPropagation();const id=b.dataset.mail,t=taskMap[id];if(!t)return;const m=t.meta||{};
-    if(!m.email_entwurf){const cm=composeMail(t);const nm=Object.assign({},m,{email_entwurf:{an:cm.an,email:cm.email,betreff:cm.betreff,text:cm.text}});await sb.from('tasks').update({meta:nm}).eq('id',id);t.meta=nm;}
-    queueAgent('email-draft',{task_id:id},b);});
+  d.querySelectorAll('button[data-mail]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.mail,t=taskMap[id];if(!t)return;const m=t.meta||{};const mail=m.email_entwurf||composeMail(t);downloadEml(mail);const o=b.textContent;b.textContent='↓ .eml geladen — in Outlook öffnen';setTimeout(()=>{b.textContent=o;},2200);});
   d.querySelectorAll('button[data-mailcopy]').forEach(b=>b.onclick=e=>{e.stopPropagation();const t=taskMap[b.dataset.mailcopy];if(!t)return;const m=t.meta||{},mail=m.email_entwurf||composeMail(t);const txt='An: '+(mail.an||'')+(mail.email?' <'+mail.email+'>':'')+'\nBetreff: '+(mail.betreff||'')+'\n\n'+(mail.text||'');const done=()=>{const o=b.textContent;b.textContent='✓ kopiert';setTimeout(()=>b.textContent=o,1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,()=>done());}else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();done();}});
   d.querySelectorAll('button[data-done]').forEach(b=>b.onclick=()=>toggleDoneBtn(b.dataset.done));
   d.querySelectorAll('button[data-edit]').forEach(b=>b.onclick=()=>{const f=el('ef'+b.dataset.edit);if(f)f.hidden=!f.hidden;});
@@ -849,6 +848,10 @@ function wireDetail(){const d=el('aufgdetail');if(!d)return;
 async function toggleDoneBtn(id){const t=taskMap[id];if(!t||!t.id)return;const nd=t.status!=='erledigt';const{error}=await sb.from('tasks').update({status:nd?'erledigt':'offen',done_at:nd?new Date().toISOString():null}).eq('id',t.id);if(error)alert('Fehler: '+error.message);}
 function fmtFrist(d){if(!d)return '—';const m=String(d).match(/(\d{4})-(\d{2})-(\d{2})/);return m?m[3]+'.'+m[2]+'.'+m[1]:String(d);}
 function copyToClip(txt,b){const ok=()=>{const o=b.textContent;b.textContent='✓ kopiert';setTimeout(()=>{b.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,ok);}else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();ok();}}
+// E-Mail-Entwurf clientseitig als .eml (RFC822, X-Unsent=1 -> oeffnet als editierbarer Entwurf im EIGENEN Outlook jedes Nutzers)
+function emlEnc(s){s=s||'';return /^[\x00-\x7F]*$/.test(s)?s:'=?UTF-8?B?'+btoa(unescape(encodeURIComponent(s)))+'?=';}
+function buildEml(mail){const L=[];if(mail.email)L.push('To: '+(mail.an?'"'+emlEnc(mail.an)+'" <'+mail.email+'>':mail.email));L.push('Subject: '+emlEnc(mail.betreff||''));L.push('X-Unsent: 1');L.push('Content-Type: text/plain; charset=utf-8');L.push('Content-Transfer-Encoding: 8bit');L.push('');L.push((mail.text||'').replace(/\r?\n/g,'\r\n'));return L.join('\r\n');}
+function downloadEml(mail){const blob=new Blob([buildEml(mail)],{type:'message/rfc822'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Entwurf_'+(slug(mail.betreff||'mail').slice(0,40)||'mail')+'.eml';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);}
 function jfBriefingText(){const D=lastD||{};const vs=D.vorausschau||{};const jf=vs.jour_fixe||{};
   const L=['Jour-Fixe-Vorbereitung · '+short(currentName||'')+(jf.datum?' · '+fmtFrist(jf.datum):''),''];
   if(jf.punkte&&jf.punkte.length){L.push('AGENDA / OFFENE PUNKTE:');jf.punkte.forEach(p=>L.push('• '+p));L.push('');}
