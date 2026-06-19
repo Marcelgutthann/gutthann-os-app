@@ -542,6 +542,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const sb=createClient('https://lzrfyxejlejxfpvqpket.supabase.co','sb_publishable_adwNO1cSP6M2OmOV-8t_1g_lmGuj40V');
 const el=id=>document.getElementById(id),esc=s=>(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const short=n=>(n||'').replace(/^\d+\s*-\s*/,'').replace(/^\d+\s+/,''),slug=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-'),today=()=>new Date().toISOString().slice(0,10),prioN=p=>({P1:1,P2:2,P3:3}[p]||3);
+// Status-Codes bleiben in Daten/Vergleichen ASCII (z.B. 'ueberfaellig'); fuer die Anzeige in echtes Deutsch uebersetzen:
+const stL=s=>({ueberfaellig:'überfällig',vollstaendig:'vollständig',geprueft:'geprüft',geklaert:'geklärt',laeuft:'läuft'}[s])||s||'';
 const fmtD=d=>d?new Date(d).toLocaleDateString('de-DE'):'—';
 const LPH=['Grundlagen','Vorentwurf','Entwurf','Genehmigung','Ausführung','Vergabe-Vorb.','Vergabe','Objekt-ÜW','Gewährl.'];
 // ── Glossar & Erklärbarkeit: ein Außenstehender muss erklären können, was abgeht ──
@@ -879,11 +881,11 @@ function dcCls(s){return s==='vollstaendig'?'ok':s==='teilweise'?'warn':s==='feh
 function renderDokuCheck(dc){
   if(!dc||!dc.phasen||!dc.phasen.length)return null;
   const phasen=dc.phasen.slice().sort((a,b)=>(a.lph||0)-(b.lph||0));
-  let h='<div class="dc-strip">'+phasen.map(p=>'<div class="dc-chip '+dcCls(p.status)+'" title="LPH '+p.lph+' · '+esc(p.status||'')+'">'+p.lph+'</div>').join('')+'</div>';
+  let h='<div class="dc-strip">'+phasen.map(p=>'<div class="dc-chip '+dcCls(p.status)+'" title="LPH '+p.lph+' · '+esc(stL(p.status||''))+'">'+p.lph+'</div>').join('')+'</div>';
   h+='<div class="dc-list">'+phasen.map(p=>{
     const gl=p.grundleistungen||[],vorh=gl.filter(g=>g.status==='vorhanden').length,cls=dcCls(p.status);
     const open=(p.status==='teilweise'||p.status==='fehlend')?' open':'';
-    return '<details class="dc-ph '+cls+'"'+open+'><summary class="dc-sum"><span class="dc-lph">LPH '+p.lph+'</span><span class="dc-name">'+esc(p.titel||'')+'</span><span class="dc-badge '+cls+'">'+esc(p.status||'')+'</span>'+(gl.length?'<span class="dc-counts">'+vorh+'/'+gl.length+' da</span>':'')+'</summary><div class="dc-body">'+
+    return '<details class="dc-ph '+cls+'"'+open+'><summary class="dc-sum"><span class="dc-lph">LPH '+p.lph+'</span><span class="dc-name">'+esc(p.titel||'')+'</span><span class="dc-badge '+cls+'">'+esc(stL(p.status||''))+'</span>'+(gl.length?'<span class="dc-counts">'+vorh+'/'+gl.length+' da</span>':'')+'</summary><div class="dc-body">'+
       (gl.length?gl.map(g=>{const ic=g.status==='vorhanden'?'ok':g.status==='teilweise'?'warn':'bad',sym=g.status==='vorhanden'?'✓':g.status==='teilweise'?'~':'✗';return '<div class="dc-gl"><span class="dc-ic '+ic+'">'+sym+'</span><span class="dc-soll">'+esc(g.soll||'')+'</span>'+(g.beleg?'<span class="dc-beleg" title="'+esc(g.beleg)+'">'+esc(g.beleg)+'</span>':'<span class="dc-beleg fehlt">— fehlt —</span>')+'</div>';}).join(''):'<div class="empty" style="padding:6px">—</div>')+
       ((p.luecken&&p.luecken.length)?'<div class="dc-luecken"><div class="dc-luecken-h">Fehlende Zusammenhänge</div>'+p.luecken.map(l=>'<div class="dc-luecke">'+esc(l)+'</div>').join('')+'</div>':'')+
       '</div></details>';
@@ -908,7 +910,7 @@ function panelBody(id,D,ex){
     const order=Object.keys(groups).sort((g1,g2)=>(g1===focusGrp?0:1)-(g2===focusGrp?0:1));
     for(const g of order){if(!groups[g].length)continue;const isF=g===focusGrp;
       h+='<div class="av-secrow'+(isF?' vf-focus':'')+'">'+esc(labels[g])+(isF?'<span class="vf-now">jetzt relevant</span>':'')+' · '+groups[g].length+'</div>';
-      h+='<table class="av-table"><tr><th>Gegenstand</th><th>Bieter / Firma</th><th>KG</th><th>Status</th><th style="text-align:right">Betrag</th><th>Datum</th></tr>'+groups[g].map(x=>'<tr><td>'+esc(x.gegenstand||'')+'</td><td>'+esc(x.firma||'')+'</td><td class="mono" style="font-size:10.5px">'+(x.kg?'KG '+esc(''+x.kg):'—')+'</td><td><span class="av-tag '+slug(x.status||'offen')+'">'+esc(x.status||'offen')+'</span></td><td class="num">'+(x.betrag!=null?Number(x.betrag).toLocaleString('de-DE')+' €':'—')+'</td><td>'+esc(fmtFrist(x.datum))+'</td></tr>').join('')+'</table>';
+      h+='<table class="av-table"><tr><th>Gegenstand</th><th>Bieter / Firma</th><th>KG</th><th>Status</th><th style="text-align:right">Betrag</th><th>Datum</th></tr>'+groups[g].map(x=>'<tr><td>'+esc(x.gegenstand||'')+'</td><td>'+esc(x.firma||'')+'</td><td class="mono" style="font-size:10.5px">'+(x.kg?'KG '+esc(''+x.kg):'—')+'</td><td><span class="av-tag '+slug(x.status||'offen')+'">'+esc(stL(x.status||'offen'))+'</span></td><td class="num">'+(x.betrag!=null?Number(x.betrag).toLocaleString('de-DE')+' €':'—')+'</td><td>'+esc(fmtFrist(x.datum))+'</td></tr>').join('')+'</table>';
     }
     return h;
   }
@@ -1034,7 +1036,7 @@ function renderLph1(L){
     h+='</div>';}
   h+='<div class="l1-kat-h">Grundlagen-Katalog '+(abs.filter(a=>a.status==='geklaert').length)+'/'+abs.length+' geklärt</div>';
   abs.forEach(a=>{const fel=a.felder||[];const cls=a.status==='geklaert'?'ok':a.status==='teilweise'?'warn':'bad';const op=a.status!=='geklaert';
-    h+='<details class="l1-sec"'+(op?' open':'')+'><summary class="l1-sec-sum"><span class="l1-sec-dot '+cls+'"></span><span class="l1-sec-t">'+esc(a.titel||a.id||'')+'</span><span class="l1-sec-st '+cls+'">'+esc(a.status||'')+'</span></summary><div class="l1-sec-b">'+
+    h+='<details class="l1-sec"'+(op?' open':'')+'><summary class="l1-sec-sum"><span class="l1-sec-dot '+cls+'"></span><span class="l1-sec-t">'+esc(a.titel||a.id||'')+'</span><span class="l1-sec-st '+cls+'">'+esc(stL(a.status||''))+'</span></summary><div class="l1-sec-b">'+
       (fel.length?fel.map(f=>{const fc=f.status==='geklaert'?'ok':f.status==='unklar'?'warn':'bad';return '<div class="l1-feld"><span class="l1-feld-dot '+fc+'"></span><span class="l1-feld-l">'+esc(f.label||'')+'</span><span class="l1-feld-w'+(f.wert==null||f.wert===''?' leer':'')+'">'+(f.wert==null||f.wert===''?'— offen —':esc(''+f.wert))+'</span>'+(f.quelle?'<span class="l1-feld-q">'+esc(f.quelle)+'</span>':'')+'</div>';}).join(''):'<div class="empty" style="padding:8px">—</div>')+
       '</div></details>';});
   return h+'</div>';
@@ -1071,7 +1073,7 @@ function renderFachplaner(D){
   const koll=D.kollisionspruefung||null;const td=today();let h='';
   if(koll&&(koll.hinweis||(koll.benoetigt&&koll.benoetigt.length)||koll.status)){
     const kst=koll.status||'offen';const kcls=kst==='abgeschlossen'?'ok':kst==='laeuft'?'warn':kst==='nicht-relevant'?'off':'bad';
-    h+='<div class="koll '+kcls+'"><div class="koll-h">'+icoLink()+gl('Kollisionsprüfung','Abgleich der Fachplanungen (Tragwerk/TGA/Elektro …) auf räumliche Konflikte. Braucht die aktuellen Pläne aller Gewerke.')+' · Plan-Koordination <span class="koll-st '+kcls+'">'+esc(kst)+'</span></div>';
+    h+='<div class="koll '+kcls+'"><div class="koll-h">'+icoLink()+gl('Kollisionsprüfung','Abgleich der Fachplanungen (Tragwerk/TGA/Elektro …) auf räumliche Konflikte. Braucht die aktuellen Pläne aller Gewerke.')+' · Plan-Koordination <span class="koll-st '+kcls+'">'+esc(stL(kst))+'</span></div>';
     if(koll.hinweis)h+='<div class="koll-hint">'+esc(koll.hinweis)+'</div>';
     if(koll.benoetigt&&koll.benoetigt.length)h+='<div class="koll-need-h">Dafür gebraucht:</div>'+koll.benoetigt.map(b=>{const ov=!b.vorhanden&&b.frist&&b.frist<td;return '<div class="koll-need"><span class="koll-dot'+(b.vorhanden?' ok':ov?' bad':'')+'"></span><span class="koll-what">'+esc(b.was||'')+'</span><span class="koll-from">'+esc(b.von||'')+'</span>'+(b.frist?'<span class="mono'+(ov?' over':'')+'">'+esc(fmtFrist(b.frist))+'</span>':'')+(b.vorhanden?'<span class="koll-have-l">liegt vor</span>':'<span class="koll-open-l">offen</span>')+'</div>';}).join('');
     h+='</div>';
@@ -1083,7 +1085,7 @@ function renderFachplaner(D){
     if(p.arbeitet_an)h+='<div class="fp-work"><span class="fp-work-l">arbeitet an</span> '+esc(p.arbeitet_an)+'</div>';
     if(zl.length){h+='<div class="fp-zl-h">Zulieferung an dich'+(offen?' <span class="fp-zl-cnt">'+offen+' offen</span>':'')+'</div>';
       h+=zl.map(z=>{const st=z.status||'offen';const ov=st==='ueberfaellig'||(st!=='geliefert'&&z.frist&&z.frist<td);const cls=st==='geliefert'?'ok':ov?'bad':st==='zugesagt'?'warn':'';
-        return '<div class="fp-zl'+(ov?' over':'')+'"><div class="fp-zl-m"><div class="fp-zl-was">'+esc(z.was||'')+(z.verschoben?' <span class="fp-versch">↻ verschoben</span>':'')+'</div>'+(z.fuer?'<div class="fp-zl-fuer">für '+esc(z.fuer)+'</div>':'')+(z.verschoben&&z.verschoben_hinweis?'<div class="fp-versch-h">'+esc(z.verschoben_hinweis)+'</div>':'')+'</div><div class="fp-zl-r">'+(z.frist?'<span class="mono'+(ov?' over':'')+'">'+esc(fmtFrist(z.frist))+'</span>':'<span class="mono off">o. Frist</span>')+'<span class="fp-zl-st '+cls+'">'+esc(st)+'</span></div></div>';}).join('');
+        return '<div class="fp-zl'+(ov?' over':'')+'"><div class="fp-zl-m"><div class="fp-zl-was">'+esc(z.was||'')+(z.verschoben?' <span class="fp-versch">↻ verschoben</span>':'')+'</div>'+(z.fuer?'<div class="fp-zl-fuer">für '+esc(z.fuer)+'</div>':'')+(z.verschoben&&z.verschoben_hinweis?'<div class="fp-versch-h">'+esc(z.verschoben_hinweis)+'</div>':'')+'</div><div class="fp-zl-r">'+(z.frist?'<span class="mono'+(ov?' over':'')+'">'+esc(fmtFrist(z.frist))+'</span>':'<span class="mono off">o. Frist</span>')+'<span class="fp-zl-st '+cls+'">'+esc(stL(st))+'</span></div></div>';}).join('');
     }
     if(p.schnittstellen_themen&&p.schnittstellen_themen.length)h+='<div class="fp-themen">'+p.schnittstellen_themen.map(t=>'<span class="fp-thema">'+esc(t)+'</span>').join('')+'</div>';
     if(p.letzter_kontakt&&!zl.length&&!p.arbeitet_an)h+='<div class="fp-foot">zuletzt '+esc(fmtFrist(p.letzter_kontakt))+'</div>';
@@ -1111,7 +1113,7 @@ function renderChecklist(activeLph){
       items.map((it,i)=>{const k=clKey(l,i),ck=!!lastChecklist[k];return '<label class="cl-item'+(ck?' done':'')+'"><input type="checkbox" class="cl-cb" data-clkey="'+k+'"'+(ck?' checked':'')+'><span>'+esc(it)+'</span></label>';}).join('')+'</div></details>';}
   return h;}
 async function toggleChecklist(key,val){const nc=Object.assign({},lastChecklist);if(val)nc[key]=true;else delete nc[key];lastChecklist=nc;const{error}=await sb.from('projects').update({checklist:nc}).eq('id',current);if(error)alert('Fehler beim Speichern: '+error.message);}
-function renderLphBew(D){if(D&&D.lph_bewertung&&D.lph_bewertung.length)return D.lph_bewertung.map(r=>'<div class="lrow"><span>'+esc(r.leistung)+'</span><span class="ls '+slug(r.status)+'">'+esc(r.status)+'</span></div>').join('');
+function renderLphBew(D){if(D&&D.lph_bewertung&&D.lph_bewertung.length)return D.lph_bewertung.map(r=>'<div class="lrow"><span>'+esc(r.leistung)+'</span><span class="ls '+slug(r.status)+'">'+esc(stL(r.status))+'</span></div>').join('');
   return '<div class="cta"><p>Die Bewertung der HOAI-Grundleistungen (vollständig / teilweise / fehlend) kommt aus der Dashboard-Analyse.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';}
 function renderBeschluesse(D){if(D&&D.beschluesse&&D.beschluesse.length)return D.beschluesse.map(b=>'<div class="vrow"><div style="flex:1"><div class="vtitle">'+esc(b.text)+'</div><div class="vmeta"><span class="mono">'+esc(b.datum||'')+'</span>'+(b.quelle?'<span>'+esc(b.quelle)+'</span>':'')+'</div></div></div>').join('');
   return '<div class="cta"><p>Wesentliche Beschlüsse (Varianten, Vergaben, Freigaben) werden aus Protokollen und Mails extrahiert.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';}
@@ -1124,7 +1126,7 @@ function renderAktivitaet(recent){if(!recent.length)return '<div class="empty">K
 function beteiligte(C){const m={};C.forEach(c=>{const k=(c.empfaenger_email||c.empfaenger||'').toLowerCase();if(!k)return;if(!m[k])m[k]={name:c.empfaenger||c.empfaenger_email,mail:c.empfaenger_email||'',n:0};m[k].n++;});return Object.values(m).sort((a,b)=>b.n-a.n);}
 function renderFolders(F,total){if(!F.length)return '<div class="empty">Keine Ordner.</div>';const max=Math.max(...F.map(f=>+f.anzahl));return F.map(f=>'<div class="fld-row"><div><div>'+esc(f.ordner||'(Wurzel)')+'</div><div class="fld-bar"><i style="width:'+Math.round(+f.anzahl/max*100)+'%"></i></div></div><div class="fc2">'+f.anzahl+'</div></div>').join('');}
 function renderComms(C){if(!C.length)return '<div class="inner"><div class="empty">Keine Vorgänge erfasst.</div></div>';const td=today();const list=C.slice().sort((a,b)=>(a.frist||'9999')<(b.frist||'9999')?-1:1);let h='<div class="inner">';
-  for(const c of list){const m=c.meta||{};const od=(c.status==='ueberfaellig')||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status));const st=c.status==='beantwortet'?'<span class="stat ok">beantwortet</span>':od?'<span class="stat alert">überfällig</span>':'<span class="stat warn">'+esc(c.status)+'</span>';
+  for(const c of list){const m=c.meta||{};const od=(c.status==='ueberfaellig')||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status));const st=c.status==='beantwortet'?'<span class="stat ok">beantwortet</span>':od?'<span class="stat alert">überfällig</span>':'<span class="stat warn">'+esc(stL(c.status))+'</span>';
     h+='<div class="vrow'+(od?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(c.betreff)+'</div><div class="vmeta"><span class="task-chip">'+esc(c.typ)+'</span>'+st+(c.empfaenger?'<span>→ '+esc(c.empfaenger)+'</span>':'')+(m.tage_offen!=null?'<span class="mono">'+m.tage_offen+' T offen</span>':'')+(c.frist?'<span class="mono">Frist '+esc(fmtFrist(c.frist))+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+'</div></div></div>';}
   return h+'</div>';}
 function wire(T,C){
