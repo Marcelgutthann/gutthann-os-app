@@ -786,8 +786,8 @@ async function renderProject(){
     kpi(cOver?'alert':'','Überfällige Vorgänge',cOver,'','Nachhaken nötig')+
     kpi('','Offene Aufgaben P1',p1,'','höchste Priorität')+
     kpi('','Honorare / Verträge',honVal&&honVal.anzahl_vertraege!=null?honVal.anzahl_vertraege:'—','',honVal?(honVal.offene_nachtraege||0)+' offene Nachträge':'Tiefenanalyse nötig')+'</div>';
-  // Grundlagen LPH 1 — nur in LPH 1 (oder wenn schon erfasst): verhindert planloses Planen
-  if((lph||0)<=1 || (proj.lph1&&Object.keys(proj.lph1).length)){
+  // Grundlagen LPH 1 — in der Planungsphase (LPH 1-4) erreichbar oder wenn schon erfasst: verhindert planloses Planen
+  if((lph||0)<=4 || (proj.lph1&&Object.keys(proj.lph1).length)){
     const L1=proj.lph1||null;const muss=L1?((L1.fragenkatalog||[]).filter(x=>x&&x.prioritaet==='muss').length):0;
     const absL=L1?(L1.abschnitte||[]):[];const gekl=absL.filter(a=>a.status==='geklaert').length;
     h+=sec('lph1','prominent','◔','Grundlagen LPH 1 · Bauherren-Fragenkatalog',L1?(gekl+'/'+absL.length+' Abschnitte geklärt · Stand '+(proj.lph1_stand?fmtD(proj.lph1_stand):'—')):'Grundlagen aus den Unterlagen erfassen',(L1?'<span class="stat'+(muss?' alert':' ok')+'">'+muss+' Muss-Fragen</span>':'<span class="stat warn">offen</span>'),renderLph1(L1));
