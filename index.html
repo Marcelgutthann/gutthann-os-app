@@ -292,6 +292,13 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .ppl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s2)}
 .ppl-card{background:var(--c-slate-50);border-left:3px solid var(--c-navy-800);border-radius:var(--r-sm);padding:8px 12px}
 .ppl-name{font-size:12px;font-weight:600;color:var(--c-navy-900)}.ppl-mail{font-family:var(--f-mono);font-size:10px;color:var(--c-slate-600);margin-top:2px}.ppl-cnt{font-size:10px;color:var(--c-slate-500);margin-top:2px}
+.ppl-role{font-size:10px;color:var(--c-slate-600);margin-top:2px}.ppl-tel{font-family:var(--f-mono);font-size:10px;color:var(--c-slate-500);margin-top:2px}
+.bet-bauherr{background:var(--c-slate-50);border:1px solid var(--c-navy-800);border-radius:var(--r-sm);padding:12px;margin-bottom:var(--s2)}
+.bet-bh-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-navy-800)}
+.bet-bh-org{font-size:14px;font-weight:700;color:var(--c-navy-900);margin-top:2px}
+.bet-bh-adr{font-size:12px;color:var(--c-slate-600);margin:2px 0 8px}.bet-bh-adr.missing{color:#b45309;font-style:italic}
+.bet-group{margin-top:var(--s2)}.bet-firma{font-size:11px;font-weight:600;color:var(--c-navy-800);margin-bottom:4px;border-bottom:1px solid var(--c-slate-200,#e2e8f0);padding-bottom:2px}
+.bet-warn{background:#fff7ed;border-left:3px solid #f59e0b;color:#92400e;font-size:11px;padding:7px 10px;border-radius:var(--r-sm);margin-bottom:var(--s2)}
 .fld-row{display:grid;grid-template-columns:1fr 46px;gap:var(--s3);align-items:center;padding:5px 0;font-size:12px}
 .fld-bar{height:7px;background:var(--c-slate-100);border-radius:4px;overflow:hidden;margin-top:3px}.fld-bar i{display:block;height:100%;background:var(--c-blue-400)}
 .fld-row .fc2{font-family:var(--f-mono);font-size:11px;color:var(--c-slate-600);text-align:right}
@@ -817,9 +824,9 @@ async function renderProject(){
   // Mängel & Abnahmen (LPH 8 — Baustelle)
   const mg=(D&&D.maengel)||[];
   if(mg.length){const offenM=mg.filter(x=>x.status!=='behoben'&&x.status!=='abgenommen').length;h+=sec('maengel','','⚠',gl('Mängel','Dokumentierte Baumängel und offene Abnahme-Punkte (LPH 8 Objektüberwachung) mit Beseitigungsfrist.')+' & Abnahmen',mg.length+' erfasst · '+offenM+' offen','<span class="stat'+(offenM?' alert':' ok')+'">'+offenM+' offen</span>',renderMaengel(mg));}
-  // Beteiligte
-  const ppl=beteiligte(C);
-  h+=sec('beteiligte','','👤','Beteiligte','Kontakte aus den Vorgängen','<span class="stat">'+ppl.length+'</span>','<div class="inner"><div class="ppl-grid">'+(ppl.length?ppl.map(p=>'<div class="ppl-card"><div class="ppl-name">'+esc(p.name)+'</div>'+(p.mail?'<div class="ppl-mail">'+esc(p.mail)+'</div>':'')+'<div class="ppl-cnt">'+p.n+' Vorgang(e)</div></div>').join(''):'<div class="empty">Keine Kontakte erfasst.</div>')+'</div></div>');
+  // Beteiligte — aus der belegten Analyse-Liste (D.beteiligte), Bauherr oben, nach Firma gruppiert
+  const betArr=(D&&D.beteiligte)||[];const betWarn=(D&&D._qa&&D._qa.beteiligte&&D._qa.beteiligte.length)?D._qa.beteiligte.length:0;
+  h+=sec('beteiligte','','👤','Beteiligte','Projektbeteiligte & Bauherr aus der Analyse','<span class="stat'+(betWarn?' alert':'')+'">'+betArr.length+'</span>',renderBeteiligte(D));
   // Projektstruktur
   h+=sec('struktur','','📁','Projekt-Struktur',(folders||[]).length+' Top-Ordner','','<div class="inner">'+renderFolders(folders||[],docCount||1)+'</div>');
   // Dokument-Suche
@@ -1190,7 +1197,25 @@ function renderMaengel(mg){const td=today();const order={offen:0,'in-behebung':1
     return '<div class="mg-row '+cls+(ov?' overdue':'')+'"><div class="mg-main"><div class="mg-desc">'+esc(m.beschreibung||'')+'</div><div class="mg-meta">'+(m.gewerk?'<span class="task-chip">'+esc(m.gewerk)+'</span>':'')+(m.verantwortlich?'<span>'+esc(m.verantwortlich)+'</span>':'')+(m.frist?'<span class="mono'+(ov?' over':'')+'">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+'</div></div><span class="mg-status '+cls+'">'+esc(st)+'</span></div>';}).join('')+'</div></div>';}
 function renderEntscheidungen(eo){const td=today();return eo.map(e=>{const ov=e.bis&&e.bis<td;return '<div class="vrow'+(ov?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(e.thema||'')+'</div>'+(e.kontext?'<div class="ent-ctx">'+esc(e.kontext)+'</div>':'')+'<div class="vmeta">'+(e.wer?'<span class="task-chip">'+esc(e.wer)+'</span>':'')+(e.bis?'<span class="mono'+(ov?'':'')+'">bis '+esc(fmtFrist(e.bis))+'</span>':'<span class="mono" style="color:var(--c-slate-400)">Termin offen</span>')+'</div></div></div>';}).join('');}
 function renderAktivitaet(recent){if(!recent.length)return '<div class="empty">Keine datierten Dateien.</div>';return recent.map(d=>'<div class="act-row"><span class="af">'+esc(d.filename)+'</span><span class="ad">'+esc(d.doctype||'')+' · '+fmtD(d.modified_at)+'</span></div>').join('');}
-function beteiligte(C){const m={};C.forEach(c=>{const k=(c.empfaenger_email||c.empfaenger||'').toLowerCase();if(!k)return;if(!m[k])m[k]={name:c.empfaenger||c.empfaenger_email,mail:c.empfaenger_email||'',n:0};m[k].n++;});return Object.values(m).sort((a,b)=>b.n-a.n);}
+function renderBeteiligte(D){
+  const bet=(D&&Array.isArray(D.beteiligte))?D.beteiligte:[];
+  if(!bet.length)return '<div class="inner"><div class="empty">Keine Beteiligten erfasst — die Tiefenanalyse zieht sie aus den Unterlagen.</div></div>';
+  const isBH=p=>p&&(p.ist_bauherr||/bauherr|auftraggeber/i.test(p.rolle||''));
+  const person=p=>'<div class="ppl-card"><div class="ppl-name">'+esc(p.name||p.firma||'—')+'</div>'+(p.rolle?'<div class="ppl-role">'+esc(p.rolle)+'</div>':'')+(p.email?'<div class="ppl-mail">'+esc(p.email)+'</div>':'')+(p.telefon?'<div class="ppl-tel">'+esc(p.telefon)+'</div>':'')+'</div>';
+  const bauherr=bet.filter(isBH),rest=bet.filter(p=>!isBH(p));
+  const groups={};rest.forEach(p=>{const f=p.firma||p.name||'—';(groups[f]=groups[f]||[]).push(p);});
+  let h='<div class="inner">';
+  const qa=(D&&D._qa&&D._qa.beteiligte)||[];
+  if(qa.length)h+='<div class="bet-warn">⚠ Prüfen: '+qa.map(esc).join(' · ')+'</div>';
+  if(bauherr.length){
+    const adr=(bauherr.find(b=>b.adresse)||{}).adresse;const org=(bauherr.find(b=>b.firma)||{}).firma;
+    h+='<div class="bet-bauherr"><div class="bet-bh-label">Bauherr / Auftraggeber</div>'+(org?'<div class="bet-bh-org">'+esc(org)+'</div>':'')+(adr?'<div class="bet-bh-adr">'+esc(adr)+'</div>':'<div class="bet-bh-adr missing">Anschrift nicht belegt — Tiefenanalyse erneut laufen lassen</div>')+'<div class="ppl-grid">'+bauherr.map(person).join('')+'</div></div>';
+  }else{
+    h+='<div class="bet-warn">⚠ Kein Bauherr/Auftraggeber in der Analyse erkannt — Tiefenanalyse erneut laufen lassen.</div>';
+  }
+  Object.keys(groups).sort().forEach(f=>{h+='<div class="bet-group"><div class="bet-firma">'+esc(f)+'</div><div class="ppl-grid">'+groups[f].map(person).join('')+'</div></div>';});
+  h+='</div>';return h;
+}
 function renderFolders(F,total){if(!F.length)return '<div class="empty">Keine Ordner.</div>';const max=Math.max(...F.map(f=>+f.anzahl));return F.map(f=>'<div class="fld-row"><div><div>'+esc(f.ordner||'(Wurzel)')+'</div><div class="fld-bar"><i style="width:'+Math.round(+f.anzahl/max*100)+'%"></i></div></div><div class="fc2">'+f.anzahl+'</div></div>').join('');}
 function renderComms(C){if(!C.length)return '<div class="inner"><div class="empty">Keine Vorgänge erfasst.</div></div>';const td=today();const list=C.slice().sort((a,b)=>(a.frist||'9999')<(b.frist||'9999')?-1:1);let h='<div class="inner">';
   for(const c of list){const m=c.meta||{};const od=(c.status==='ueberfaellig')||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status));const st=c.status==='beantwortet'?'<span class="stat ok">beantwortet</span>':od?'<span class="stat alert">überfällig</span>':'<span class="stat warn">'+esc(stL(c.status))+'</span>';
