@@ -54,29 +54,72 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .kpi-strip{display:flex;flex-wrap:wrap;gap:14px 42px;margin:0 4px var(--s5);align-items:flex-end}
 .kpi{background:none;border:none;border-radius:0;padding:0;box-shadow:none}
 .kpi-value{font-family:var(--f-disp);font-size:32px;font-weight:600;color:var(--c-navy-900);line-height:.95;letter-spacing:-.02em}
-.kpi-unit{font-size:12px;color:var(--c-slate-500);margin-left:4px;font-family:var(--f-sans);font-weight:500;letter-spacing:0}
+.kpi-unit{font-size:12px;color:var(--c-slate-500);margin-left:4px;font-family:var(--f-sans);font-weight:500;letter-spacing:0;vertical-align:bottom}
 .kpi-label{font-size:11px;color:var(--c-slate-600);margin-top:7px;font-weight:600}
 .kpi-sub{font-size:10.5px;color:var(--c-slate-400);margin-top:1px}
 .kpi.accent .kpi-value{color:var(--c-navy-900)}
 .kpi.alert .kpi-value{color:var(--c-danger)}
 .kpi.warn .kpi-value{color:var(--c-warning)}
 @media(max-width:1100px){.kpi-strip{gap:12px 28px}}
+/* Dot-Matrix-Numerale (Signatur der datum-Designsprache) */
+.dm{display:inline-flex;align-items:flex-end;line-height:0;vertical-align:baseline}
+.dm i{display:block;border-radius:50%}
+/* Aura-Karten: weiche Radial-Farbflächen mit Dot-Ring, Zahl in Weiß */
+.aurarow{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:var(--s4);width:100%}
+.aura{position:relative;min-height:240px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid rgba(22,19,15,.08);background:var(--c-white);font:inherit;padding:0;cursor:pointer;border-radius:24px;overflow:hidden;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s}
+.aura:hover{transform:translateY(-2px);box-shadow:var(--sh-lift)}
+.aura-bg{position:absolute;inset:0}
+.aura.green .aura-bg{background:radial-gradient(130% 150% at 50% 130%,#1F9740,#4FB648 58%,#8AC049)}
+.aura.amber .aura-bg{background:radial-gradient(120% 130% at 50% 130%,#EF6F28,#F0A03A 55%,#F6C96A)}
+.aura-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.7) 1.1px,transparent 1.9px);background-size:12px 12px;opacity:.3}
+.aura-c{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:11px;color:#fff;padding:12px}
+.aura-l{font-size:13px;font-weight:600;color:rgba(255,255,255,.95)}
+.aura-s{font-size:12px;font-weight:600}
+.aura-foot{display:flex;gap:14px;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.85);max-width:280px;flex-wrap:wrap;justify-content:center}
+.aura-side{background:var(--c-white);border:none;font:inherit;text-align:left;cursor:pointer;border-radius:24px;padding:17px 18px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:10px;min-height:232px;transition:box-shadow .15s,transform .15s}
+.aura-side:hover{box-shadow:var(--sh-lift);transform:translateY(-2px)}
+.aura-side-h{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--c-navy-900)}
+.aura-side-h .cnt{margin-left:auto;font-family:var(--f-mono);font-size:10px;font-weight:600;background:var(--c-slate-100);color:var(--c-slate-600);padding:2px 9px;border-radius:20px}
+.aura-week{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--c-slate-100)}
+.aura-week:last-child{border-bottom:none}
+.aura-week .dot{width:8px;height:8px;border-radius:50%;background:var(--c-danger);flex-shrink:0;margin-top:4px}
+.aura-week.soon .dot{background:var(--c-warning)}
+.aura-week-t{flex:1;font-size:12.5px;font-weight:600;color:var(--c-navy-900);line-height:1.35}
+.aura-week-f{font-family:var(--f-mono);font-size:10.5px;color:var(--c-slate-500);white-space:nowrap}
 /* ── Fenster-Grid: Kacheln nebeneinander, Klick öffnet das Fenster ── */
-.winboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:13px;margin-top:var(--s2);align-items:stretch}
+.winboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:var(--s2);align-items:stretch;grid-auto-flow:dense}
 .win{display:flex;min-width:0}
 .win.prominent{grid-column:span 2}
-@media(max-width:620px){.win.prominent{grid-column:span 1}}
-.win-tile{flex:1;width:100%;text-align:left;background:var(--c-white);border:none;border-radius:20px;padding:15px 16px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:10px;min-height:118px;cursor:pointer;position:relative;transition:box-shadow .15s,transform .15s}
+@media(max-width:700px){.win.prominent{grid-column:span 1}}
+.win-tile{flex:1;width:100%;text-align:left;background:var(--c-white);border:none;border-radius:20px;padding:16px 17px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:9px;min-height:170px;cursor:pointer;position:relative;transition:box-shadow .15s,transform .15s}
 .win-tile:hover{box-shadow:var(--sh-lift);transform:translateY(-2px)}
-.win-tile-top{display:flex;align-items:center;gap:9px;width:100%}
+.win-tile-head{display:flex;align-items:center;gap:10px;width:100%}
+.win-tx{flex:1;min-width:0;display:flex;flex-direction:column;text-align:left}
+.win-sub{display:block;font-size:10.5px;color:var(--c-slate-500);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .win-ico{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--c-slate-100);color:var(--c-navy-900);flex-shrink:0}
-.win.prominent .win-ico{background:var(--c-lime);color:#16130F}
-.win-badge{font-size:9.5px;font-weight:700;color:#16130F;background:var(--c-lime);padding:3px 9px;border-radius:20px;white-space:nowrap}
-.win-open{margin-left:auto;color:var(--c-slate-400);font-size:14px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.win.prominent .win-ico{background:var(--c-lime);color:#16130F;width:36px;height:36px;border-radius:11px}
+.win.prominent .win-title{font-size:15px}
+.win.prominent .win-tile{min-height:210px}
+.win-badge{font-size:9.5px;font-weight:700;color:#16130F;background:var(--c-lime);padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.win-open{color:var(--c-slate-400);font-size:14px;opacity:0;transition:opacity .15s;flex-shrink:0}
 .win-tile:hover .win-open{opacity:1}
 .win-title{display:block;font-size:13.5px;font-weight:700;color:var(--c-navy-900);line-height:1.3}
 .win-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11px;color:var(--c-slate-500);line-height:1.45;margin-top:3px}
 .win-meta{display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap;margin-top:auto}
+/* Teaser: strukturierter Ausschnitt des Fensterinhalts direkt auf der Kachel */
+.win-teaser{width:100%;display:flex;flex-direction:column;text-align:left}
+.tz{display:flex;align-items:center;gap:8px;padding:6.5px 0;border-top:1px solid var(--c-slate-100);font-size:12px;width:100%}
+.win-teaser .tz:first-child{border-top:none}
+.tz-t{flex:1;min-width:0;color:var(--c-navy-800);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tz-r{font-family:var(--f-mono);font-size:10.5px;color:var(--c-slate-500);white-space:nowrap;flex-shrink:0}
+.tz-more .tz-t{color:var(--c-slate-400);font-weight:500;font-size:11px}
+.pdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--c-slate-300)}
+.pdot.p1,.pdot.bad{background:var(--c-danger)}.pdot.p2,.pdot.warn{background:var(--c-warning)}.pdot.p3{background:var(--c-slate-400)}.pdot.ok{background:var(--c-success)}
+.win-big{display:flex;align-items:flex-end;gap:8px;padding:7px 0 3px}
+.win-big-u{font-size:11px;color:var(--c-slate-500);font-weight:500;padding-bottom:1px}
+.win-bar{height:7px;border-radius:4px;background:var(--c-slate-100);overflow:hidden;margin:4px 0 2px;width:100%}
+.win-bar i{display:block;height:100%;background:var(--c-navy-900);border-radius:4px}
+.win-search{display:flex;align-items:center;gap:8px;background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:16px;padding:9px 13px;font-size:12px;color:var(--c-slate-400);width:100%;margin-top:6px}
 .stat{font-family:var(--f-mono);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--c-slate-100);color:var(--c-slate-700)}
 .stat.alert{background:var(--c-danger-bg);color:var(--c-danger)}.stat.warn{background:var(--c-amber-bg);color:var(--c-warning)}.stat.ok{background:var(--c-success-bg);color:var(--c-success)}
 /* das geöffnete Fenster */
@@ -771,7 +814,7 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
   let h='<h1 class="page">Cockpit</h1><div class="page-sub">'+(ps||[]).length+' Projekte · klick für das Projekt-Dashboard</div>';
   if(warn.length)h+='<div class="fw"><div class="fw-h"><span class="fw-dot"></span>Frühwarnung · was als Nächstes kritisch wird <span class="fw-cnt">'+warn.length+'</span></div>'+warn.slice(0,8).map(w=>'<div class="fw-item '+w.lvl+'" data-id="'+w.pid+'"><span class="fw-proj">'+esc(w.pn)+'</span><span class="fw-typ">'+esc(w.typ)+'</span><span class="fw-titel">'+esc(w.titel||'')+'</span><span class="fw-frist mono">'+(w.frist?'Frist '+fmtFrist(w.frist):'—')+'</span></div>').join('')+'</div>';
   h+='<div class="grid">';
-  for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+b.offen+'</div><div class="k">offen</div></div><div><div class="v'+(b.p1?' r':'')+'">'+b.p1+'</div><div class="k">P1</div></div><div><div class="v'+(b.od?' r':'')+'">'+b.od+'</div><div class="k">überfällig</div></div></div></div>';}
+  for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
   el('main').innerHTML=h+'</div>';
   el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));
   el('main').querySelectorAll('.fw-item').forEach(c=>c.onclick=()=>go('project',c.dataset.id));}
@@ -813,12 +856,26 @@ async function renderProject(){
   h+='<nav class="pilgrim"><div class="pilgrim-label">Leistungsphasen HOAI · klick zum Setzen der aktiven Phase</div><div class="pilgrim-track"><div class="pilgrim-line"></div><div class="pilgrim-line-progress" style="width:'+(lph?((lph-1)/8*89+5.5):0)+'%"></div>';
   for(let i=1;i<=9;i++){const cl=lph&&i<lph?'done':lph&&i===lph?'active':'';h+='<div class="pilgrim-station '+cl+'" data-lph="'+i+'"><div class="pilgrim-dot">'+i+'</div><div class="pilgrim-labelset">'+LPH[i-1]+'</div></div>';}
   h+='</div></nav>';
+  // Aura-Fenster: Phasen-Reife + engster Zwangspunkt-Puffer (echte Analyse-Werte) + „Diese Woche" —
+  // alle drei sind Einstiege in dasselbe Vorausschau-Fenster (Termin-Radar, Reife, Jour-Fixe …)
+  {const vs=(D&&D.vorausschau)||{};
+   const pr=(vs.phasen_reife&&vs.phasen_reife.pct!=null)?Math.max(0,Math.min(100,Math.round(+vs.phasen_reife.pct))):null;
+   const zps=(vs.zwangspunkte||[]).filter(z=>z&&z.puffer_wochen!=null).sort((a,b)=>(+a.puffer_wochen)-(+b.puffer_wochen));
+   const wk=(vs.diese_woche||[]).slice(0,3);
+   if(pr!=null||zps.length){let ar='<section class="win" data-sec="vorausschau"><div class="aurarow">';
+    if(pr!=null){const cl=pr>=66?'green':'amber';const fe=((vs.phasen_reife&&vs.phasen_reife.fehlend)||[]).slice(0,2).map(f=>f&&f.text).filter(Boolean);
+     ar+='<button class="aura '+cl+'" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">'+gl('Phasen-Reife')+'</span>'+dm(pr,6.5,'#fff')+'<span class="aura-s">% reif · LPH '+(lph||'—')+'</span>'+(fe.length?'<div class="aura-foot"><span>fehlt: '+esc(fe.join(' · '))+'</span></div>':'')+'</div></button>';}
+    if(zps.length){const z=zps[0];const pw=Math.max(0,Math.round(+z.puffer_wochen));const cl=pw<=6?'amber':'green';ar+='<button class="aura '+cl+'" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">'+gl('Puffer')+' bis zum nächsten '+gl('Zwangspunkt')+'</span>'+dm(pw,6.5,'#fff')+'<span class="aura-s">'+(pw===1?'Woche':'Wochen')+'</span><div class="aura-foot"><span>'+esc(z.name||'')+'</span>'+(z.frist?'<span>Frist '+fmtFrist(z.frist)+'</span>':'')+'</div></div></button>';}
+    ar+='<button class="aura-side" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-side-h">Diese Woche<span class="cnt">'+wk.length+'</span></div>'+(wk.length?wk.map(a=>'<div class="aura-week'+(a.dringlichkeit==='bald'?' soon':'')+'"><span class="dot"></span><div class="aura-week-t">'+esc(a.titel||'')+'</div>'+(a.frist?'<span class="aura-week-f">'+fmtFrist(a.frist)+'</span>':'')+'</div>').join(''):'<div class="empty" style="padding:14px">Keine fixen Fristen in den nächsten 2 Wochen.</div>')+'</button>';
+    ar+='</div><div class="win-ov" hidden><div class="win-card"><header class="win-head"><span class="win-ico">◔</span><div class="win-head-tx"><div class="win-title">Termine & Vorausschau</div><div class="win-sum">Zwangspunkte, '+gl('Phasen-Reife')+', Wochen-Fokus — aus der Analyse</div></div><div class="win-meta"><span class="stat">'+(vs.zwangspunkte||[]).length+' '+gl('Zwangspunkt')+(((vs.zwangspunkte||[]).length)===1?'':'e')+'</span></div><button class="win-x" title="Fenster schließen">✕</button></header><div class="win-bd"><div class="vs-inner">'+renderVorausschau(vs)+'</div></div></div></div></section>';
+    h+=ar;}}
   h+='<div class="winboard">';
   // Grundlagen LPH 1 — in der Planungsphase (LPH 1-4) erreichbar oder wenn schon erfasst: verhindert planloses Planen
   if((lph||0)<=4 || (proj.lph1&&Object.keys(proj.lph1).length)){
     const L1=proj.lph1||null;const muss=L1?((L1.fragenkatalog||[]).filter(x=>x&&x.prioritaet==='muss').length):0;
     const absL=L1?(L1.abschnitte||[]):[];const gekl=absL.filter(a=>a.status==='geklaert').length;
-    h+=sec('lph1','prominent','◔','Grundlagen LPH 1 · Bauherren-Fragenkatalog',L1?(gekl+'/'+absL.length+' Abschnitte geklärt · Stand '+(proj.lph1_stand?fmtD(proj.lph1_stand):'—')):'Grundlagen aus den Unterlagen erfassen',(L1?'<span class="stat'+(muss?' alert':' ok')+'">'+muss+' Muss-Fragen</span>':'<span class="stat warn">offen</span>'),renderLph1(L1));
+    const tL1=L1?(tz(null,'Abschnitte geklärt',gekl+'/'+absL.length)+'<span class="win-bar"><i style="width:'+(absL.length?Math.round(gekl/absL.length*100):0)+'%"></i></span>'+tz(muss?'bad':'ok','Muss-Fragen vor Planungsbeginn offen',''+muss)):tz('warn','Noch nicht erfasst — der Agent zieht die Grundlagen aus den Unterlagen','');
+    h+=sec('lph1','prominent daily','◔','Grundlagen LPH 1 · Bauherren-Fragenkatalog',L1?('Stand '+(proj.lph1_stand?fmtD(proj.lph1_stand):'—')):'Grundlagen aus den Unterlagen erfassen',(L1?'<span class="stat'+(muss?' alert':' ok')+'">'+muss+' Muss-Fragen</span>':'<span class="stat warn">offen</span>'),renderLph1(L1),tL1);
   }
   // Vorausschau lebt jetzt in der Ansicht „Termine & Fristen" (Marcel: umziehen statt doppeltem Block auf dem Dashboard).
   // Aufgaben-Zentrale
@@ -826,40 +883,74 @@ async function renderProject(){
   const tabsRow='<nav class="tasks-tabs">'+tabBtn('alle','Alle',offen)+Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).map(k=>tabBtn(slug(k),k,cats[k])).join('')+'</nav>';
   const filtRow='<div class="tasks-filters"><span class="filter-label">Priorität</span><button class="fc s1" data-p="P1">P1</button><button class="fc s2" data-p="P2">P2</button><button class="fc" data-p="P3">P3</button><span style="flex:1"></span><button class="btn-sm ghost" id="addtaskbtn" style="margin:0;padding:5px 11px">+ Aufgabe</button></div>';
   const aufgBody=tabsRow+filtRow+addTaskForm()+(AL.length?renderAufgSplit(AL):'<div class="empty" style="padding:24px">Noch keine Aufgaben — lege oben eine an, oder die Analyse zieht sie aus den Protokollen.</div>');
-  h+=sec('aufgaben','prominent','⚡','Aufgaben-Zentrale',offen+' offen · '+p1+' kritisch','<span class="stat'+(p1?' alert':'')+'">'+p1+' P1</span>',aufgBody);
-  // Kosten (Pflicht)
-  h+=sec('kosten','','€','Kosten-Übersicht',D&&D.kosten?'aus Tiefenanalyse':'noch nicht analysiert',(D&&D.kosten?'<span class="stat ok">analysiert</span>':'<span class="stat warn">offen</span>'),'<div class="inner">'+renderKosten(D,costDocs||[])+'</div>');
+  const topT=AL.filter(t=>t.status!=='erledigt').sort((a,b)=>prioN(a.prio)-prioN(b.prio)).slice(0,3);
+  const tAufg=(topT.length?topT.map(t=>{const m=t.meta||{};return tz('p'+prioN(t.prio),esc(t.title),m.frist?fmtFrist(m.frist):'');}).join(''):tz('ok','Keine offenen Aufgaben',''))+(offen>3?tz(null,'+ '+(offen-3)+' weitere offen','','tz-more'):'');
+  h+=sec('aufgaben','prominent daily','⚡','Aufgaben-Zentrale',offen+' offen · '+p1+' kritisch','<span class="stat'+(p1?' alert':'')+'">'+p1+' P1</span>',aufgBody,tAufg);
+  // Vorgänge / Nachhaken — Täglich-Fenster, dringendste zuerst
+  {const cOL=C.filter(c=>!['beantwortet','erledigt'].includes(c.status)).sort((a,b)=>{const ao=(a.status==='ueberfaellig'||(a.frist&&a.frist<td))?0:1,bo=(b.status==='ueberfaellig'||(b.frist&&b.frist<td))?0:1;return ao-bo||((a.frist||'9999')<(b.frist||'9999')?-1:1);});
+   const tVorg=(cOL.length?cOL.slice(0,3).map(c=>{const od=c.status==='ueberfaellig'||(c.frist&&c.frist<td);return tz(od?'bad':'warn',esc(c.betreff)+(c.empfaenger?' · '+esc(c.empfaenger):''),od?'überfällig':(c.frist?fmtFrist(c.frist):esc(stL(c.status))));}).join(''):tz('ok','Nichts offen — alle Vorgänge beantwortet',''))+(cOL.length>3?tz(null,'+ '+(cOL.length-3)+' weitere offen','','tz-more'):'');
+   h+=sec('vorgaenge','prominent daily','✉',gl('Nachhaken')+' & Vorgänge','Worauf gewartet wird — Antworten, Fristen, Angebote','<span class="stat'+(cOver?' alert':'')+'">'+cOver+' überfällig</span>',renderComms(C),tVorg);}
+  // Kosten (Pflicht) — groß & präsent
+  {let tKost='';const k=D&&D.kosten;
+   if(k&&k.summe_brutto){tKost='<span class="win-big">'+dm((k.summe_brutto/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}),3.2,'var(--c-navy-900)')+'<span class="win-big-u">Mio € brutto'+(k.stand?' · Stand '+esc(k.stand):'')+'</span></span>';
+    if(k.budget!=null&&!isNaN(+k.budget)&&+k.budget>0){const dlt=k.summe_brutto-(+k.budget);tKost+=tz(dlt>0?'bad':'ok','vs. '+gl('Budget','Vom Bauherrn vorgegebener Kostenrahmen.')+' '+((+k.budget)/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €','<span style="color:'+(dlt>0?'var(--c-danger)':'var(--c-success)')+'">'+(dlt>0?'+':'−')+Math.abs(Math.round(dlt/1000)).toLocaleString('de-DE')+' T€</span>');}
+    if(honVal&&honVal.offene_nachtraege)tKost+=tz('warn','Offene Nachträge',''+honVal.offene_nachtraege);
+   }else tKost=tz('warn','Noch keine Kostenwerte — Tiefenanalyse starten','');
+   h+=sec('kosten','prominent','€','Kosten-Übersicht',k?'DIN 276 · aus Tiefenanalyse':'noch nicht analysiert',(k?'<span class="stat ok">analysiert</span>':'<span class="stat warn">offen</span>'),'<div class="inner">'+renderKosten(D,costDocs||[])+'</div>',tKost);}
   // LPH-Bewertung
-  h+=sec('lphbew','','✓','LPH-Bewertung',(lph?'LPH '+lph+' Grundleistungen':'')+(D&&D.lph_bewertung?'':' · noch nicht analysiert'),'','<div class="inner">'+renderLphBew(D)+'</div>');
+  {const lb=(D&&D.lph_bewertung)||[];const cN=s=>lb.filter(r=>r.status===s).length;
+   const tLb=lb.length?(tz('ok','vollständig',''+cN('vollstaendig'))+tz('warn','teilweise',''+cN('teilweise'))+tz('bad','fehlend',''+cN('fehlend'))):tz('warn','Noch nicht bewertet — kommt aus der Tiefenanalyse','');
+   h+=sec('lphbew','','✓','LPH-Bewertung',(lph?'LPH '+lph+' Grundleistungen':'Grundleistungen'),'','<div class="inner">'+renderLphBew(D)+'</div>',tLb);}
   // LPH-Checkliste (HOAI-Grundleistungen + Vergabe/ZVB) — abhakbar, persistent
-  {const cdone=clCounts(lastChecklist);h+=sec('checkliste','','☑','LPH-Checkliste','HOAI-Grundleistungen + Vergabe/ZVB je Phase · '+cdone.done+'/'+cdone.total+' erledigt','<span class="stat">'+cdone.done+'/'+cdone.total+'</span>','<div class="inner">'+renderChecklist(lph)+'</div>');}
+  {const cdone=clCounts(lastChecklist);const clPct=cdone.total?Math.round(cdone.done/cdone.total*100):0;
+   h+=sec('checkliste','','☑','LPH-Checkliste','HOAI-Grundleistungen + Vergabe/ZVB je Phase','<span class="stat">'+cdone.done+'/'+cdone.total+'</span>','<div class="inner">'+renderChecklist(lph)+'</div>',tz(null,'Abgehakt über alle Phasen',cdone.done+'/'+cdone.total)+'<span class="win-bar"><i style="width:'+clPct+'%"></i></span>');}
   // Offene Entscheidungen (getrennt von gefassten Beschlüssen)
   const eo=(D&&D.entscheidungen_offen)||[];
-  if(eo.length)h+=sec('entscheidungen','','◇','Offene Entscheidungen',eo.length+' anstehend · noch nicht getroffen','<span class="stat warn">'+eo.length+'</span>','<div class="inner">'+renderEntscheidungen(eo)+'</div>');
+  if(eo.length)h+=sec('entscheidungen','','◇','Offene Entscheidungen',eo.length+' anstehend · noch nicht getroffen','<span class="stat warn">'+eo.length+'</span>','<div class="inner">'+renderEntscheidungen(eo)+'</div>',eo.slice(0,2).map(e=>tz('warn',esc(e.titel||e.text||''),e.frist?fmtFrist(e.frist):'')).join('')+(eo.length>2?tz(null,'+ '+(eo.length-2)+' weitere','','tz-more'):''));
   // Beschlüsse
-  h+=sec('beschluesse','','§','Wesentliche Beschlüsse',D&&D.beschluesse?(D.beschluesse.length+' Beschlüsse'):'noch nicht analysiert','','<div class="inner">'+renderBeschluesse(D)+'</div>');
+  {const bs=(D&&D.beschluesse)||[];
+   h+=sec('beschluesse','','§','Wesentliche Beschlüsse',bs.length?'aus Protokollen & Mails':'noch nicht analysiert','','<div class="inner">'+renderBeschluesse(D)+'</div>',bs.length?(bs.slice(0,2).map(b=>tz(null,esc(b.text||''),esc(b.datum||''))).join('')+(bs.length>2?tz(null,'+ '+(bs.length-2)+' weitere','','tz-more'):'')):tz('warn','Noch keine Beschlüsse extrahiert',''));}
   // Aktivität
-  h+=sec('aktivitaet','','◷','Aktivität (zuletzt geändert)','neueste Dateien & Mails','<span class="stat">'+(recent||[]).length+'</span>','<div class="inner">'+renderAktivitaet(recent||[])+'</div>');
-  // Vorgänge
-  h+=sec('vorgaenge','prominent','✉',gl('Nachhaken')+' & Vorgänge','Worauf gewartet wird — Antworten, Fristen, Angebote','<span class="stat'+(cOver?' alert':'')+'">'+cOver+' überfällig</span>',renderComms(C));
+  h+=sec('aktivitaet','','◷','Aktivität (zuletzt geändert)','neueste Dateien & Mails','<span class="stat">'+(recent||[]).length+'</span>','<div class="inner">'+renderAktivitaet(recent||[])+'</div>',(recent&&recent.length?recent.slice(0,3).map(d=>tz(null,esc(d.filename),fmtD(d.modified_at))).join(''):tz(null,'Keine datierten Dateien','')));
   // Mängel & Abnahmen (LPH 8 — Baustelle)
   const mg=(D&&D.maengel)||[];
-  if(mg.length){const offenM=mg.filter(x=>x.status!=='behoben'&&x.status!=='abgenommen').length;h+=sec('maengel','','⚠',gl('Mängel','Dokumentierte Baumängel und offene Abnahme-Punkte (LPH 8 Objektüberwachung) mit Beseitigungsfrist.')+' & Abnahmen',mg.length+' erfasst · '+offenM+' offen','<span class="stat'+(offenM?' alert':' ok')+'">'+offenM+' offen</span>',renderMaengel(mg));}
+  if(mg.length){const mgOpen=mg.filter(x=>x.status!=='behoben'&&x.status!=='abgenommen');const offenM=mgOpen.length;
+   h+=sec('maengel','','⚠',gl('Mängel','Dokumentierte Baumängel und offene Abnahme-Punkte (LPH 8 Objektüberwachung) mit Beseitigungsfrist.')+' & Abnahmen',mg.length+' erfasst','<span class="stat'+(offenM?' alert':' ok')+'">'+offenM+' offen</span>',renderMaengel(mg),(mgOpen.length?mgOpen.slice(0,2).map(m=>tz('bad',esc(m.beschreibung||''),m.frist?fmtFrist(m.frist):'')).join('')+(offenM>2?tz(null,'+ '+(offenM-2)+' weitere offen','','tz-more'):''):tz('ok','Alle Mängel behoben','')));}
   // Beteiligte — aus der belegten Analyse-Liste (D.beteiligte), Bauherr oben, nach Firma gruppiert
   const betArr=(D&&D.beteiligte)||[];const betWarn=(D&&D._qa&&D._qa.beteiligte&&D._qa.beteiligte.length)?D._qa.beteiligte.length:0;
-  h+=sec('beteiligte','','👤','Beteiligte','Projektbeteiligte & Bauherr aus der Analyse','<span class="stat'+(betWarn?' alert':'')+'">'+betArr.length+'</span>',renderBeteiligte(D));
+  {const bh=betArr.find(p=>p&&(p.ist_bauherr||/bauherr|auftraggeber/i.test(p.rolle||'')));
+   const firmen=new Set(betArr.map(p=>p&&(p.firma||p.organisation)).filter(Boolean)).size;
+   const tBet=betArr.length?((bh?tz(null,'<strong>Bauherr:</strong> '+esc(bh.name||bh.firma||''),''):'')+tz(null,betArr.length+' Personen'+(firmen?' · '+firmen+' Firmen':''),'')):tz('warn','Noch keine Beteiligten erfasst','');
+   h+=sec('beteiligte','','👤','Beteiligte','Projektbeteiligte & Bauherr aus der Analyse','<span class="stat'+(betWarn?' alert':'')+'">'+betArr.length+'</span>',renderBeteiligte(D),tBet);}
   // Projektstruktur
-  h+=sec('struktur','','📁','Projekt-Struktur',(folders||[]).length+' Top-Ordner','','<div class="inner">'+renderFolders(folders||[],docCount||1)+'</div>');
+  h+=sec('struktur','','📁','Projekt-Struktur',(folders||[]).length+' Top-Ordner · '+(docCount||0)+' Dokumente','','<div class="inner">'+renderFolders(folders||[],docCount||1)+'</div>',(folders&&folders.length?folders.slice(0,3).map(f=>tz(null,esc(f.ordner||'(Wurzel)'),''+f.anzahl)).join(''):''));
   // Dokument-Suche
-  h+=sec('suche','','🔍','Dokument-Volltextsuche','durchsucht '+(docCount||0)+' Dokumente','','<div class="inner"><div class="search-box"><input id="docq" placeholder="z. B. Brandschutz, Sporthalle, Statik …"><button id="docgo">Suchen</button></div><div id="sres"></div></div>');
+  h+=sec('suche','','🔍','Dokument-Volltextsuche','durchsucht '+(docCount||0)+' Dokumente','','<div class="inner"><div class="search-box"><input id="docq" placeholder="z. B. Brandschutz, Sporthalle, Statik …"><button id="docgo">Suchen</button></div><div id="sres"></div></div>','<span class="win-search">🔍 z. B. Brandschutz, Statik, Förderung …</span>'+tz(null,'Volltext + Dateinamen · Treffer mit Fundstelle',''+(docCount||0)));
   h+='</div>';
   el('main').innerHTML=h;wire(T,C);
 }
-function kpi(cl,label,val,unit,sub){return '<div class="kpi '+cl+'"><div class="kpi-value">'+val+(unit?'<span class="kpi-unit">'+unit+'</span>':'')+'</div><div class="kpi-label">'+label+'</div><div class="kpi-sub">'+sub+'</div></div>';}
-// Fenster-Kachel + zugehöriges Overlay-Fenster (Klick auf die Kachel öffnet es)
-function sec(id,extra,icon,title,summary,meta,body){const badge=extra==='prominent'?'<span class="win-badge">Täglich</span>':'';
-  return '<section class="win '+extra+'" data-sec="'+id+'"><button class="win-tile"><span class="win-tile-top"><span class="win-ico">'+icon+'</span>'+badge+'<span class="win-open">⤢</span></span><span><span class="win-title">'+title+'</span><span class="win-sum">'+esc(summary)+'</span></span><span class="win-meta">'+meta+'</span></button>'+
+// Dot-Matrix-Numerale — Signatur der datum-Designsprache (5×7-Raster je Ziffer)
+const DM={'0':['01110','10001','10011','10101','11001','10001','01110'],'1':['00100','01100','00100','00100','00100','00100','01110'],'2':['01110','10001','00001','00010','00100','01000','11111'],'3':['11111','00010','00100','00010','00001','10001','01110'],'4':['00010','00110','01010','10010','11111','00010','00010'],'5':['11111','10000','11110','00001','00001','10001','01110'],'6':['00110','01000','10000','11110','10001','10001','01110'],'7':['11111','00001','00010','00100','01000','01000','01000'],'8':['01110','10001','10001','01110','10001','10001','01110'],'9':['01110','10001','10001','01111','00001','00010','01100'],'-':['000','000','000','111','000','000','000'],',':['00','00','00','00','00','01','10'],'.':['0','0','0','0','0','0','1']};
+function dm(val,size,color){const gap=size*0.5;let h='<span class="dm" style="gap:'+(size*1.15)+'px">';
+  for(const ch of String(val)){const bits=DM[ch];
+    if(!bits){h+='<span style="font-family:var(--f-disp);font-size:'+(size*7.5)+'px;line-height:.9;color:'+color+'">'+esc(ch)+'</span>';continue;}
+    const cols=bits[0].length;h+='<span style="display:grid;grid-template-columns:repeat('+cols+','+size+'px);grid-auto-rows:'+size+'px;gap:'+gap+'px">';
+    for(let r=0;r<7;r++)for(let c=0;c<cols;c++)h+='<i'+(bits[r][c]==='1'?' style="background:'+color+'"':'')+'></i>';
+    h+='</span>';}
+  return h+'</span>';}
+function kpi(cl,label,val,unit,sub){const col=cl==='alert'?'var(--c-danger)':cl==='warn'?'var(--c-warning)':'var(--c-navy-900)';
+  const v=/^[0-9][0-9.,-]*$/.test(String(val))?dm(val,3.1,col):val;
+  return '<div class="kpi '+cl+'"><div class="kpi-value">'+v+(unit?'<span class="kpi-unit">'+unit+'</span>':'')+'</div><div class="kpi-label">'+label+'</div><div class="kpi-sub">'+sub+'</div></div>';}
+// Fenster-Kachel: Kopf (Icon+Titel) + Teaser (Ausschnitt dessen, was drinnen zu erledigen ist) + Status-Pille.
+// Klick öffnet das zugehörige Overlay-Fenster. extra: 'prominent' = groß (span 2), zusätzlich 'daily' = Täglich-Badge.
+function sec(id,extra,icon,title,summary,meta,body,teaser){const badge=extra.indexOf('daily')>=0?'<span class="win-badge">Täglich</span>':'';
+  return '<section class="win '+extra+'" data-sec="'+id+'"><button class="win-tile">'+
+    '<span class="win-tile-head"><span class="win-ico">'+icon+'</span><span class="win-tx"><span class="win-title">'+title+'</span><span class="win-sub">'+esc(summary)+'</span></span>'+badge+'<span class="win-open">⤢</span></span>'+
+    (teaser?'<span class="win-teaser">'+teaser+'</span>':'')+
+    '<span class="win-meta">'+meta+'</span></button>'+
     '<div class="win-ov" hidden><div class="win-card"><header class="win-head"><span class="win-ico">'+icon+'</span><div class="win-head-tx"><div class="win-title">'+title+'</div><div class="win-sum">'+esc(summary)+'</div></div><div class="win-meta">'+meta+'</div><button class="win-x" title="Fenster schließen">✕</button></header><div class="win-bd">'+body+'</div></div></div></section>';}
+// Eine Teaser-Zeile: optionaler Status-Punkt, Text (ellipsiert), rechts Mono-Wert
+function tz(dot,text,right,cls){return '<span class="tz'+(cls?' '+cls:'')+'">'+(dot?'<span class="pdot '+dot+'"></span>':'')+'<span class="tz-t">'+text+'</span>'+(right!=null&&right!==''?'<span class="tz-r">'+right+'</span>':'')+'</span>';}
 function tabBtn(id,label,cnt){return '<button class="tab-btn'+(tab===id?' active':'')+'" data-tab="'+id+'">'+esc(label)+'<span class="tab-count">'+cnt+'</span></button>';}
 function chevT(){return '<svg class="task-chevron" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>';}
 function getAufgaben(D,T){
@@ -1270,7 +1361,7 @@ function wire(T,C){
   el('main').querySelectorAll('.cl-cb').forEach(cb=>cb.onchange=()=>toggleChecklist(cb.dataset.clkey,cb.checked));
   el('main').querySelectorAll('.cl-ph').forEach(d=>d.addEventListener('toggle',()=>{const l=+d.dataset.cllph;d.open?openCl.add(l):openCl.delete(l);}));
   // Fenster öffnen/schließen — openWin merkt sich das offene Fenster über Realtime-Re-Renders hinweg
-  el('main').querySelectorAll('.win-tile').forEach(t=>t.onclick=()=>{const s=t.closest('.win'),o=s.querySelector('.win-ov');if(o){openWin=s.dataset.sec;o.hidden=false;document.body.style.overflow='hidden';}});
+  el('main').querySelectorAll('.win-tile,[data-winopen]').forEach(t=>t.onclick=()=>{const s=t.closest('.win'),o=s.querySelector('.win-ov');if(o){openWin=s.dataset.sec;o.hidden=false;document.body.style.overflow='hidden';}});
   el('main').querySelectorAll('.win-ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o||e.target.closest('.win-x')){openWin=null;o.hidden=true;document.body.style.overflow='';}}));
   if(openWin){const o=el('main').querySelector('.win[data-sec="'+openWin+'"] .win-ov');if(o){o.hidden=false;document.body.style.overflow='hidden';}else{openWin=null;document.body.style.overflow='';}}
   el('main').querySelectorAll('.pilgrim-station').forEach(st=>st.onclick=async()=>{await sb.from('projects').update({lph:+st.dataset.lph}).eq('id',current);render();});
