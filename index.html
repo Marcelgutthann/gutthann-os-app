@@ -61,9 +61,8 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .kpi.alert .kpi-value{color:var(--c-danger)}
 .kpi.warn .kpi-value{color:var(--c-warning)}
 @media(max-width:1100px){.kpi-strip{gap:12px 28px}}
-/* Dot-Matrix-Numerale (Signatur der datum-Designsprache) */
-.dm{display:inline-flex;align-items:flex-end;line-height:0;vertical-align:baseline}
-.dm i{display:block;border-radius:50%}
+/* Kennzahlen-Ziffern */
+.dm{display:inline-block;vertical-align:baseline;font-variant-numeric:tabular-nums}
 /* Aura-Karten: weiche Radial-Farbflächen mit Dot-Ring, Zahl in Weiß */
 .aurarow{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:var(--s4);width:100%}
 .aura{position:relative;min-height:240px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid rgba(22,19,15,.08);background:var(--c-white);font:inherit;padding:0;cursor:pointer;border-radius:24px;overflow:hidden;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s}
@@ -798,26 +797,15 @@ function renderSidebar(){
 }
 
 async function renderCockpit(){el('crumb').textContent='Cockpit';
-  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph,dashboard').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
+  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
   const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,offen:0,p1:0,od:0});
   (ts||[]).forEach(t=>{const b=m[t.project_id];if(b&&t.status!=='erledigt'){b.offen++;if(t.prio==='P1')b.p1++;}});
   const td=today();(cs||[]).forEach(c=>{const b=m[c.project_id];if(b&&(c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))))b.od++;});
-  // ── Portfolio-Frühwarnung: das Kritischste über ALLE Projekte ──
-  const warn=[];
-  (ps||[]).forEach(p=>{const vs=(p.dashboard||{}).vorausschau||{};
-    (vs.zwangspunkte||[]).forEach(z=>{if(z.status==='danger'||(z.puffer_wochen!=null&&z.puffer_wochen<=2))warn.push({pid:p.id,pn:short(p.name),typ:'Zwangspunkt',titel:z.name,frist:z.frist,lvl:'danger'});});
-    (vs.diese_woche||[]).forEach(w=>{if(w.dringlichkeit==='jetzt')warn.push({pid:p.id,pn:short(p.name),typ:'Diese Woche',titel:w.titel,frist:w.frist,lvl:'warn'});});
-    ((p.dashboard||{}).fachplaner||[]).forEach(fp=>{(fp.zulieferungen||[]).forEach(z=>{if(z&&z.was&&z.status!=='geliefert'&&(z.status==='ueberfaellig'||(z.frist&&z.frist<td)))warn.push({pid:p.id,pn:short(p.name),typ:'Zulieferung '+(fp.rolle||'Fachplaner'),titel:z.was,frist:z.frist,lvl:'danger'});});});});
-  (ts||[]).forEach(t=>{if(t.status!=='erledigt'&&t.prio==='P1'&&t.due_date&&t.due_date<td&&m[t.project_id])warn.push({pid:t.project_id,pn:short(m[t.project_id].name),typ:'Aufgabe P1 überfällig',titel:t.title,frist:t.due_date,lvl:'danger'});});
-  (cs||[]).forEach(c=>{if(c.status==='ueberfaellig'&&m[c.project_id])warn.push({pid:c.project_id,pn:short(m[c.project_id].name),typ:'Nachhaken überfällig',titel:c.betreff,frist:c.frist,lvl:'danger'});});
-  warn.sort((a,b)=>(a.lvl==='danger'?0:1)-(b.lvl==='danger'?0:1)||((a.frist||'9999')<(b.frist||'9999')?-1:1));
   let h='<h1 class="page">Cockpit</h1><div class="page-sub">'+(ps||[]).length+' Projekte · klick für das Projekt-Dashboard</div>';
-  if(warn.length)h+='<div class="fw"><div class="fw-h"><span class="fw-dot"></span>Frühwarnung · was als Nächstes kritisch wird <span class="fw-cnt">'+warn.length+'</span></div>'+warn.slice(0,8).map(w=>'<div class="fw-item '+w.lvl+'" data-id="'+w.pid+'"><span class="fw-proj">'+esc(w.pn)+'</span><span class="fw-typ">'+esc(w.typ)+'</span><span class="fw-titel">'+esc(w.titel||'')+'</span><span class="fw-frist mono">'+(w.frist?'Frist '+fmtFrist(w.frist):'—')+'</span></div>').join('')+'</div>';
   h+='<div class="grid">';
   for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
   el('main').innerHTML=h+'</div>';
-  el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));
-  el('main').querySelectorAll('.fw-item').forEach(c=>c.onclick=()=>go('project',c.dataset.id));}
+  el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));}
 
 async function renderProject(){
   const td=today();
@@ -929,15 +917,8 @@ async function renderProject(){
   h+='</div>';
   el('main').innerHTML=h;wire(T,C);
 }
-// Dot-Matrix-Numerale — Signatur der datum-Designsprache (5×7-Raster je Ziffer)
-const DM={'0':['01110','10001','10011','10101','11001','10001','01110'],'1':['00100','01100','00100','00100','00100','00100','01110'],'2':['01110','10001','00001','00010','00100','01000','11111'],'3':['11111','00010','00100','00010','00001','10001','01110'],'4':['00010','00110','01010','10010','11111','00010','00010'],'5':['11111','10000','11110','00001','00001','10001','01110'],'6':['00110','01000','10000','11110','10001','10001','01110'],'7':['11111','00001','00010','00100','01000','01000','01000'],'8':['01110','10001','10001','01110','10001','10001','01110'],'9':['01110','10001','10001','01111','00001','00010','01100'],'-':['000','000','000','111','000','000','000'],',':['00','00','00','00','00','01','10'],'.':['0','0','0','0','0','0','1']};
-function dm(val,size,color){const gap=size*0.5;let h='<span class="dm" style="gap:'+(size*1.15)+'px">';
-  for(const ch of String(val)){const bits=DM[ch];
-    if(!bits){h+='<span style="font-family:var(--f-disp);font-size:'+(size*7.5)+'px;line-height:.9;color:'+color+'">'+esc(ch)+'</span>';continue;}
-    const cols=bits[0].length;h+='<span style="display:grid;grid-template-columns:repeat('+cols+','+size+'px);grid-auto-rows:'+size+'px;gap:'+gap+'px">';
-    for(let r=0;r<7;r++)for(let c=0;c<cols;c++)h+='<i'+(bits[r][c]==='1'?' style="background:'+color+'"':'')+'></i>';
-    h+='</span>';}
-  return h+'</span>';}
+// Kennzahlen als normale Ziffern; size skaliert die Schrifthöhe (10px je Einheit, entspricht der früheren Rasterhöhe)
+function dm(val,size,color){return '<span class="dm" style="font-family:var(--f-disp);font-size:'+Math.round(size*10)+'px;font-weight:600;line-height:.95;letter-spacing:-.02em;color:'+color+'">'+esc(String(val))+'</span>';}
 function kpi(cl,label,val,unit,sub){const col=cl==='alert'?'var(--c-danger)':cl==='warn'?'var(--c-warning)':'var(--c-navy-900)';
   const v=/^[0-9][0-9.,-]*$/.test(String(val))?dm(val,3.1,col):val;
   return '<div class="kpi '+cl+'"><div class="kpi-value">'+v+(unit?'<span class="kpi-unit">'+unit+'</span>':'')+'</div><div class="kpi-label">'+label+'</div><div class="kpi-sub">'+sub+'</div></div>';}
