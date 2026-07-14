@@ -51,16 +51,20 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .pilgrim-station.active .pilgrim-dot{background:var(--c-navy-900);border-color:var(--c-navy-900);color:#fff;box-shadow:0 0 0 4px var(--c-lime)}
 .pilgrim-labelset{font-size:10px;text-align:center;color:var(--c-slate-500);font-weight:500;line-height:1.25}
 .pilgrim-station.done .pilgrim-labelset{color:var(--c-navy-700)}.pilgrim-station.active .pilgrim-labelset{color:var(--c-navy-900);font-weight:700}
-.kpi-strip{display:flex;flex-wrap:wrap;gap:14px 42px;margin:0 4px var(--s5);align-items:flex-end}
-.kpi{background:none;border:none;border-radius:0;padding:0;box-shadow:none}
-.kpi-value{font-family:var(--f-disp);font-size:32px;font-weight:600;color:var(--c-navy-900);line-height:.95;letter-spacing:-.02em}
-.kpi-unit{font-size:12px;color:var(--c-slate-500);margin-left:4px;font-family:var(--f-sans);font-weight:500;letter-spacing:0;vertical-align:bottom}
-.kpi-label{font-size:11px;color:var(--c-slate-600);margin-top:7px;font-weight:600}
-.kpi-sub{font-size:10.5px;color:var(--c-slate-400);margin-top:1px}
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin:0 0 var(--s5)}
+.kpi{background:var(--c-white);border:none;border-radius:18px;padding:14px 16px 13px;box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0}
+.kpi-label{font-size:11px;color:var(--c-slate-600);font-weight:600;margin-bottom:10px;line-height:1.3}
+.kpi-value{font-family:var(--f-disp);font-size:31px;font-weight:600;color:var(--c-navy-900);line-height:.9;letter-spacing:-.02em}
+.kpi-unit{font-size:11px;color:var(--c-slate-500);margin-left:5px;font-family:var(--f-sans);font-weight:500;letter-spacing:0}
+.kpi-sub{font-size:10.5px;color:var(--c-slate-500);margin-top:7px;line-height:1.35}
+.kpi-sub .up{color:var(--c-danger);font-weight:600}.kpi-sub .okc{color:var(--c-success);font-weight:600}
 .kpi.accent .kpi-value{color:var(--c-navy-900)}
 .kpi.alert .kpi-value{color:var(--c-danger)}
 .kpi.warn .kpi-value{color:var(--c-warning)}
-@media(max-width:1100px){.kpi-strip{gap:12px 28px}}
+.kpi-bar{height:6px;border-radius:3px;background:var(--c-slate-100);overflow:hidden;margin-top:9px}
+.kpi-bar i{display:block;height:100%;border-radius:3px;background:var(--c-navy-900)}
+.kpi-bar i.over{background:var(--c-danger)}
+@media(max-width:1100px){.kpi-strip{gap:10px}}
 /* Kennzahlen-Ziffern */
 .dm{display:inline-block;vertical-align:baseline;font-variant-numeric:tabular-nums}
 /* Aura-Karten: weiche Radial-Farbflächen mit Dot-Ring, Zahl in Weiß */
@@ -73,6 +77,8 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .aura-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.7) 1.1px,transparent 1.9px);background-size:12px 12px;opacity:.3}
 .aura-c{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:11px;color:#fff;padding:12px}
 .aura-l{font-size:13px;font-weight:600;color:rgba(255,255,255,.95)}
+.aura-v{display:flex;align-items:baseline;gap:5px}
+.aura-pct{font-family:var(--f-disp);font-size:34px;font-weight:600;color:#fff;line-height:.95;letter-spacing:-.02em}
 .aura-s{font-size:12px;font-weight:600}
 .aura-foot{display:flex;gap:14px;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.85);max-width:280px;flex-wrap:wrap;justify-content:center}
 .aura-side{background:var(--c-white);border:none;font:inherit;text-align:left;cursor:pointer;border-radius:24px;padding:17px 18px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:10px;min-height:232px;transition:box-shadow .15s,transform .15s}
@@ -85,6 +91,10 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .aura-week.soon .dot{background:var(--c-warning)}
 .aura-week-t{flex:1;font-size:12.5px;font-weight:600;color:var(--c-navy-900);line-height:1.35}
 .aura-week-f{font-family:var(--f-mono);font-size:10.5px;color:var(--c-slate-500);white-space:nowrap}
+.aura-side-foot{margin-top:auto;display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--c-slate-100);font-size:11px;color:var(--c-slate-600)}
+.aura-side-foot strong{color:var(--c-navy-900);font-weight:700}
+.asf-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.asf-f{font-family:var(--f-mono);font-size:10.5px;color:var(--c-slate-500);white-space:nowrap}
 /* ── Fenster-Grid: Kacheln nebeneinander, Klick öffnet das Fenster ── */
 .winboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:var(--s2);align-items:stretch;grid-auto-flow:dense}
 .win{display:flex;min-width:0}
@@ -96,7 +106,7 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .win-tx{flex:1;min-width:0;display:flex;flex-direction:column;text-align:left}
 .win-sub{display:block;font-size:10.5px;color:var(--c-slate-500);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .win-ico{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--c-slate-100);color:var(--c-navy-900);flex-shrink:0}
-.win.prominent .win-ico{background:var(--c-lime);color:#16130F;width:36px;height:36px;border-radius:11px}
+.win.prominent .win-ico{background:radial-gradient(130% 150% at 50% 130%,#1F9740,#4FB648 58%,#8AC049);color:#fff;width:36px;height:36px;border-radius:11px}
 .win.prominent .win-title{font-size:15px}
 .win.prominent .win-tile{min-height:210px}
 .win-badge{font-size:9.5px;font-weight:700;color:#16130F;background:var(--c-lime);padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
@@ -125,22 +135,33 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .win-ov{position:fixed;inset:0;z-index:1000;background:rgba(22,19,15,.42);display:flex;align-items:flex-start;justify-content:center;padding:4vh 18px;overflow-y:auto}
 .win-ov[hidden]{display:none}
 .win-card{background:var(--c-white);border-radius:22px;box-shadow:0 30px 80px rgba(22,19,15,.28);width:100%;max-width:1060px;max-height:91vh;display:flex;flex-direction:column;overflow:hidden}
-.win-head{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--c-slate-100);flex-shrink:0}
-.win-head .win-ico{width:34px;height:34px}
+.win-head{display:flex;align-items:center;gap:13px;padding:16px 22px;border-bottom:1px solid var(--c-slate-100);flex-shrink:0}
+.win .win-head .win-ico{width:38px;height:38px;border-radius:12px;font-size:17px;background:radial-gradient(130% 150% at 50% 130%,#1F9740,#4FB648 58%,#8AC049);color:#fff}
 .win-head-tx{flex:1;min-width:0}
-.win-head .win-title{font-size:15px}
-.win-head .win-sum{display:block;-webkit-line-clamp:unset;margin-top:1px}
+.win-head .win-title{font-family:var(--f-disp);font-size:17px;letter-spacing:-.02em}
+.win-head .win-sum{display:block;-webkit-line-clamp:unset;margin-top:2px;font-size:11.5px}
 .win-head .win-meta{margin-top:0}
 .win-x{width:30px;height:30px;border-radius:50%;border:none;background:var(--c-slate-100);color:var(--c-slate-600);cursor:pointer;font-size:14px;line-height:1;flex-shrink:0}
 .win-x:hover{background:var(--c-slate-200);color:var(--c-navy-900)}
 .win-bd{overflow-y:auto;min-height:0}
-.inner{padding:var(--s4) var(--s5)}
+.inner{padding:var(--s5) var(--s6) var(--s6)}
+/* Fenster-Hero: große Kennzahlen unter dem Fensterkopf (Datum-Muster) */
+.ov-hero{display:flex;gap:34px;flex-wrap:wrap;align-items:flex-end;padding:16px var(--s5) 2px}
+.inner>.ov-hero{padding:2px 0 14px}
+.vs-inner>.ov-hero{padding:0 0 2px}
+.ov-k{display:flex;flex-direction:column;gap:4px}
+.ov-k-v{font-family:var(--f-disp);font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:.85;color:var(--c-navy-900);font-variant-numeric:tabular-nums}
+.ov-k-u{font-size:12px;color:var(--c-slate-500);font-weight:500;font-family:var(--f-sans);letter-spacing:0}
+.ov-k.ok .ov-k-v{color:var(--c-success)}.ov-k.warn .ov-k-v{color:var(--c-warning)}.ov-k.bad .ov-k-v{color:var(--c-danger)}.ov-k.mut .ov-k-v{color:var(--c-slate-500)}
+.ov-k-l{font-size:10.5px;color:var(--c-slate-500);font-weight:500}
 .tasks-tabs{background:var(--c-slate-50);border-bottom:1px solid var(--c-slate-200);display:flex;padding:0 var(--s5);overflow-x:auto}
 .tab-btn{background:none;border:none;padding:11px 13px;font-size:12px;color:var(--c-slate-600);font-weight:600;white-space:nowrap;border-bottom:2px solid transparent;display:flex;align-items:center;gap:7px}
 .tab-btn:hover{color:var(--c-navy-800)}.tab-btn.active{color:var(--c-navy-900);border-bottom-color:var(--c-blue-600)}
 .tab-count{font-family:var(--f-mono);min-width:20px;padding:2px 6px;border-radius:10px;background:var(--c-slate-200);color:var(--c-slate-700);font-size:10px;text-align:center}
 .tab-btn.active .tab-count{background:var(--c-blue-600);color:#fff}
 .tasks-filters{padding:9px var(--s5);border-bottom:1px solid var(--c-slate-200);display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
+#addtaskform{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:11px var(--s5);background:var(--c-blue-50);border-bottom:1px solid var(--c-slate-200)}
+#addtaskform[hidden]{display:none}
 .filter-label{font-family:var(--f-mono);font-size:9.5px;color:var(--c-slate-500);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .fc{background:var(--c-slate-100);border:1px solid var(--c-slate-200);color:var(--c-slate-700);padding:3px 9px;border-radius:11px;font-size:10.5px;font-weight:600;cursor:pointer}
 .fc.active{background:var(--c-navy-900);border-color:var(--c-navy-900);color:#fff}.fc.s1.active{background:var(--c-danger);border-color:var(--c-danger)}.fc.s2.active{background:var(--c-amber);border-color:var(--c-amber)}
@@ -171,7 +192,7 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .task-row.hide{display:none}
 .task-row .tcheck{flex-shrink:0}.task-row .task-prio{flex-shrink:0}
 .tr-main{flex:1;min-width:0}
-.tr-title{font-size:12.5px;font-weight:600;color:var(--c-navy-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr-title{font-size:13px;font-weight:600;color:var(--c-navy-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tr-meta{font-size:10px;color:var(--c-slate-500);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tr-mail{color:var(--c-blue-600);font-size:13px;flex-shrink:0}
 .det-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:var(--s3)}
@@ -225,11 +246,25 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .task-resp{font-size:10.5px;color:var(--c-slate-500);margin-top:var(--s3)}.task-resp strong{color:var(--c-navy-900)}
 .btn-sm{margin-top:var(--s3);padding:6px 14px;background:var(--c-navy-900);color:#fff;border:none;border-radius:18px;font-size:11px;font-weight:600}.btn-sm:hover{background:var(--c-blue-700)}
 .btn-sm.ghost{background:var(--c-white);border:1px solid var(--c-slate-300);color:var(--c-slate-700)}
+/* Kommentar-Abschluss (item_feedback): ✕-Aktion, Inline-Form, zugeklappte Abgeschlossen-Sektion */
+.fb-open{flex-shrink:0;border:1px solid var(--c-slate-200);background:var(--c-white);color:var(--c-slate-500);border-radius:9px;font-size:10px;font-weight:600;padding:2px 8px;cursor:pointer;line-height:1.5;align-self:center}
+.fb-open:hover{border-color:var(--c-danger);color:var(--c-danger)}
+.fb-open.lbl{padding:5px 12px;border-radius:18px;font-size:11px}
+.fb-form{background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:9px 11px;margin:6px 0}
+.fb-form[hidden]{display:none}
+.fb-form textarea{width:100%;resize:vertical;border:1px solid var(--c-slate-300);border-radius:var(--r-sm);padding:6px 9px;font:inherit;font-size:12px;background:#fff}
+.fb-form-a{display:flex;gap:8px;margin-top:7px}
+.fb-done{border-top:1px solid var(--c-slate-200);margin-top:8px}
+.fb-done-sum{list-style:none;cursor:pointer;padding:10px 14px;font-size:11.5px;font-weight:600;color:var(--c-slate-500);display:flex;align-items:center;gap:8px}
+.fb-done-sum::-webkit-details-marker{display:none}.fb-done-sum:hover{color:var(--c-navy-900)}
+.fb-done-row{display:flex;gap:10px;align-items:baseline;padding:6px 14px;border-bottom:1px dashed var(--c-slate-200);font-size:12px}.fb-done-row:last-child{border-bottom:none}
+.fb-done-t{color:var(--c-slate-500);text-decoration:line-through;flex:1;min-width:0}
+.fb-done-k{color:var(--c-navy-800);font-size:11.5px;max-width:46%}
 /* analytic sections */
 .lrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--c-slate-100);font-size:12px}.lrow:last-child{border:none}
 .lrow .ls{font-family:var(--f-mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
 .ls.vollstaendig{background:var(--c-success-bg);color:var(--c-success)}.ls.teilweise{background:var(--c-warning-bg);color:var(--c-warning)}.ls.fehlend{background:var(--c-danger-bg);color:var(--c-danger)}
-.kg-table{width:100%;border-collapse:collapse;font-size:12px}.kg-table td,.kg-table th{padding:6px 8px;border-bottom:1px solid var(--c-slate-100);text-align:left}.kg-table td.n{font-family:var(--f-mono);text-align:right}.kg-table th{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;color:var(--c-slate-500);letter-spacing:.5px}
+.kg-table{width:100%;border-collapse:collapse;font-size:12.5px}.kg-table td,.kg-table th{padding:8px 10px;border-bottom:1px solid var(--c-slate-100);text-align:left}.kg-table td.n{font-family:var(--f-mono);text-align:right}.kg-table th{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;color:var(--c-slate-500);letter-spacing:.5px}
 .kt{margin:14px 0 4px}
 .kt-h{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--c-slate-500);margin-bottom:9px}
 .kt-budget{display:flex;justify-content:space-between;align-items:center;background:var(--c-navy-900);color:#fff;border-radius:var(--r-md);padding:9px 14px;margin-bottom:10px}
@@ -381,7 +416,7 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .sres-foot{display:flex;align-items:center;gap:12px;margin-top:6px;font-size:10px;color:var(--c-slate-500)}
 .sres-folder{color:var(--c-slate-600)}
 .sres-copy{font-size:10px;padding:3px 9px;border:1px solid var(--c-slate-200);background:#fff;border-radius:var(--r-sm);color:var(--c-slate-600);cursor:pointer;flex-shrink:0}.sres-copy:hover{border-color:var(--c-blue-600);color:var(--c-blue-700)}
-.vrow{display:flex;gap:var(--s3);align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--c-slate-100)}.vrow:last-child{border:none}
+.vrow{display:flex;gap:var(--s3);align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--c-slate-100)}.vrow:last-child{border:none}
 .vrow.overdue{padding-left:10px;border-left:3px solid var(--c-danger);margin-left:-10px;background:var(--c-danger-bg)}
 .vtitle{font-size:12.5px;font-weight:600;color:var(--c-navy-900)}.vmeta{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center;font-size:10.5px;color:var(--c-slate-500);margin-top:4px}
 .palette{display:flex;gap:9px;flex-wrap:wrap}.acard{background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:12px 14px;width:172px}
@@ -636,6 +671,8 @@ const short=n=>(n||'').replace(/^\d+\s*-\s*/,'').replace(/^\d+\s+/,''),slug=s=>(
 const stL=s=>({ueberfaellig:'überfällig',vollstaendig:'vollständig',geprueft:'geprüft',geklaert:'geklärt',laeuft:'läuft'}[s])||s||'';
 const fmtD=d=>d?new Date(d).toLocaleDateString('de-DE'):'—';
 const LPH=['Grundlagen','Vorentwurf','Entwurf','Genehmigung','Ausführung','Vergabe-Vorb.','Vergabe','Objekt-ÜW','Gewährl.'];
+// Phasen-Titel fuer das LPH-Katalog-Fenster (deckungsgleich mit LPH_KATALOG_DEF im Runner)
+const LPH_KAT_TITEL={1:'Grundlagenermittlung',2:'Vorplanung',3:'Entwurfsplanung',4:'Genehmigungsplanung',5:'Ausführungsplanung',6:'Vorbereitung der Vergabe',7:'Mitwirkung bei der Vergabe',8:'Objektüberwachung',9:'Objektbetreuung'};
 // ── Glossar & Erklärbarkeit: ein Außenstehender muss erklären können, was abgeht ──
 const GLOSS={
  'LPH':'Leistungsphase nach HOAI (1–9) — Stufe der Planung bzw. Ausführung. „Aktive Phase" = woran gerade gearbeitet wird.',
@@ -690,9 +727,10 @@ const AGENT_VIEWS=[
 function icoPath(n){return({grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',users:'<circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6a3 3 0 010 6M20.5 20c0-2-1-3.7-2.8-4.4"/>',euro:'<circle cx="12" cy="12" r="9"/><path d="M15.5 9a4 4 0 100 6M7.5 11h6M7.5 13.5h5"/>',doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'}[n]||'');}
 function navIco(n){return '<svg viewBox="0 0 24 24">'+icoPath(n)+'</svg>';}
 function navItem(id,label,ic,badge){return '<button class="sb-nav'+(pview===id?' active':'')+'" data-pview="'+id+'"><span class="ni">'+ic+'</span><span class="nt">'+esc(label)+'</span>'+(badge?'<span class="nb">'+badge+'</span>':'')+'</button>';}
-const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
+const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse','lph-katalog':'LPH-Katalog',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
 let view='cockpit',current=null,currentName='',pview='dashboard',lastD={},lastStand=null,started=false,openRun=null,tab='alle',prioFilters=new Set(),openWin=null;
 let selTask=null,taskMap={},peopleMail={},lastChecklist={},openCl=new Set(),lastL1=null;
+let fbClosed={},fbUid=0,lastKat=null,lastKatLph=1;
 let selNachtrag=null,ntPollTimer=null;
 async function renderNachtraege(proj){el('crumb').textContent=short(proj.name||currentName)+' · Nachträge';
   const{data:list}=await sb.from('nachtraege').select('id,titel,status,created_at').eq('project_id',current).order('created_at',{ascending:false});
@@ -809,16 +847,18 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
 
 async function renderProject(){
   const td=today();
-  const[{data:proj},{data:tasks},{data:comms},{count:docCount},{data:recent},{data:folders},{data:costDocs}]=await Promise.all([
-    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist,lph1,lph1_stand,angebote_check,angebote_stand').eq('id',current).single(),
+  const[{data:proj},{data:tasks},{data:comms},{count:docCount},{data:recent},{data:folders},{data:costDocs},{data:fbRows}]=await Promise.all([
+    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist,lph1,lph1_stand,lph_kataloge,angebote_check,angebote_stand').eq('id',current).single(),
     sb.from('tasks').select('id,title,status,prio,kategorie,assignee,due_date,meta').eq('project_id',current).order('prio'),
     sb.from('communications').select('id,typ,betreff,empfaenger,empfaenger_email,status,frist,betrag,meta').eq('project_id',current),
     sb.from('documents').select('id',{count:'exact',head:true}).eq('project_id',current),
     sb.from('documents').select('filename,doctype,modified_at').eq('project_id',current).not('modified_at','is',null).order('modified_at',{ascending:false}).limit(12),
     sb.rpc('folder_stats',{pid:current}),
-    sb.from('documents').select('filename,modified_at').eq('project_id',current).or('filename.ilike.%kosten%,filename.ilike.%din%276%,filename.ilike.%honorar%,filename.ilike.%angebot%,filename.ilike.%nachtrag%').order('modified_at',{ascending:false}).limit(15)]);
+    sb.from('documents').select('filename,modified_at').eq('project_id',current).or('filename.ilike.%kosten%,filename.ilike.%din%276%,filename.ilike.%honorar%,filename.ilike.%angebot%,filename.ilike.%nachtrag%').order('modified_at',{ascending:false}).limit(15),
+    sb.from('item_feedback').select('item_type,item_title,kommentar').eq('project_id',current).order('created_at')]);
   if(!proj){go('cockpit');return;}
   currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;lastChecklist=proj.checklist||{};lastL1=proj.lph1||null;renderSidebar();
+  fbClosed={};(fbRows||[]).forEach(r=>{fbClosed[fbKey(r.item_type,r.item_title)]=r;});
   el('crumb').innerHTML='<a id="toC">Cockpit</a><span class="sep">›</span>'+esc(short(proj.name));
   const T=tasks||[],C=comms||[],D=proj.dashboard||null;
   peopleMail={};((D&&D.beteiligte)||[]).forEach(p=>{if(p&&p.name&&p.email)peopleMail[String(p.name).toLowerCase().trim()]=p.email;});
@@ -835,12 +875,13 @@ async function renderProject(){
   let h='<header class="hdr"><div><div class="hdr-brand">Gutthann HIW · Projekt-Dashboard · Live</div><h1 class="hdr-title">'+esc(short(proj.name))+'</h1>'+
     '<div class="hdr-meta">'+(nr?'<span><strong>Nr.</strong> '+nr+'</span>':'')+'<span><strong>Phase</strong> '+(lph?'LPH '+lph:'—')+'</span><span><strong>Dokumente</strong> '+(docCount||0)+'</span><span><strong>Aufgaben</strong> '+offen+' offen</span></div></div>'+
     '<div class="hdr-status">'+(D?'Analyse-Stand':'Stand')+'<span class="stamp">'+(proj.dashboard_stand?fmtD(proj.dashboard_stand):fmtD(today()))+'</span></div></header>';
+  const kk=D&&D.kosten,kBudget=(kk&&kk.budget!=null&&!isNaN(+kk.budget)&&+kk.budget>0)?+kk.budget:null;
+  let kostenSub=kostenVal?('brutto'+(kk&&kk.stand?' · Stand '+esc(kk.stand):' · Stand lt. Analyse')):'Tiefenanalyse nötig',kostenBar='';
+  if(kostenVal&&kBudget){const dlt=kostenVal-kBudget;kostenSub=(dlt>0?'<span class="up">+':'<span class="okc">−')+Math.abs(Math.round(dlt/1000)).toLocaleString('de-DE')+' T€</span> vs. Budget '+(kBudget/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €';kostenBar='<div class="kpi-bar"><i class="'+(dlt>0?'over':'')+'" style="width:'+Math.min(100,Math.round(kostenVal/kBudget*100))+'%"></i></div>';}
   h+='<div class="kpi-strip">'+kpi('accent','Aktive Phase',lph?gl('LPH')+' '+lph:'—','','HOAI § 34')+
-    kpi('warn','Offene Aufgaben',offen,'',p1+' P1 kritisch')+
-    kpi(kostenVal?'':'','Kosten aktuell',kostenVal?(kostenVal/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}):'—',kostenVal?'Mio €':'',kostenVal?'brutto · Stand lt. Analyse':'Tiefenanalyse nötig')+
-    kpi(cOver?'alert':'','Überfällige Vorgänge',cOver,'','Nachhaken nötig')+
-    kpi('','Offene Aufgaben P1',p1,'','höchste Priorität')+
-    kpi('','Honorare / Verträge',honVal&&honVal.anzahl_vertraege!=null?honVal.anzahl_vertraege:'—','',honVal?(honVal.offene_nachtraege||0)+' offene Nachträge':'Tiefenanalyse nötig')+'</div>';
+    kpi(kostenVal?'':'','Kosten aktuell',kostenVal?(kostenVal/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}):'—',kostenVal?'Mio €':'',kostenSub,kostenBar)+
+    kpi(cOver?'alert':'','Überfällige Vorgänge',cOver,'',cOver?'Nachhaken nötig · '+cOpen+' offen gesamt':(cOpen?cOpen+' offen · nichts überfällig':'nichts offen'))+
+    kpi('','Honorare / Verträge',honVal&&honVal.anzahl_vertraege!=null?honVal.anzahl_vertraege:'—','',honVal?((honVal.offene_nachtraege||0)?'<span class="up">'+honVal.offene_nachtraege+' offene Nachträge</span>':'keine offenen Nachträge'):'Tiefenanalyse nötig')+'</div>';
   h+='<nav class="pilgrim"><div class="pilgrim-label">Leistungsphasen HOAI · klick zum Setzen der aktiven Phase</div><div class="pilgrim-track"><div class="pilgrim-line"></div><div class="pilgrim-line-progress" style="width:'+(lph?((lph-1)/8*89+5.5):0)+'%"></div>';
   for(let i=1;i<=9;i++){const cl=lph&&i<lph?'done':lph&&i===lph?'active':'';h+='<div class="pilgrim-station '+cl+'" data-lph="'+i+'"><div class="pilgrim-dot">'+i+'</div><div class="pilgrim-labelset">'+LPH[i-1]+'</div></div>';}
   h+='</div></nav>';
@@ -850,27 +891,30 @@ async function renderProject(){
    const pr=(vs.phasen_reife&&vs.phasen_reife.pct!=null)?Math.max(0,Math.min(100,Math.round(+vs.phasen_reife.pct))):null;
    const zps=(vs.zwangspunkte||[]).filter(z=>z&&z.puffer_wochen!=null).sort((a,b)=>(+a.puffer_wochen)-(+b.puffer_wochen));
    const wk=(vs.diese_woche||[]).slice(0,3);
-   if(pr!=null||zps.length){let ar='<section class="win" data-sec="vorausschau"><div class="aurarow">';
+   {let ar='<section class="win" data-sec="vorausschau"><div class="aurarow">';
     if(pr!=null){const cl=pr>=66?'green':'amber';const fe=((vs.phasen_reife&&vs.phasen_reife.fehlend)||[]).slice(0,2).map(f=>f&&f.text).filter(Boolean);
-     ar+='<button class="aura '+cl+'" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">'+gl('Phasen-Reife')+'</span>'+dm(pr,6.5,'#fff')+'<span class="aura-s">% reif · LPH '+(lph||'—')+'</span>'+(fe.length?'<div class="aura-foot"><span>fehlt: '+esc(fe.join(' · '))+'</span></div>':'')+'</div></button>';}
-    if(zps.length){const z=zps[0];const pw=Math.max(0,Math.round(+z.puffer_wochen));const cl=pw<=6?'amber':'green';ar+='<button class="aura '+cl+'" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">'+gl('Puffer')+' bis zum nächsten '+gl('Zwangspunkt')+'</span>'+dm(pw,6.5,'#fff')+'<span class="aura-s">'+(pw===1?'Woche':'Wochen')+'</span><div class="aura-foot"><span>'+esc(z.name||'')+'</span>'+(z.frist?'<span>Frist '+fmtFrist(z.frist)+'</span>':'')+'</div></div></button>';}
-    ar+='<button class="aura-side" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-side-h">Diese Woche<span class="cnt">'+wk.length+'</span></div>'+(wk.length?wk.map(a=>'<div class="aura-week'+(a.dringlichkeit==='bald'?' soon':'')+'"><span class="dot"></span><div class="aura-week-t">'+esc(a.titel||'')+'</div>'+(a.frist?'<span class="aura-week-f">'+fmtFrist(a.frist)+'</span>':'')+'</div>').join(''):'<div class="empty" style="padding:14px">Keine fixen Fristen in den nächsten 2 Wochen.</div>')+'</button>';
+     ar+='<button class="aura '+cl+'" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">'+(lph?'LPH '+lph+' · ':'')+gl('Fortschritt',GLOSS['Phasen-Reife'])+'</span><span class="aura-v">'+dm(pr,6.5,'#fff')+'<span class="aura-pct">%</span></span><span class="aura-s">der Grundleistungen abgeschlossen</span>'+(fe.length?'<div class="aura-foot"><span>fehlt: '+esc(fe.join(' · '))+'</span></div>':'')+'</div></button>';}
+    ar+='<button class="aura '+(p1?'amber':'green')+'" data-openwin="aufgaben" title="Fenster öffnen: Aufgaben-Zentrale"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">Offene Aufgaben</span><span class="aura-v">'+dm(offen,6.5,'#fff')+'</span><span class="aura-s">'+p1+' kritisch · P1</span></div></button>';
+    let zfoot='';if(zps.length){const z=zps[0],pw=Math.max(0,Math.round(+z.puffer_wochen));zfoot='<div class="aura-side-foot"><span class="pdot '+(pw<=6?'warn':'ok')+'"></span><span class="asf-t">'+gl('Puffer')+' <strong>'+pw+' Wo</strong> · '+esc(z.name||'')+'</span>'+(z.frist?'<span class="asf-f">'+fmtFrist(z.frist)+'</span>':'')+'</div>';}
+    ar+='<button class="aura-side" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-side-h">Diese Woche<span class="cnt">'+wk.length+'</span></div>'+(wk.length?wk.map(a=>'<div class="aura-week'+(a.dringlichkeit==='bald'?' soon':'')+'"><span class="dot"></span><div class="aura-week-t">'+esc(a.titel||'')+'</div>'+(a.frist?'<span class="aura-week-f">'+fmtFrist(a.frist)+'</span>':'')+'</div>').join(''):'<div class="empty" style="padding:14px">Keine fixen Fristen in den nächsten 2 Wochen.</div>')+zfoot+'</button>';
     ar+='</div><div class="win-ov" hidden><div class="win-card"><header class="win-head"><span class="win-ico">◔</span><div class="win-head-tx"><div class="win-title">Termine & Vorausschau</div><div class="win-sum">Zwangspunkte, '+gl('Phasen-Reife')+', Wochen-Fokus — aus der Analyse</div></div><div class="win-meta"><span class="stat">'+(vs.zwangspunkte||[]).length+' '+gl('Zwangspunkt')+(((vs.zwangspunkte||[]).length)===1?'':'e')+'</span></div><button class="win-x" title="Fenster schließen">✕</button></header><div class="win-bd"><div class="vs-inner">'+renderVorausschau(vs)+'</div></div></div></div></section>';
     h+=ar;}}
   h+='<div class="winboard">';
-  // Grundlagen LPH 1 — in der Planungsphase (LPH 1-4) erreichbar oder wenn schon erfasst: verhindert planloses Planen
-  if((lph||0)<=4 || (proj.lph1&&Object.keys(proj.lph1).length)){
-    const L1=proj.lph1||null;const muss=L1?((L1.fragenkatalog||[]).filter(x=>x&&x.prioritaet==='muss').length):0;
-    const absL=L1?(L1.abschnitte||[]):[];const gekl=absL.filter(a=>a.status==='geklaert').length;
-    const tL1=L1?(tz(null,'Abschnitte geklärt',gekl+'/'+absL.length)+'<span class="win-bar"><i style="width:'+(absL.length?Math.round(gekl/absL.length*100):0)+'%"></i></span>'+tz(muss?'bad':'ok','Muss-Fragen vor Planungsbeginn offen',''+muss)):tz('warn','Noch nicht erfasst — der Agent zieht die Grundlagen aus den Unterlagen','');
-    h+=sec('lph1','prominent daily','◔','Grundlagen LPH 1 · Bauherren-Fragenkatalog',L1?('Stand '+(proj.lph1_stand?fmtD(proj.lph1_stand):'—')):'Grundlagen aus den Unterlagen erfassen',(L1?'<span class="stat'+(muss?' alert':' ok')+'">'+muss+' Muss-Fragen</span>':'<span class="stat warn">offen</span>'),renderLph1(L1),tL1);
-  }
+  // LPH-Katalog der AKTIVEN Phase — Fragenkatalog + Abschnitts-Stand je LPH (LPH 1 = Grundlagen inkl. Raumprogramm, Fallback lph1-Spalte)
+  {const kLph=lph||1;const kat=(proj.lph_kataloge&&proj.lph_kataloge[String(kLph)])||(kLph===1?(proj.lph1||null):null);
+    lastKat=kat;lastKatLph=kLph;
+    const frOff=kat?((kat.fragenkatalog||[]).filter(x=>x&&!fbClosed[fbKey('frage',x.frage)])):[];
+    const muss=frOff.filter(x=>x.prioritaet==='muss').length;
+    const absL=kat?(kat.abschnitte||[]):[];const gekl=absL.filter(a=>a.status==='geklaert').length;
+    const tL1=kat?(tz(null,'Abschnitte geklärt',gekl+'/'+absL.length)+'<span class="win-bar"><i style="width:'+(absL.length?Math.round(gekl/absL.length*100):0)+'%"></i></span>'+tz(muss?'bad':'ok','Muss-Fragen offen',''+muss)):tz('warn','Noch nicht erfasst — der Agent zieht den Katalog aus den Unterlagen','');
+    h+=sec('lph1','prominent daily','◔','LPH '+kLph+' · '+(LPH_KAT_TITEL[kLph]||'')+' · Fragenkatalog',kat?('Stand '+(kat.stand?fmtFrist(kat.stand):(kLph===1&&proj.lph1_stand?fmtD(proj.lph1_stand):'—'))):'Katalog der aktiven Phase aus den Unterlagen erfassen',(kat?'<span class="stat'+(muss?' alert':' ok')+'">'+muss+' Muss-Fragen</span>':'<span class="stat warn">offen</span>'),renderLph1(kat,kLph),tL1);}
   // Vorausschau lebt jetzt in der Ansicht „Termine & Fristen" (Marcel: umziehen statt doppeltem Block auf dem Dashboard).
   // Aufgaben-Zentrale
   const cats={};AL.forEach(t=>{if(t.status!=='erledigt'){const k=t.kategorie||'sonstige';cats[k]=(cats[k]||0)+1;}});
   const tabsRow='<nav class="tasks-tabs">'+tabBtn('alle','Alle',offen)+Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).map(k=>tabBtn(slug(k),k,cats[k])).join('')+'</nav>';
   const filtRow='<div class="tasks-filters"><span class="filter-label">Priorität</span><button class="fc s1" data-p="P1">P1</button><button class="fc s2" data-p="P2">P2</button><button class="fc" data-p="P3">P3</button><span style="flex:1"></span><button class="btn-sm ghost" id="addtaskbtn" style="margin:0;padding:5px 11px">+ Aufgabe</button></div>';
-  const aufgBody=tabsRow+filtRow+addTaskForm()+(AL.length?renderAufgSplit(AL):'<div class="empty" style="padding:24px">Noch keine Aufgaben — lege oben eine an, oder die Analyse zieht sie aus den Protokollen.</div>');
+  const aufgHero=ovHero([ovK(p1?'bad':'ok',p1,'P1 kritisch'),ovK('',offen,'offen gesamt'),ovK('ok',AL.length-offen,'erledigt')]);
+  const aufgBody=aufgHero+tabsRow+filtRow+addTaskForm()+(AL.length?renderAufgSplit(AL):'<div class="empty" style="padding:24px">Noch keine Aufgaben — lege oben eine an, oder die Analyse zieht sie aus den Protokollen.</div>');
   const topT=AL.filter(t=>t.status!=='erledigt').sort((a,b)=>prioN(a.prio)-prioN(b.prio)).slice(0,3);
   const tAufg=(topT.length?topT.map(t=>{const m=t.meta||{};return tz('p'+prioN(t.prio),esc(t.title),m.frist?fmtFrist(m.frist):'');}).join(''):tz('ok','Keine offenen Aufgaben',''))+(offen>3?tz(null,'+ '+(offen-3)+' weitere offen','','tz-more'):'');
   h+=sec('aufgaben','prominent daily','⚡','Aufgaben-Zentrale',offen+' offen · '+p1+' kritisch','<span class="stat'+(p1?' alert':'')+'">'+p1+' P1</span>',aufgBody,tAufg);
@@ -892,18 +936,20 @@ async function renderProject(){
   // LPH-Checkliste (HOAI-Grundleistungen + Vergabe/ZVB) — abhakbar, persistent
   {const cdone=clCounts(lastChecklist);const clPct=cdone.total?Math.round(cdone.done/cdone.total*100):0;
    h+=sec('checkliste','','☑','LPH-Checkliste','HOAI-Grundleistungen + Vergabe/ZVB je Phase','<span class="stat">'+cdone.done+'/'+cdone.total+'</span>','<div class="inner">'+renderChecklist(lph)+'</div>',tz(null,'Abgehakt über alle Phasen',cdone.done+'/'+cdone.total)+'<span class="win-bar"><i style="width:'+clPct+'%"></i></span>');}
-  // Offene Entscheidungen (getrennt von gefassten Beschlüssen)
-  const eo=(D&&D.entscheidungen_offen)||[];
-  if(eo.length)h+=sec('entscheidungen','','◇','Offene Entscheidungen',eo.length+' anstehend · noch nicht getroffen','<span class="stat warn">'+eo.length+'</span>','<div class="inner">'+renderEntscheidungen(eo)+'</div>',eo.slice(0,2).map(e=>tz('warn',esc(e.titel||e.text||''),e.frist?fmtFrist(e.frist):'')).join('')+(eo.length>2?tz(null,'+ '+(eo.length-2)+' weitere','','tz-more'):''));
+  // Offene Entscheidungen (getrennt von gefassten Beschlüssen) — mit Kommentar abgeschlossene zählen nicht mehr als offen
+  const eoAll=(D&&D.entscheidungen_offen)||[];
+  const eo=eoAll.filter(e=>e&&!fbClosed[fbKey('entscheidung',e.thema||e.titel||e.text||'')]);
+  if(eo.length)h+=sec('entscheidungen','','◇','Offene Entscheidungen',eo.length+' anstehend · noch nicht getroffen','<span class="stat warn">'+eo.length+'</span>','<div class="inner">'+renderEntscheidungen(eoAll)+'</div>',eo.slice(0,2).map(e=>tz('warn',esc(e.titel||e.text||''),e.frist?fmtFrist(e.frist):'')).join('')+(eo.length>2?tz(null,'+ '+(eo.length-2)+' weitere','','tz-more'):''));
   // Beschlüsse
   {const bs=(D&&D.beschluesse)||[];
    h+=sec('beschluesse','','§','Wesentliche Beschlüsse',bs.length?'aus Protokollen & Mails':'noch nicht analysiert','','<div class="inner">'+renderBeschluesse(D)+'</div>',bs.length?(bs.slice(0,2).map(b=>tz(null,esc(b.text||''),esc(b.datum||''))).join('')+(bs.length>2?tz(null,'+ '+(bs.length-2)+' weitere','','tz-more'):'')):tz('warn','Noch keine Beschlüsse extrahiert',''));}
   // Aktivität
   h+=sec('aktivitaet','','◷','Aktivität (zuletzt geändert)','neueste Dateien & Mails','<span class="stat">'+(recent||[]).length+'</span>','<div class="inner">'+renderAktivitaet(recent||[])+'</div>',(recent&&recent.length?recent.slice(0,3).map(d=>tz(null,esc(d.filename),fmtD(d.modified_at))).join(''):tz(null,'Keine datierten Dateien','')));
-  // Mängel & Abnahmen (LPH 8 — Baustelle)
-  const mg=(D&&D.maengel)||[];
+  // Mängel & Abnahmen (LPH 8 — Baustelle) — mit Kommentar abgeschlossene zählen nicht mehr als offen
+  const mgAll=(D&&D.maengel)||[];
+  const mg=mgAll.filter(x=>x&&!fbClosed[fbKey('mangel',x.beschreibung||'')]);
   if(mg.length){const mgOpen=mg.filter(x=>x.status!=='behoben'&&x.status!=='abgenommen');const offenM=mgOpen.length;
-   h+=sec('maengel','','⚠',gl('Mängel','Dokumentierte Baumängel und offene Abnahme-Punkte (LPH 8 Objektüberwachung) mit Beseitigungsfrist.')+' & Abnahmen',mg.length+' erfasst','<span class="stat'+(offenM?' alert':' ok')+'">'+offenM+' offen</span>',renderMaengel(mg),(mgOpen.length?mgOpen.slice(0,2).map(m=>tz('bad',esc(m.beschreibung||''),m.frist?fmtFrist(m.frist):'')).join('')+(offenM>2?tz(null,'+ '+(offenM-2)+' weitere offen','','tz-more'):''):tz('ok','Alle Mängel behoben','')));}
+   h+=sec('maengel','','⚠',gl('Mängel','Dokumentierte Baumängel und offene Abnahme-Punkte (LPH 8 Objektüberwachung) mit Beseitigungsfrist.')+' & Abnahmen',mg.length+' erfasst','<span class="stat'+(offenM?' alert':' ok')+'">'+offenM+' offen</span>',renderMaengel(mgAll),(mgOpen.length?mgOpen.slice(0,2).map(m=>tz('bad',esc(m.beschreibung||''),m.frist?fmtFrist(m.frist):'')).join('')+(offenM>2?tz(null,'+ '+(offenM-2)+' weitere offen','','tz-more'):''):tz('ok','Alle Mängel behoben','')));}
   // Beteiligte — aus der belegten Analyse-Liste (D.beteiligte), Bauherr oben, nach Firma gruppiert
   const betArr=(D&&D.beteiligte)||[];const betWarn=(D&&D._qa&&D._qa.beteiligte&&D._qa.beteiligte.length)?D._qa.beteiligte.length:0;
   {const bh=betArr.find(p=>p&&(p.ist_bauherr||/bauherr|auftraggeber/i.test(p.rolle||'')));
@@ -919,9 +965,9 @@ async function renderProject(){
 }
 // Kennzahlen als normale Ziffern; size skaliert die Schrifthöhe (10px je Einheit, entspricht der früheren Rasterhöhe)
 function dm(val,size,color){return '<span class="dm" style="font-family:var(--f-disp);font-size:'+Math.round(size*10)+'px;font-weight:600;line-height:.95;letter-spacing:-.02em;color:'+color+'">'+esc(String(val))+'</span>';}
-function kpi(cl,label,val,unit,sub){const col=cl==='alert'?'var(--c-danger)':cl==='warn'?'var(--c-warning)':'var(--c-navy-900)';
+function kpi(cl,label,val,unit,sub,extra){const col=cl==='alert'?'var(--c-danger)':cl==='warn'?'var(--c-warning)':'var(--c-navy-900)';
   const v=/^[0-9][0-9.,-]*$/.test(String(val))?dm(val,3.1,col):val;
-  return '<div class="kpi '+cl+'"><div class="kpi-value">'+v+(unit?'<span class="kpi-unit">'+unit+'</span>':'')+'</div><div class="kpi-label">'+label+'</div><div class="kpi-sub">'+sub+'</div></div>';}
+  return '<div class="kpi '+cl+'"><div class="kpi-label">'+label+'</div><div class="kpi-value">'+v+(unit?'<span class="kpi-unit">'+unit+'</span>':'')+'</div><div class="kpi-sub">'+sub+'</div>'+(extra||'')+'</div>';}
 // Fenster-Kachel: Kopf (Icon+Titel) + Teaser (Ausschnitt dessen, was drinnen zu erledigen ist) + Status-Pille.
 // Klick öffnet das zugehörige Overlay-Fenster. extra: 'prominent' = groß (span 2), zusätzlich 'daily' = Täglich-Badge.
 function sec(id,extra,icon,title,summary,meta,body,teaser){const badge=extra.indexOf('daily')>=0?'<span class="win-badge">Täglich</span>':'';
@@ -930,6 +976,9 @@ function sec(id,extra,icon,title,summary,meta,body,teaser){const badge=extra.ind
     (teaser?'<span class="win-teaser">'+teaser+'</span>':'')+
     '<span class="win-meta">'+meta+'</span></button>'+
     '<div class="win-ov" hidden><div class="win-card"><header class="win-head"><span class="win-ico">'+icon+'</span><div class="win-head-tx"><div class="win-title">'+title+'</div><div class="win-sum">'+esc(summary)+'</div></div><div class="win-meta">'+meta+'</div><button class="win-x" title="Fenster schließen">✕</button></header><div class="win-bd">'+body+'</div></div></div></section>';}
+// Fenster-Hero: Status-gefärbte Großzahlen oben im Overlay (Datum-Muster). val darf HTML enthalten (Einheit via .ov-k-u).
+function ovK(cl,val,label){return '<div class="ov-k'+(cl?' '+cl:'')+'"><span class="ov-k-v">'+val+'</span><span class="ov-k-l">'+esc(label)+'</span></div>';}
+function ovHero(cells){cells=cells.filter(Boolean);return cells.length?'<div class="ov-hero">'+cells.join('')+'</div>':'';}
 // Eine Teaser-Zeile: optionaler Status-Punkt, Text (ellipsiert), rechts Mono-Wert
 function tz(dot,text,right,cls){return '<span class="tz'+(cls?' '+cls:'')+'">'+(dot?'<span class="pdot '+dot+'"></span>':'')+'<span class="tz-t">'+text+'</span>'+(right!=null&&right!==''?'<span class="tz-r">'+right+'</span>':'')+'</span>';}
 function tabBtn(id,label,cnt){return '<button class="tab-btn'+(tab===id?' active':'')+'" data-tab="'+id+'">'+esc(label)+'<span class="tab-count">'+cnt+'</span></button>';}
@@ -939,7 +988,7 @@ function getAufgaben(D,T){
   return (T||[]).map(t=>({key:'t'+t.id,id:t.id,source:'T',title:t.title,status:t.status,prio:t.prio||'P3',kategorie:t.kategorie||'sonstige',assignee:t.assignee||'',meta:Object.assign({},t.meta||{},t.due_date?{frist:t.due_date}:{})}));
 }
 function addTaskForm(){const inp='font:inherit;font-size:12px;padding:6px 9px;border:1px solid var(--c-slate-300);border-radius:var(--r-md);background:#fff';
-  return '<form id="addtaskform" hidden style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:11px var(--s5);background:var(--c-blue-50);border-bottom:1px solid var(--c-slate-200)">'+
+  return '<form id="addtaskform" hidden>'+
     '<input id="nt-title" placeholder="Neue Aufgabe…" required style="flex:1;min-width:220px;'+inp+'">'+
     '<select id="nt-kat" style="'+inp+'"><option value="intern">intern</option><option value="bauherr">Bauherr</option><option value="behoerde">Behörde</option><option value="nachhaken">Nachhaken</option><option value="technisch">technisch</option></select>'+
     '<select id="nt-prio" style="'+inp+'"><option>P1</option><option selected>P2</option><option>P3</option></select>'+
@@ -951,14 +1000,35 @@ async function createTask(){const title=el('nt-title').value.trim();if(!title)re
   const{error}=await sb.from('tasks').insert({project_id:current,title,prio:el('nt-prio').value,kategorie:el('nt-kat').value,assignee:el('nt-assignee').value.trim()||null,due_date:el('nt-frist').value||null,status:'offen',meta:{source:'manuell'}});
   if(error){alert('Konnte Aufgabe nicht anlegen: '+error.message);return;}
   el('nt-title').value='';el('nt-assignee').value='';el('addtaskform').hidden=true;}
+// ── Kommentar-Abschluss (item_feedback): generierte Einträge mit Begründung schließen — die Korrektur ist für die nächste Analyse verbindlich ──
+function fbKey(type,title){return type+'|'+String(title||'').trim().toLowerCase();}
+function fbUI(type,title,extra,label){const id=++fbUid;
+  return{btn:'<button type="button" class="fb-open'+(label?' lbl':'')+'" data-fbopen="'+id+'" title="Mit Kommentar abschließen — der Punkt wird ausgeblendet und die nächste Analyse legt ihn nicht neu an">✕'+(label?' mit Kommentar abschließen':'')+'</button>',
+  form:'<div class="fb-form" id="fbf-'+id+'" hidden><textarea rows="2" placeholder="Warum erledigt/hinfällig? Der Kommentar fließt als Korrektur in die nächste Analyse ein."></textarea><div class="fb-form-a"><button type="button" class="btn-sm" style="margin:0" data-fbsave="'+id+'" data-fbtype="'+esc(type)+'" data-fbtitle="'+glAttr(title)+'"'+(extra||'')+'>Abschließen</button><button type="button" class="btn-sm ghost" style="margin:0" data-fbcancel="'+id+'">Abbrechen</button></div></div>'};}
+function fbDoneSec(items){if(!items.length)return '';
+  return '<details class="fb-done"><summary class="fb-done-sum">✕ Mit Kommentar abgeschlossen <span class="done-cnt">'+items.length+'</span></summary><div class="fb-done-body">'+items.map(x=>'<div class="fb-done-row"><span class="fb-done-t">'+esc(x.title||'')+'</span><span class="fb-done-k">'+esc(x.kommentar||'—')+'</span></div>').join('')+'</div></details>';}
+async function fbSave(btn){const f=el('fbf-'+btn.dataset.fbsave),ta=f?f.querySelector('textarea'):null,kom=ta?ta.value.trim():'';
+  if(!kom){if(ta)ta.focus();return;}
+  btn.disabled=true;btn.textContent='…';
+  const{error}=await sb.from('item_feedback').insert({project_id:current,item_type:btn.dataset.fbtype,item_title:btn.dataset.fbtitle,feedback:'mit Kommentar abgeschlossen',kommentar:kom});
+  if(error){btn.disabled=false;btn.textContent='Abschließen';alert('Konnte Feedback nicht speichern: '+error.message);return;}
+  if(btn.dataset.fbtask)await sb.from('tasks').update({status:'erledigt',done_at:new Date().toISOString()}).eq('id',btn.dataset.fbtask);
+  if(btn.dataset.fbcomm)await sb.from('communications').update({status:'erledigt'}).eq('id',btn.dataset.fbcomm);
+  if(view==='project')render();}
+document.addEventListener('click',function(e){
+  var o=e.target.closest&&e.target.closest('[data-fbopen]');if(o){e.preventDefault();e.stopPropagation();const f=el('fbf-'+o.dataset.fbopen);if(f){f.hidden=!f.hidden;const ta=f.querySelector('textarea');if(!f.hidden&&ta)ta.focus();}return;}
+  var c=e.target.closest&&e.target.closest('[data-fbcancel]');if(c){e.preventDefault();const f=el('fbf-'+c.dataset.fbcancel);if(f)f.hidden=true;return;}
+  var s=e.target.closest&&e.target.closest('[data-fbsave]');if(s){e.preventDefault();fbSave(s);}});
 function taskCard(t){const done=t.status==='erledigt',pn=prioN(t.prio),m=t.meta||{},mail=m.email_entwurf;
   const chk=t.source==='D'?('data-key="'+t.key+'"'):('data-task="'+t.id+'"');
+  const fb=t.id?fbUI('task',t.title,' data-fbtask="'+t.id+'"',1):null;
   return '<article class="task-card'+(done?' done':'')+'" data-category="'+slug(t.kategorie||'sonstige')+'" data-priority="'+pn+'"><div class="task-head"><input type="checkbox" class="tcheck" '+chk+(done?' checked':'')+'><div><div class="task-title">'+esc(t.title)+'</div><div class="task-meta-row">'+(t.kategorie?'<span class="task-chip">'+esc(t.kategorie)+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+(m.frist?'<span class="mono">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+'</div></div><span class="task-prio p'+pn+'">'+(t.prio||'P3')+'</span>'+chevT()+'</div><div class="task-body">'+
     (m.problem?'<div class="task-section"><h4>Problem</h4><div class="task-context-box">'+esc(m.problem)+'</div></div>':'')+
     (m.zu_tun?'<div class="task-section"><h4>Zu tun</h4><div class="task-context-box" style="background:var(--c-slate-50);border-color:var(--c-slate-200)">'+esc(m.zu_tun)+'</div></div>':'')+
     (mail?'<div class="task-section"><h4>E-Mail-Entwurf</h4><div class="task-context-box">Betreff: '+esc(mail.betreff||'')+'\n\n'+esc(mail.text||'')+'</div><button class="btn-sm" data-mail="'+t.id+'">→ Outlook-Entwurf anlegen</button></div>':'')+
     '<div class="task-resp"><strong>Verantwortlich:</strong> '+esc(t.assignee||'—')+((m.kontakt&&m.kontakt.email)?' · '+esc(m.kontakt.name||'')+' ('+esc(m.kontakt.email)+')':'')+(m.source==='manuell'?' · <span style="color:var(--c-slate-400)">manuell</span>':'')+'</div>'+
-    (m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'" style="margin-top:10px">Löschen</button>':'')+'</div></article>';
+    (m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'" style="margin-top:10px">Löschen</button>':'')+
+    (fb?'<div style="margin-top:10px">'+fb.btn+'</div>'+fb.form:'')+'</div></article>';
 }
 function renderTasks(list){
   const open=list.filter(t=>t.status!=='erledigt').sort((a,b)=>prioN(a.prio)-prioN(b.prio));
@@ -992,15 +1062,18 @@ function renderTaskDetail(t){if(!t)return '<div class="empty" style="padding:34p
   if(m.problem)h+='<div class="det-sec"><h4>Problem</h4><p>'+esc(m.problem)+'</p></div>';
   if(m.zu_tun)h+='<div class="det-sec"><h4>Zu tun</h4><p>'+esc(m.zu_tun)+'</p></div>';
   if(mail&&t.id)h+='<div class="det-sec"><h4>E-Mail-Entwurf'+(mail.an?' · an '+esc(mail.an):'')+'</h4>'+(mail.generated?'<div class="mail-gen">Automatisch aus Problem &amp; nächstem Schritt vorformuliert — vor dem Senden bitte prüfen.</div>':'')+'<div class="mail-box">'+((mail.an||mail.email)?'<div class="mail-line"><span>An:</span> '+esc(mail.an||'')+(mail.email?' &lt;'+esc(mail.email)+'&gt;':' <em class="mail-noaddr">(Adresse prüfen)</em>')+'</div>':'')+'<div class="mail-line"><span>Betreff:</span> '+esc(mail.betreff||'')+'</div><div class="mail-body">'+esc(mail.text||'')+'</div></div><div class="mail-actions"><button class="btn-sm ghost" data-mailcopy="'+t.id+'">Text kopieren</button><button class="btn-sm" data-mail="'+t.id+'">✉ In Outlook öffnen</button></div><div class="mail-hint">Öffnet eine neue Mail in <em>deinem</em> Outlook — der Text oben, deine eigene Signatur fügt Outlook automatisch darunter ein.</div></div>';
-  h+='<div class="det-actions"><button class="btn-sm'+(done?' ghost':'')+'" data-done="'+(t.id||t.key)+'">'+(done?'↺ Wieder öffnen':'✓ Erledigt')+'</button>'+(m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'">Löschen</button>':'')+'</div>';
+  const fb=t.id?fbUI('task',t.title,' data-fbtask="'+t.id+'"',1):null;
+  h+='<div class="det-actions"><button class="btn-sm'+(done?' ghost':'')+'" data-done="'+(t.id||t.key)+'">'+(done?'↺ Wieder öffnen':'✓ Erledigt')+'</button>'+(fb?fb.btn:'')+(m.source==='manuell'?'<button class="btn-sm ghost" data-deltask="'+t.id+'">Löschen</button>':'')+'</div>'+(fb?fb.form:'');
   return h;}
 function renderAufgSplit(list){
+  const zu=list.filter(t=>fbClosed[fbKey('task',t.title)]);list=list.filter(t=>!fbClosed[fbKey('task',t.title)]);
   taskMap={};list.forEach(t=>{taskMap[t.id||t.key]=t;});
   const open=list.filter(t=>t.status!=='erledigt').sort((a,b)=>prioN(a.prio)-prioN(b.prio));
   const done=list.filter(t=>t.status==='erledigt');
   if(!selTask||!taskMap[selTask])selTask=open[0]?(open[0].id||open[0].key):(list[0]?(list[0].id||list[0].key):null);
   let listH=open.length?open.map(taskRow).join(''):'<div class="empty" style="padding:18px">Keine offenen Aufgaben.</div>';
   if(done.length)listH+='<details class="done-sec"><summary class="done-sum"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Erledigt <span class="done-cnt">'+done.length+'</span></summary><div class="done-body">'+done.map(taskRow).join('')+'</div></details>';
+  listH+=fbDoneSec(zu.map(t=>({title:t.title,kommentar:(fbClosed[fbKey('task',t.title)]||{}).kommentar})));
   return '<div class="aufg-split"><div class="aufg-list">'+listH+'</div><div class="aufg-detail" id="aufgdetail">'+renderTaskDetail(taskMap[selTask])+'</div></div>';}
 function wireDetail(){const d=el('aufgdetail');if(!d)return;
   d.querySelectorAll('button[data-mail]').forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.mail,t=taskMap[id];if(!t)return;const m=t.meta||{};const mail=m.email_entwurf||composeMail(t);openMailto(mail);});
@@ -1137,6 +1210,8 @@ function renderVorausschauSection(D){
 function renderVorausschau(vs){
   let h='';
   const zp=vs.zwangspunkte||[],reife=vs.phasen_reife||null,week=vs.diese_woche||[],jf=vs.jour_fixe||null,sst=vs.schnittstellen||[],hot=vs.hotspots||[];
+  const engst=zp.filter(z=>z&&z.puffer_wochen!=null).slice().sort((a,b)=>(+a.puffer_wochen)-(+b.puffer_wochen))[0];
+  h+=ovHero([reife&&reife.pct!=null?ovK('',Math.max(0,Math.min(100,Math.round(+reife.pct)))+'<span class="ov-k-u"> %</span>','Grundleistungen abgeschlossen'):null,ovK(zp.length?'':'mut',zp.length,'Zwangspunkte'),engst?ovK(Math.round(+engst.puffer_wochen)<=6?'warn':'ok',Math.max(0,Math.round(+engst.puffer_wochen))+'<span class="ov-k-u"> Wo</span>','engster Puffer'):null,week.length?ovK('',week.length,'diese Woche'):null]);
   let left='';
   if(zp.length){
     left='<div class="vs-block-c"><div class="vs-h">'+icoClock()+'Termin-Radar · '+gl('Rückwärtsterminierung')+'<span class="vs-tag">'+zp.length+' '+gl('Zwangspunkt')+(zp.length>1?'e':'')+'</span></div>';
@@ -1199,29 +1274,35 @@ function renderHonorar(D){const ho=D&&D.honorare?D.honorare:null;if(!ho)return '
 }
 function renderKosten(D,costDocs){
   if(D&&D.kosten){const k=D.kosten;let h='';
-    if(k.summe_brutto)h+='<div style="font-family:var(--f-mono);font-size:22px;font-weight:600;color:var(--c-navy-900)">'+(k.summe_brutto).toLocaleString('de-DE')+' € <span style="font-size:12px;color:var(--c-slate-500)">brutto · Stand '+esc(k.stand||'?')+'</span></div>';
+    if(k.summe_brutto){const bud=(k.budget!=null&&!isNaN(+k.budget)&&+k.budget>0)?+k.budget:null,ho=D.honorare||null,dlt=bud!=null?k.summe_brutto-bud:null;
+      h+=ovHero([ovK('',(k.summe_brutto/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+'<span class="ov-k-u"> Mio € brutto</span>','Stand '+(k.stand||'?')),dlt!=null?ovK(dlt>0?'bad':'ok',(dlt>0?'+':'−')+Math.abs(Math.round(dlt/1000)).toLocaleString('de-DE')+'<span class="ov-k-u"> T€</span>','vs. Budget '+(bud/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €'):null,ho&&ho.offene_nachtraege?ovK('warn',ho.offene_nachtraege,'offene Nachträge'):null]);}
     h+=renderKostenTrend(k);
-    if(k.kg&&k.kg.length){h+='<table class="kg-table"><tr><th>'+gl('KG','Kostengruppe nach DIN 276 — z. B. KG 300 Bauwerk, KG 400 Technik.')+' (DIN 276)</th><th style="text-align:right">Betrag</th></tr>'+k.kg.map(r=>'<tr><td>KG '+esc(''+r.kg)+'</td><td class="n">'+(Number(r.betrag)||0).toLocaleString('de-DE')+' €</td></tr>').join('')+'</table>';}
+    if(k.kg&&k.kg.length){h+='<div class="kt-h" style="margin-top:14px">Kostengruppen · DIN 276</div><table class="kg-table"><tr><th>'+gl('KG','Kostengruppe nach DIN 276 — z. B. KG 300 Bauwerk, KG 400 Technik.')+' (DIN 276)</th><th style="text-align:right">Betrag</th></tr>'+k.kg.map(r=>'<tr><td>KG '+esc(''+r.kg)+'</td><td class="n">'+(Number(r.betrag)||0).toLocaleString('de-DE')+' €</td></tr>').join('')+'</table>';}
     h+=renderHonorar(D);
     if(k.quelle)h+='<div class="page-sub" style="margin-top:10px">Quelle: '+esc(k.quelle)+'</div>';
     return h||'<div class="empty">Analyse ohne Kostenwerte.</div>';}
   let h='<div class="cta"><p>Kosten (KG 200–700), Verträge und Trend werden von der <strong>Dashboard-Analyse</strong> aus deinen Kosten-Dokumenten ermittelt. Noch nicht gelaufen.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';
   if(costDocs.length)h+='<h4 style="font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;color:var(--c-slate-500);letter-spacing:.6px;margin:16px 0 6px">Gefundene Kosten-Dokumente ('+costDocs.length+')</h4>'+costDocs.map(d=>'<div class="act-row"><span class="af">'+esc(d.filename)+'</span><span class="ad">'+fmtD(d.modified_at)+'</span></div>').join('');
   return h;}
-function renderLph1(L){
-  if(!L)return '<div class="inner"><div class="cta"><p>Ein <strong>erfahrener Architekt</strong> füllt aus deinen Unterlagen den LPH-1-Grundlagenkatalog vor (Aufgabenstellung, Rahmenbedingungen, Bauordnung, Standort, Raumprogramm …), beurteilt das Raumprogramm und leitet die offenen <strong>Bauherren-Fragen</strong> ab — damit niemand zeichnet, bevor die Grundlagen klar sind.</p><button class="btn-sm" data-agent="lph1-grundlagen">Grundlagen jetzt erfassen</button></div></div>';
-  const abs=L.abschnitte||[],fragen=L.fragenkatalog||[],rp=L.raumprogramm||{};
-  let h='<div class="inner">';
-  if(fragen.length){const grp={muss:[],soll:[],kann:[]};fragen.forEach(f=>{(grp[f&&f.prioritaet]||grp.kann).push(f);});
-    const tl={muss:'Muss vor Planungsbeginn geklärt sein',soll:'Sollte geklärt werden',kann:'Optional / später'};
-    h+='<div class="l1-frag"><div class="l1-frag-h"><span>Bauherren-Fragenkatalog · '+fragen.length+' offene Punkte</span><button class="btn-sm ghost" data-fragcopy="1">Katalog kopieren</button></div>';
-    ['muss','soll','kann'].forEach(p=>{if(grp[p].length)h+='<div class="l1-fg '+p+'"><div class="l1-fg-h">'+tl[p]+' ('+grp[p].length+')</div>'+grp[p].map(f=>'<div class="l1-frage"><span class="l1-frage-dot"></span><span class="l1-frage-t">'+esc(f.frage||'')+'</span>'+(f.abschnitt?'<span class="l1-frage-a">'+esc(f.abschnitt)+'</span>':'')+'</div>').join('')+'</div>';});
-    h+='</div>';}
+function renderLph1(L,kLph){kLph=kLph||1;
+  if(!L)return '<div class="inner"><div class="cta">'+(kLph===1
+    ?'<p>Ein <strong>erfahrener Architekt</strong> füllt aus deinen Unterlagen den LPH-1-Grundlagenkatalog vor (Aufgabenstellung, Rahmenbedingungen, Bauordnung, Standort, Raumprogramm …), beurteilt das Raumprogramm und leitet die offenen <strong>Bauherren-Fragen</strong> ab — damit niemand zeichnet, bevor die Grundlagen klar sind.</p><button class="btn-sm" data-agent="lph1-grundlagen">Grundlagen jetzt erfassen</button>'
+    :'<p>Ein <strong>erfahrener Architekt</strong> erfasst aus deinen Unterlagen den Stand der <strong>'+esc(LPH_KAT_TITEL[kLph]||'Phase')+'</strong> (LPH '+kLph+'), bewertet ihn fachlich und leitet aus allen offenen Punkten den <strong>Fragenkatalog</strong> an Bauherrn &amp; Beteiligte ab.</p><button class="btn-sm" data-agent="lph-katalog" data-lph="'+kLph+'">Katalog jetzt erfassen</button>')+'</div></div>';
+  const abs=L.abschnitte||[],rp=L.raumprogramm||{};
+  const frAlle=L.fragenkatalog||[],frZu=frAlle.filter(f=>f&&fbClosed[fbKey('frage',f.frage)]),fragen=frAlle.filter(f=>f&&!fbClosed[fbKey('frage',f.frage)]);
+  const geklN=abs.filter(a=>a.status==='geklaert').length,mussN=fragen.filter(f=>f.prioritaet==='muss').length;
+  let h='<div class="inner">'+ovHero([ovK(mussN?'bad':'ok',mussN,'Muss-Fragen offen'),ovK('',geklN+'/'+abs.length,'Abschnitte geklärt'),ovK(fragen.length?'':'mut',fragen.length,'Fragen gesamt')]);
+  if(fragen.length||frZu.length){const grp={muss:[],soll:[],kann:[]};fragen.forEach(f=>{(grp[f.prioritaet]||grp.kann).push(f);});
+    const tl={muss:kLph===1?'Muss vor Planungsbeginn geklärt sein':'Muss für den Fortgang der Phase geklärt sein',soll:'Sollte geklärt werden',kann:'Optional / später'};
+    h+='<div class="l1-frag"><div class="l1-frag-h"><span>'+(kLph===1?'Bauherren-Fragenkatalog':'Fragenkatalog an Bauherrn & Beteiligte')+' · '+fragen.length+' offene Punkte</span><button class="btn-sm ghost" data-fragcopy="1">Katalog kopieren</button></div>';
+    ['muss','soll','kann'].forEach(p=>{if(grp[p].length)h+='<div class="l1-fg '+p+'"><div class="l1-fg-h">'+tl[p]+' ('+grp[p].length+')</div>'+grp[p].map(f=>{const fb=fbUI('frage',f.frage||'');return '<div class="l1-frage"><span class="l1-frage-dot"></span><span class="l1-frage-t">'+esc(f.frage||'')+'</span>'+(f.abschnitt?'<span class="l1-frage-a">'+esc(f.abschnitt)+'</span>':'')+fb.btn+'</div>'+fb.form;}).join('')+'</div>';});
+    h+=fbDoneSec(frZu.map(f=>({title:f.frage||'',kommentar:(fbClosed[fbKey('frage',f.frage)]||{}).kommentar})))+'</div>';}
   if(rp.manager||((rp.raeume||[]).length)){h+='<div class="l1-rp"><div class="l1-rp-h">Raumprogramm</div>';
     if((rp.raeume||[]).length)h+=renderRaumGrafik(rp);
     if(rp.manager){const m=rp.manager;h+='<div class="l1-rpm">'+(m.gesamtbewertung?'<div class="l1-rpm-ges">'+esc(m.gesamtbewertung)+'</div>':'')+rpmList('Schwächen / Probleme',m.schwaechen,'bad')+rpmList('Tatsächliche Bedarfe',m.bedarfe,'warn')+rpmList('Vorschläge',m.vorschlaege,'ok')+'</div>';}
     h+='</div>';}
-  h+='<div class="l1-kat-h">Grundlagen-Katalog '+(abs.filter(a=>a.status==='geklaert').length)+'/'+abs.length+' geklärt</div>';
+  if(L.manager&&kLph>1){const m=L.manager;h+='<div class="l1-rp"><div class="l1-rp-h">Fachliche Bewertung · Phasen-Stand</div><div class="l1-rpm">'+(m.gesamtbewertung?'<div class="l1-rpm-ges">'+esc(m.gesamtbewertung)+'</div>':'')+rpmList('Schwächen / Probleme',m.schwaechen,'bad')+rpmList('Tatsächliche Bedarfe',m.bedarfe,'warn')+rpmList('Vorschläge',m.vorschlaege,'ok')+'</div></div>';}
+  h+='<div class="l1-kat-h">'+(kLph===1?'Grundlagen-Katalog':'Phasen-Katalog')+' '+geklN+'/'+abs.length+' geklärt</div>';
   abs.forEach(a=>{const fel=a.felder||[];const cls=a.status==='geklaert'?'ok':a.status==='teilweise'?'warn':'bad';const op=a.status!=='geklaert';
     h+='<details class="l1-sec"'+(op?' open':'')+'><summary class="l1-sec-sum"><span class="l1-sec-dot '+cls+'"></span><span class="l1-sec-t">'+esc(a.titel||a.id||'')+'</span><span class="l1-sec-st '+cls+'">'+esc(stL(a.status||''))+'</span></summary><div class="l1-sec-b">'+
       (fel.length?fel.map(f=>{const fc=f.status==='geklaert'?'ok':f.status==='unklar'?'warn':'bad';return '<div class="l1-feld"><span class="l1-feld-dot '+fc+'"></span><span class="l1-feld-l">'+esc(f.label||'')+'</span><span class="l1-feld-w'+(f.wert==null||f.wert===''?' leer':'')+'">'+(f.wert==null||f.wert===''?'— offen —':esc(''+f.wert))+'</span>'+(f.quelle?'<span class="l1-feld-q">'+esc(f.quelle)+'</span>':'')+'</div>';}).join(''):'<div class="empty" style="padding:8px">—</div>')+
@@ -1248,10 +1329,10 @@ function renderRaumGrafik(rp){const raeume=(rp.raeume||[]).filter(r=>r&&r.name&&
     h+='</div></div>';}
   return h+'</div>'+(rp.summe_nf_m2?'<div class="rg-total">Summe Nutzfläche: <strong>'+Math.round(rp.summe_nf_m2).toLocaleString('de-DE')+' m²</strong> · Blöcke flächen­maßstäblich (Einzelraum), Hover zeigt Details</div>':'<div class="rg-total" style="border:none">Blöcke flächenmaßstäblich · Hover zeigt Details</div>');
 }
-function lph1FragenText(){const L=lastL1||{};const f=L.fragenkatalog||[];
-  const lines=['Bauherren-Fragenkatalog · '+short(currentName||'')+' · LPH 1 Grundlagen',''];
+function lph1FragenText(){const L=lastKat||lastL1||{};const f=(L.fragenkatalog||[]).filter(x=>x&&!fbClosed[fbKey('frage',x.frage)]);
+  const lines=['Fragenkatalog · '+short(currentName||'')+' · LPH '+lastKatLph+' '+(LPH_KAT_TITEL[lastKatLph]||''),''];
   const grp={muss:[],soll:[],kann:[]};f.forEach(x=>{(grp[x&&x.prioritaet]||grp.kann).push(x);});
-  const tl={muss:'MUSS vor Planungsbeginn geklärt sein:',soll:'Sollte geklärt werden:',kann:'Optional / später:'};
+  const tl={muss:lastKatLph===1?'MUSS vor Planungsbeginn geklärt sein:':'MUSS für den Fortgang der Phase geklärt sein:',soll:'Sollte geklärt werden:',kann:'Optional / später:'};
   ['muss','soll','kann'].forEach(p=>{if(grp[p].length){lines.push(tl[p]);grp[p].forEach(x=>lines.push('• '+(x.frage||'')));lines.push('');}});
   return lines.join('\n').trim();
 }
@@ -1306,10 +1387,13 @@ function renderLphBew(D){if(D&&D.lph_bewertung&&D.lph_bewertung.length)return D.
 function renderBeschluesse(D){if(D&&D.beschluesse&&D.beschluesse.length)return D.beschluesse.map(b=>'<div class="vrow"><div style="flex:1"><div class="vtitle">'+esc(b.text)+'</div><div class="vmeta"><span class="mono">'+esc(b.datum||'')+'</span>'+(b.quelle?'<span>'+esc(b.quelle)+'</span>':'')+'</div></div></div>').join('');
   return '<div class="cta"><p>Wesentliche Beschlüsse (Varianten, Vergaben, Freigaben) werden aus Protokollen und Mails extrahiert.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';}
 function renderMaengel(mg){const td=today();const order={offen:0,'in-behebung':1,behoben:2,abgenommen:3};
-  const list=mg.slice().sort((a,b)=>((order[a.status]==null?9:order[a.status])-(order[b.status]==null?9:order[b.status]))||((a.frist||'9999')<(b.frist||'9999')?-1:1));
-  return '<div class="inner"><div class="mg-list">'+list.map(m=>{const st=m.status||'offen';const ov=st!=='behoben'&&st!=='abgenommen'&&m.frist&&m.frist<td;const cls=(st==='behoben'||st==='abgenommen')?'ok':st==='in-behebung'?'warn':'bad';
-    return '<div class="mg-row '+cls+(ov?' overdue':'')+'"><div class="mg-main"><div class="mg-desc">'+esc(m.beschreibung||'')+'</div><div class="mg-meta">'+(m.gewerk?'<span class="task-chip">'+esc(m.gewerk)+'</span>':'')+(m.verantwortlich?'<span>'+esc(m.verantwortlich)+'</span>':'')+(m.frist?'<span class="mono'+(ov?' over':'')+'">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+'</div></div><span class="mg-status '+cls+'">'+esc(st)+'</span></div>';}).join('')+'</div></div>';}
-function renderEntscheidungen(eo){const td=today();return eo.map(e=>{const ov=e.bis&&e.bis<td;return '<div class="vrow'+(ov?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(e.thema||'')+'</div>'+(e.kontext?'<div class="ent-ctx">'+esc(e.kontext)+'</div>':'')+'<div class="vmeta">'+(e.wer?'<span class="task-chip">'+esc(e.wer)+'</span>':'')+(e.bis?'<span class="mono'+(ov?'':'')+'">bis '+esc(fmtFrist(e.bis))+'</span>':'<span class="mono" style="color:var(--c-slate-400)">Termin offen</span>')+'</div></div></div>';}).join('');}
+  const zu=mg.filter(m=>m&&fbClosed[fbKey('mangel',m.beschreibung||'')]),rest=mg.filter(m=>m&&!fbClosed[fbKey('mangel',m.beschreibung||'')]);
+  const list=rest.slice().sort((a,b)=>((order[a.status]==null?9:order[a.status])-(order[b.status]==null?9:order[b.status]))||((a.frist||'9999')<(b.frist||'9999')?-1:1));
+  return '<div class="inner"><div class="mg-list">'+list.map(m=>{const st=m.status||'offen';const ov=st!=='behoben'&&st!=='abgenommen'&&m.frist&&m.frist<td;const cls=(st==='behoben'||st==='abgenommen')?'ok':st==='in-behebung'?'warn':'bad';const fb=fbUI('mangel',m.beschreibung||'');
+    return '<div class="mg-row '+cls+(ov?' overdue':'')+'"><div class="mg-main"><div class="mg-desc">'+esc(m.beschreibung||'')+'</div><div class="mg-meta">'+(m.gewerk?'<span class="task-chip">'+esc(m.gewerk)+'</span>':'')+(m.verantwortlich?'<span>'+esc(m.verantwortlich)+'</span>':'')+(m.frist?'<span class="mono'+(ov?' over':'')+'">Frist '+esc(fmtFrist(m.frist))+'</span>':'')+'</div></div><span class="mg-status '+cls+'">'+esc(st)+'</span>'+fb.btn+'</div>'+fb.form;}).join('')+fbDoneSec(zu.map(m=>({title:m.beschreibung||'',kommentar:(fbClosed[fbKey('mangel',m.beschreibung||'')]||{}).kommentar})))+'</div></div>';}
+function renderEntscheidungen(eo){const td=today();const eKey=e=>fbKey('entscheidung',e.thema||e.titel||e.text||'');
+  const zu=eo.filter(e=>e&&fbClosed[eKey(e)]),open=eo.filter(e=>e&&!fbClosed[eKey(e)]);
+  return open.map(e=>{const ov=e.bis&&e.bis<td;const fb=fbUI('entscheidung',e.thema||e.titel||e.text||'');return '<div class="vrow'+(ov?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(e.thema||'')+'</div>'+(e.kontext?'<div class="ent-ctx">'+esc(e.kontext)+'</div>':'')+'<div class="vmeta">'+(e.wer?'<span class="task-chip">'+esc(e.wer)+'</span>':'')+(e.bis?'<span class="mono'+(ov?'':'')+'">bis '+esc(fmtFrist(e.bis))+'</span>':'<span class="mono" style="color:var(--c-slate-400)">Termin offen</span>')+'</div></div>'+fb.btn+'</div>'+fb.form;}).join('')+fbDoneSec(zu.map(e=>({title:e.thema||e.titel||e.text||'',kommentar:(fbClosed[eKey(e)]||{}).kommentar})));}
 function renderAktivitaet(recent){if(!recent.length)return '<div class="empty">Keine datierten Dateien.</div>';return recent.map(d=>'<div class="act-row"><span class="af">'+esc(d.filename)+'</span><span class="ad">'+esc(d.doctype||'')+' · '+fmtD(d.modified_at)+'</span></div>').join('');}
 function renderBeteiligte(D){
   const bet=(D&&Array.isArray(D.beteiligte))?D.beteiligte:[];
@@ -1331,9 +1415,15 @@ function renderBeteiligte(D){
   h+='</div>';return h;
 }
 function renderFolders(F,total){if(!F.length)return '<div class="empty">Keine Ordner.</div>';const max=Math.max(...F.map(f=>+f.anzahl));return F.map(f=>'<div class="fld-row"><div><div>'+esc(f.ordner||'(Wurzel)')+'</div><div class="fld-bar"><i style="width:'+Math.round(+f.anzahl/max*100)+'%"></i></div></div><div class="fc2">'+f.anzahl+'</div></div>').join('');}
-function renderComms(C){if(!C.length)return '<div class="inner"><div class="empty">Keine Vorgänge erfasst.</div></div>';const td=today();const list=C.slice().sort((a,b)=>(a.frist||'9999')<(b.frist||'9999')?-1:1);let h='<div class="inner">';
+function renderComms(C){if(!C.length)return '<div class="inner"><div class="empty">Keine Vorgänge erfasst.</div></div>';const td=today();
+  const zu=C.filter(c=>fbClosed[fbKey('vorgang',c.betreff)]),CC=C.filter(c=>!fbClosed[fbKey('vorgang',c.betreff)]);
+  const list=CC.slice().sort((a,b)=>(a.frist||'9999')<(b.frist||'9999')?-1:1);
+  const off=CC.filter(c=>!['beantwortet','erledigt'].includes(c.status)),ovC=off.filter(c=>c.status==='ueberfaellig'||(c.frist&&c.frist<td)).length;
+  let h=ovHero([ovK(ovC?'bad':'ok',ovC,'überfällig'),ovK('',off.length,'offen · wartet auf Antwort'),ovK('ok',CC.length-off.length,'beantwortet')])+'<div class="inner">';
   for(const c of list){const m=c.meta||{};const od=(c.status==='ueberfaellig')||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status));const st=c.status==='beantwortet'?'<span class="stat ok">beantwortet</span>':od?'<span class="stat alert">überfällig</span>':'<span class="stat warn">'+esc(stL(c.status))+'</span>';
-    h+='<div class="vrow'+(od?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(c.betreff)+'</div><div class="vmeta"><span class="task-chip">'+esc(c.typ)+'</span>'+st+(c.empfaenger?'<span>→ '+esc(c.empfaenger)+'</span>':'')+(m.tage_offen!=null?'<span class="mono">'+m.tage_offen+' T offen</span>':'')+(c.frist?'<span class="mono">Frist '+esc(fmtFrist(c.frist))+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+'</div></div></div>';}
+    const fb=c.id?fbUI('vorgang',c.betreff||'',' data-fbcomm="'+c.id+'"'):null;
+    h+='<div class="vrow'+(od?' overdue':'')+'"><div style="flex:1"><div class="vtitle">'+esc(c.betreff)+'</div><div class="vmeta"><span class="task-chip">'+esc(c.typ)+'</span>'+st+(c.empfaenger?'<span>→ '+esc(c.empfaenger)+'</span>':'')+(m.tage_offen!=null?'<span class="mono">'+m.tage_offen+' T offen</span>':'')+(c.frist?'<span class="mono">Frist '+esc(fmtFrist(c.frist))+'</span>':'')+(m.quelle?'<span>Quelle: '+esc(m.quelle)+'</span>':'')+'</div></div>'+(fb?fb.btn:'')+'</div>'+(fb?fb.form:'');}
+  h+=fbDoneSec(zu.map(c=>({title:c.betreff||'',kommentar:(fbClosed[fbKey('vorgang',c.betreff)]||{}).kommentar})));
   return h+'</div>';}
 function wire(T,C){
   const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
@@ -1343,13 +1433,14 @@ function wire(T,C){
   el('main').querySelectorAll('.cl-ph').forEach(d=>d.addEventListener('toggle',()=>{const l=+d.dataset.cllph;d.open?openCl.add(l):openCl.delete(l);}));
   // Fenster öffnen/schließen — openWin merkt sich das offene Fenster über Realtime-Re-Renders hinweg
   el('main').querySelectorAll('.win-tile,[data-winopen]').forEach(t=>t.onclick=()=>{const s=t.closest('.win'),o=s.querySelector('.win-ov');if(o){openWin=s.dataset.sec;o.hidden=false;document.body.style.overflow='hidden';}});
+  el('main').querySelectorAll('[data-openwin]').forEach(t=>t.onclick=()=>{const s=el('main').querySelector('.win[data-sec="'+t.dataset.openwin+'"]'),o=s&&s.querySelector('.win-ov');if(o){openWin=s.dataset.sec;o.hidden=false;document.body.style.overflow='hidden';}});
   el('main').querySelectorAll('.win-ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o||e.target.closest('.win-x')){openWin=null;o.hidden=true;document.body.style.overflow='';}}));
   if(openWin){const o=el('main').querySelector('.win[data-sec="'+openWin+'"] .win-ov');if(o){o.hidden=false;document.body.style.overflow='hidden';}else{openWin=null;document.body.style.overflow='';}}
   el('main').querySelectorAll('.pilgrim-station').forEach(st=>st.onclick=async()=>{await sb.from('projects').update({lph:+st.dataset.lph}).eq('id',current);render();});
   el('main').querySelectorAll('.task-row').forEach(r=>r.onclick=e=>{if(e.target.classList.contains('tcheck'))return;selTask=r.dataset.trow;el('main').querySelectorAll('.task-row').forEach(x=>x.classList.toggle('sel',x.dataset.trow===selTask));const d=el('aufgdetail');if(d){d.innerHTML=renderTaskDetail(taskMap[selTask]);wireDetail();}});
   el('main').querySelectorAll('.tcheck').forEach(cb=>cb.onchange=()=>toggleTask(cb.dataset.task,cb));
   wireDetail();
-  el('main').querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
+  el('main').querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,b.dataset.lph?{lph:+b.dataset.lph}:{},b));
   el('main').querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;applyTaskFilter();el('main').querySelectorAll('.tab-btn').forEach(x=>x.classList.toggle('active',x===b));});
   el('main').querySelectorAll('.fc').forEach(f=>f.onclick=()=>{const p=f.dataset.p;prioFilters.has(p)?prioFilters.delete(p):prioFilters.add(p);f.classList.toggle('active');applyTaskFilter();});
   const dq=el('docq'),dg=el('docgo');if(dg)dg.onclick=docSearch;if(dq)dq.onkeydown=e=>{if(e.key==='Enter')docSearch();};
