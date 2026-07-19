@@ -748,7 +748,7 @@ const AGENT_VIEWS=[
   {id:'aktivitaet',key:'aktivitaet',ico:'mail',kicker:'Agent · E-Mail-Wissensbasis',title:'Aktivität seit letztem Stand',desc:'Neue Mails & Vorgänge seit dem letzten Dashboard-Stand — chronologisch aus der Mail-Wissensbasis.'},
   {id:'fachplaner',key:'fachplaner',ico:'users',kicker:'Agent · Multi-Persona-Analyse',title:'Fachplaner & Schnittstellen',desc:'Alle beteiligten Fachplaner und Büro-Schnittstellen mit aktuellem Status.'},
   {id:'angebote',key:'angebote',ico:'euro',kicker:'Agent · Vergabe & Honorar',title:'Angebote / Nachträge',desc:'Angebotsvergleich je Vergabeeinheit (aus den Mail-Anhängen), fehlende Angebote, Nachträge und Honorar-Vorgänge.'},
-  {id:'bericht',key:null,ico:'doc',kicker:'Agent · GF-Bericht',title:'Projektbericht',desc:'Projektakte, Lagebericht (letzte 3 Monate) und Zielpfad — der ungeschönte Blick aufs Projekt, nur für intern.'},
+  {id:'bericht',key:null,ico:'doc',kicker:'Agent · Berichtswesen',title:'Projektbericht',desc:'Projektakte, Lagebericht (letzte 3 Monate) und Zielpfad — der ehrliche Blick aufs Projekt, nur für intern.'},
   {id:'doku',key:'dokumentationen',ico:'doc',kicker:'Agent · Dokumenten-Volltext',title:'Dokumentationen',desc:'Die wichtigsten Dokumente je Kategorie — plus Volltextsuche über alle Dateien.'},
   {id:'historie',key:'historie',ico:'clock',kicker:'Agent · Wissensbasis chronologisch',title:'Projekt-Historie',desc:'Zeitstrahl der Meilensteine — chronologisch aus Protokollen und Mails.'},
   {id:'termine',key:null,ico:'cal',kicker:'Agent · Bauzeitenplan & Zwangspunkte',title:'Termine & Fristen',desc:'Zwangspunkte, Fristen und anstehende Termine — knüpft an den Bauzeitplan an.'}];
@@ -764,7 +764,7 @@ let berTyp='lagebericht',berSel=null,berPollTimer=null;
 const BER_TYPEN=[['lagebericht','Lagebericht','letzte 3 Monate'],['projektakte','Projektakte','ganzes Projekt'],['zielpfad','Zielpfad','Ausblick']];
 const BER_DIM={kosten:'Kosten',termine:'Termine',planung:'Planung',bauherr:'Bauherr',team:'Team',dokumentation:'Doku/Risiko'};
 const berCls=s=>s==='danger'||s==='ueberfaellig'?'d':s==='warn'?'w':'o';
-const BER_LBL={offen:'OFFEN',laeuft:'LÄUFT',erledigt:'ERLEDIGT',ueberfaellig:'ÜBERFÄLLIG',problemquelle:'PROBLEMQUELLE',leistungstraeger:'LEISTUNGSTRÄGER',neutral:'NEUTRAL'};
+const BER_LBL={offen:'OFFEN',laeuft:'LÄUFT',erledigt:'ERLEDIGT',ueberfaellig:'ÜBERFÄLLIG',problemquelle:'VERZÖGERT',leistungstraeger:'VERLÄSSLICH',neutral:'NEUTRAL'};
 const berLbl=s=>BER_LBL[s]||String(s||'').toUpperCase();
 const berEur=n=>n!=null?Number(n).toLocaleString('de-DE',{maximumFractionDigits:0})+' €':null;
 async function renderBericht(proj){el('crumb').textContent=short(proj.name||currentName)+' · Projektbericht';
@@ -799,7 +799,7 @@ function berHtml(ber){const j=ber.inhalt||{};let h='';
   if(amp.length)h+='<div class="ber-amp">'+amp.map(a=>'<div class="ber-amp-c '+berCls(a.status)+'"><div class="ber-amp-d">'+esc(BER_DIM[a.dimension]||a.dimension||'')+'</div><div class="ber-amp-s">'+esc(a.satz||'')+'</div></div>').join('')+'</div>';
   if(j.summary&&j.summary.top_punkt)h+='<div class="ber-top">⚠ '+esc(j.summary.top_punkt)+'</div>';
   {const all=j.gf_entscheidungsbedarf||[],zu=all.filter(g=>g&&fbClosed[fbKey('bericht-gf',g.punkt)]),off=all.filter(g=>g&&!fbClosed[fbKey('bericht-gf',g.punkt)]);
-   h+=berCard('Wo der Chef ran muss',berLis(off.map(g=>{const fb=fbUI('bericht-gf',g.punkt||'');return '<strong>'+esc(g.punkt||'')+'</strong> '+fb.btn+'<div class="ber-sub">'+esc(g.warum_nur_gf||'')+(g.vorschlag?' · Vorschlag: '+esc(g.vorschlag):'')+'</div>'+fb.form;}))+fbDoneSec(zu.map(g=>({title:g.punkt,kommentar:(fbClosed[fbKey('bericht-gf',g.punkt)]||{}).kommentar}))),'gf');}
+   h+=berCard('Entscheidungsbedarf',berLis(off.map(g=>{const fb=fbUI('bericht-gf',g.punkt||'');return '<strong>'+esc(g.punkt||'')+'</strong> '+fb.btn+'<div class="ber-sub">'+esc(g.warum_nur_gf||'')+(g.vorschlag?' · Vorschlag: '+esc(g.vorschlag):'')+'</div>'+fb.form;}))+fbDoneSec(zu.map(g=>({title:g.punkt,kommentar:(fbClosed[fbKey('bericht-gf',g.punkt)]||{}).kommentar}))),'gf');}
   const dl=j.delta||{};const dHas=['neu','verschaerft','entschaerft','erledigt'].some(k=>(dl[k]||[]).length);
   if(dHas)h+=berCard('Seit dem letzten Bericht',['neu','verschaerft','entschaerft','erledigt'].map(k=>(dl[k]||[]).map(x=>'<div class="ber-li"><span class="ber-tag '+(k==='verschaerft'?'d':k==='neu'?'w':'o')+'">'+({neu:'NEU',verschaerft:'VERSCHÄRFT',entschaerft:'ENTSCHÄRFT',erledigt:'ERLEDIGT'})[k]+'</span>'+esc(x)+'</div>').join('')).join(''));
   const kh=j.kosten_honorar||{};
@@ -908,14 +908,14 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
   h+='<div class="grid">';
   for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
   h+='</div>';
-  // GF-Lage: neuester Lagebericht je Projekt — Ampeln, Top-Punkt, GF-Entscheidungsbedarf auf einen Blick
+  // Projektlage: neuester Lagebericht je Projekt — Ampeln, Top-Punkt, Entscheidungsbedarf auf einen Blick
   {const latest={};(brs||[]).forEach(b=>{if(!latest[b.project_id])latest[b.project_id]=b;});
    const rows=(ps||[]).map(p=>({p,b:latest[p.id]})).filter(x=>x.b&&x.b.summary);
-   if(rows.length){h+='<h2 class="gfl-h">GF-Lage <span class="gfl-sub">aktuelle Lageberichte · klick öffnet den Bericht</span></h2><div class="gfl">';
+   if(rows.length){h+='<h2 class="gfl-h">Projektlage <span class="gfl-sub">aktuelle Lageberichte · klick öffnet den Bericht</span></h2><div class="gfl">';
     for(const{p,b}of rows){const amp=(b.summary&&b.summary.ampeln)||[],nGf=(b.gf||[]).length;
      h+='<div class="gfl-c" data-ber="'+p.id+'"><div class="gfl-top"><span class="gfl-n">'+esc(short(p.name))+'</span><span class="gfl-dots">'+amp.map(a=>'<i class="gfl-dot '+berCls(a.status)+'" title="'+glAttr((BER_DIM[a.dimension]||a.dimension||'')+': '+(a.satz||''))+'"></i>').join('')+'</span></div>'
       +(b.summary.top_punkt?'<div class="gfl-t">'+esc(b.summary.top_punkt)+'</div>':'')
-      +'<div class="gfl-m">'+(nGf?'<strong>'+nGf+'× Chef-Sache</strong> · ':'')+'Stand '+fmtD(b.created_at)+'</div></div>';}
+      +'<div class="gfl-m">'+(nGf?'<strong>'+nGf+'× Entscheidungsbedarf</strong> · ':'')+'Stand '+fmtD(b.created_at)+'</div></div>';}
     h+='</div>';}}
   el('main').innerHTML=h;
   el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));
