@@ -251,6 +251,18 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .ber-ziel-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .ber-ziel-add input{border:1px solid var(--c-slate-300);border-radius:var(--r-sm);padding:6px 8px;font:inherit;font-size:12px}
 #zt{flex:2;min-width:170px}#zk{flex:2;min-width:150px}
+.gfl-h{font-family:var(--f-disp);font-size:17px;font-weight:600;margin:26px 0 10px;color:var(--c-navy-900)}
+.gfl-sub{font-size:11px;font-weight:400;color:var(--c-slate-500);margin-left:8px}
+.gfl{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.gfl-c{border:1px solid var(--c-slate-200);border-radius:var(--r-md);background:#fff;padding:10px 12px;cursor:pointer;box-shadow:var(--sh)}
+.gfl-c:hover{box-shadow:var(--sh-lift)}
+.gfl-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.gfl-n{font-size:12.5px;font-weight:700;color:var(--c-slate-800);line-height:1.3}
+.gfl-dots{display:flex;gap:3px;flex:none}
+.gfl-dot{width:9px;height:9px;border-radius:50%;background:var(--c-success)}
+.gfl-dot.w{background:var(--c-warning)}.gfl-dot.d{background:var(--c-danger)}
+.gfl-t{font-size:11.5px;color:var(--c-slate-600);line-height:1.45;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gfl-m{font-size:10px;color:var(--c-slate-400);margin-top:6px}.gfl-m strong{color:var(--c-danger)}
 .mail-noaddr{color:var(--c-slate-400);font-style:italic;font-size:11px}
 .mail-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .mail-hint{font-size:10px;color:var(--c-slate-400);margin-top:6px;line-height:1.4}.mail-hint em{font-style:italic;color:var(--c-slate-500)}
@@ -786,7 +798,8 @@ function berHtml(ber){const j=ber.inhalt||{};let h='';
   const amp=(j.summary&&j.summary.ampeln)||[];
   if(amp.length)h+='<div class="ber-amp">'+amp.map(a=>'<div class="ber-amp-c '+berCls(a.status)+'"><div class="ber-amp-d">'+esc(BER_DIM[a.dimension]||a.dimension||'')+'</div><div class="ber-amp-s">'+esc(a.satz||'')+'</div></div>').join('')+'</div>';
   if(j.summary&&j.summary.top_punkt)h+='<div class="ber-top">⚠ '+esc(j.summary.top_punkt)+'</div>';
-  h+=berCard('Wo der Chef ran muss',berLis((j.gf_entscheidungsbedarf||[]).map(g=>'<strong>'+esc(g.punkt||'')+'</strong><div class="ber-sub">'+esc(g.warum_nur_gf||'')+(g.vorschlag?' · Vorschlag: '+esc(g.vorschlag):'')+'</div>')),'gf');
+  {const all=j.gf_entscheidungsbedarf||[],zu=all.filter(g=>g&&fbClosed[fbKey('bericht-gf',g.punkt)]),off=all.filter(g=>g&&!fbClosed[fbKey('bericht-gf',g.punkt)]);
+   h+=berCard('Wo der Chef ran muss',berLis(off.map(g=>{const fb=fbUI('bericht-gf',g.punkt||'');return '<strong>'+esc(g.punkt||'')+'</strong> '+fb.btn+'<div class="ber-sub">'+esc(g.warum_nur_gf||'')+(g.vorschlag?' · Vorschlag: '+esc(g.vorschlag):'')+'</div>'+fb.form;}))+fbDoneSec(zu.map(g=>({title:g.punkt,kommentar:(fbClosed[fbKey('bericht-gf',g.punkt)]||{}).kommentar}))),'gf');}
   const dl=j.delta||{};const dHas=['neu','verschaerft','entschaerft','erledigt'].some(k=>(dl[k]||[]).length);
   if(dHas)h+=berCard('Seit dem letzten Bericht',['neu','verschaerft','entschaerft','erledigt'].map(k=>(dl[k]||[]).map(x=>'<div class="ber-li"><span class="ber-tag '+(k==='verschaerft'?'d':k==='neu'?'w':'o')+'">'+({neu:'NEU',verschaerft:'VERSCHÄRFT',entschaerft:'ENTSCHÄRFT',erledigt:'ERLEDIGT'})[k]+'</span>'+esc(x)+'</div>').join('')).join(''));
   const kh=j.kosten_honorar||{};
@@ -798,8 +811,10 @@ function berHtml(ber){const j=ber.inhalt||{};let h='';
   if(tm.lage||(tm.zwangspunkte||[]).length||(tm.verschiebungen||[]).length)h+=berCard('Termine & Zwangspunkte',(tm.lage?'<div class="ber-li">'+esc(tm.lage)+'</div>':'')
     +berLis((tm.zwangspunkte||[]).map(z=>'<span class="ber-tag '+berCls(z.status)+'">'+(z.puffer_wochen!=null?z.puffer_wochen+' Wo.':'—')+'</span><strong>'+esc(z.name||'')+'</strong> · Frist '+esc(z.frist||'—'))
       .concat((tm.verschiebungen||[]).map(v=>'<span class="ber-tag w">VERSCHOBEN</span>'+esc(v.was||'')+' — '+esc(v.von||'?')+' → '+esc(v.auf||'offen')+' ('+esc(v.wer||'?')+')'+(v.beleg?'<div class="ber-sub">Beleg: '+esc(v.beleg)+'</div>':'')))));
-  h+=berCard('Konfliktherde & Schwachstellen',berLis((j.konfliktherde||[]).map(k=>'<strong>'+esc(k.thema||'')+'</strong>'+(k.seit?' <span class="ber-sub">seit '+esc(k.seit)+'</span>':'')+'<div class="ber-sub">'+esc(k.stand||'')+((k.beteiligte||[]).length?' · Beteiligte: '+esc(k.beteiligte.join(', ')):'')+(k.beleg?' · '+esc(k.beleg):'')+'</div>'+(k.eigenanteil?'<div class="ber-sub"><strong>Unser Anteil:</strong> '+esc(k.eigenanteil)+'</div>':''))));
-  h+=berCard('Beteiligten-Bilanz <span class="ber-sub">(belegbasiert · nur intern)</span>',berLis((j.beteiligten_bilanz||[]).map(b=>'<span class="ber-tag '+(b.einstufung==='problemquelle'?'d':b.einstufung==='leistungstraeger'?'o':'w')+'">'+esc(berLbl(b.einstufung||'neutral'))+'</span><strong>'+esc(b.name||b.firma||'')+'</strong>'+(b.name&&b.firma?' · '+esc(b.firma):'')+(b.rolle?' <span class="ber-sub">('+esc(b.rolle)+')</span>':'')+'<div class="ber-sub">'+esc(b.befund||'')+(b.beleg?' · '+esc(b.beleg):'')+'</div>')));
+  {const all=j.konfliktherde||[],zu=all.filter(k=>k&&fbClosed[fbKey('bericht-konflikt',k.thema)]),off=all.filter(k=>k&&!fbClosed[fbKey('bericht-konflikt',k.thema)]);
+   h+=berCard('Konfliktherde & Schwachstellen',berLis(off.map(k=>{const fb=fbUI('bericht-konflikt',k.thema||'');return '<strong>'+esc(k.thema||'')+'</strong>'+(k.seit?' <span class="ber-sub">seit '+esc(k.seit)+'</span>':'')+' '+fb.btn+'<div class="ber-sub">'+esc(k.stand||'')+((k.beteiligte||[]).length?' · Beteiligte: '+esc(k.beteiligte.join(', ')):'')+(k.beleg?' · '+esc(k.beleg):'')+'</div>'+(k.eigenanteil?'<div class="ber-sub"><strong>Unser Anteil:</strong> '+esc(k.eigenanteil)+'</div>':'')+fb.form;}))+fbDoneSec(zu.map(k=>({title:k.thema,kommentar:(fbClosed[fbKey('bericht-konflikt',k.thema)]||{}).kommentar}))));}
+  {const all=j.beteiligten_bilanz||[],pk=b=>fbKey('bericht-person',b.name||b.firma),zu=all.filter(b=>b&&fbClosed[pk(b)]),off=all.filter(b=>b&&!fbClosed[pk(b)]);
+   h+=berCard('Beteiligten-Bilanz <span class="ber-sub">(belegbasiert · nur intern)</span>',berLis(off.map(b=>{const fb=fbUI('bericht-person',b.name||b.firma||'');return '<span class="ber-tag '+(b.einstufung==='problemquelle'?'d':b.einstufung==='leistungstraeger'?'o':'w')+'">'+esc(berLbl(b.einstufung||'neutral'))+'</span><strong>'+esc(b.name||b.firma||'')+'</strong>'+(b.name&&b.firma?' · '+esc(b.firma):'')+(b.rolle?' <span class="ber-sub">('+esc(b.rolle)+')</span>':'')+' '+fb.btn+'<div class="ber-sub">'+esc(b.befund||'')+(b.beleg?' · '+esc(b.beleg):'')+'</div>'+fb.form;}))+fbDoneSec(zu.map(b=>({title:b.name||b.firma,kommentar:(fbClosed[pk(b)]||{}).kommentar}))));}
   const en=j.entscheidungen||{};
   if((en.getroffen||[]).length||(en.offen||[]).length)h+=berCard('Entscheidungslage',
     berLis((en.offen||[]).map(o=>'<span class="ber-tag w">OFFEN</span><strong>'+esc(o.thema||'')+'</strong> — '+esc(o.wer||'?')+(o.seit?' <span class="ber-sub">seit '+esc(o.seit)+'</span>':'')+(o.blockiert?'<div class="ber-sub">Blockiert: '+esc(o.blockiert)+'</div>':''))
@@ -811,7 +826,7 @@ function berHtml(ber){const j=ber.inhalt||{};let h='';
     +(z.plan_b?'<div class="ber-sub"><strong>Plan B:</strong> '+esc(z.plan_b)+'</div>':'')+'</div>').join(''));
   h+=berCard('Chronologie',berLis((j.chronologie||[]).map(c=>'<span class="mono ber-sub">'+esc(c.datum||'')+'</span> '+(c.wendepunkt?'<span class="ber-tag d">WENDEPUNKT</span>':'')+esc(c.ereignis||''))));
   h+=berCard('Belege — „wir haben es schriftlich"',berLis((j.belege||[]).map(b=>esc(b.aussage||'')+'<div class="ber-sub">📄 '+esc(b.datei||'')+(b.fundstelle?' · '+esc(b.fundstelle):'')+'</div>')));
-  h+='<div class="ber-meta">Erstellt '+fmtD(ber.created_at)+(ber.von?' · Zeitraum '+fmtD(ber.von)+' – '+fmtD(ber.bis):'')+' · nur für den internen Gebrauch</div>';
+  h+='<div class="ber-meta">Erstellt '+fmtD(ber.created_at)+(ber.von?' · Zeitraum '+fmtD(ber.von)+' – '+fmtD(ber.bis):'')+' · nur für den internen Gebrauch'+(ber.html_pfad?'<br>📄 Druckfassung (intern + extern) im Projektordner: <span class="mono">'+esc(ber.html_pfad)+'</span>':'')+'</div>';
   return h;}
 function berZieleCard(proj){const z=Array.isArray(proj.ziele)?proj.ziele:[];
   let h='<details class="ber-ziele"'+(z.length?'':' open')+'><summary>🎯 Projektziele ('+z.length+') — Vorgaben für den Zielpfad</summary><div class="ber-ziele-b">';
@@ -884,15 +899,27 @@ function renderSidebar(){
 }
 
 async function renderCockpit(){el('crumb').textContent='Cockpit';
-  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
+  const[{data:ps},{data:ts},{data:cs},{data:brs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff'),
+    sb.from('berichte').select('project_id,created_at,summary:inhalt->summary,gf:inhalt->gf_entscheidungsbedarf').eq('typ','lagebericht').order('created_at',{ascending:false}).limit(60)]);
   const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,offen:0,p1:0,od:0});
   (ts||[]).forEach(t=>{const b=m[t.project_id];if(b&&t.status!=='erledigt'){b.offen++;if(t.prio==='P1')b.p1++;}});
   const td=today();(cs||[]).forEach(c=>{const b=m[c.project_id];if(b&&(c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))))b.od++;});
   let h='<h1 class="page">Cockpit</h1><div class="page-sub">'+(ps||[]).length+' Projekte · klick für das Projekt-Dashboard</div>';
   h+='<div class="grid">';
   for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
-  el('main').innerHTML=h+'</div>';
-  el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));}
+  h+='</div>';
+  // GF-Lage: neuester Lagebericht je Projekt — Ampeln, Top-Punkt, GF-Entscheidungsbedarf auf einen Blick
+  {const latest={};(brs||[]).forEach(b=>{if(!latest[b.project_id])latest[b.project_id]=b;});
+   const rows=(ps||[]).map(p=>({p,b:latest[p.id]})).filter(x=>x.b&&x.b.summary);
+   if(rows.length){h+='<h2 class="gfl-h">GF-Lage <span class="gfl-sub">aktuelle Lageberichte · klick öffnet den Bericht</span></h2><div class="gfl">';
+    for(const{p,b}of rows){const amp=(b.summary&&b.summary.ampeln)||[],nGf=(b.gf||[]).length;
+     h+='<div class="gfl-c" data-ber="'+p.id+'"><div class="gfl-top"><span class="gfl-n">'+esc(short(p.name))+'</span><span class="gfl-dots">'+amp.map(a=>'<i class="gfl-dot '+berCls(a.status)+'" title="'+glAttr((BER_DIM[a.dimension]||a.dimension||'')+': '+(a.satz||''))+'"></i>').join('')+'</span></div>'
+      +(b.summary.top_punkt?'<div class="gfl-t">'+esc(b.summary.top_punkt)+'</div>':'')
+      +'<div class="gfl-m">'+(nGf?'<strong>'+nGf+'× Chef-Sache</strong> · ':'')+'Stand '+fmtD(b.created_at)+'</div></div>';}
+    h+='</div>';}}
+  el('main').innerHTML=h;
+  el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));
+  el('main').querySelectorAll('.gfl-c').forEach(c=>c.onclick=()=>{view='project';current=c.dataset.ber;pview='bericht';berTyp='lagebericht';berSel=null;render();window.scrollTo(0,0);});}
 
 async function renderProject(){
   const td=today();
