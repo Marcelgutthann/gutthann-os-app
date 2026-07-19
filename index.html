@@ -649,6 +649,23 @@ h1.page{font-family:var(--f-disp);font-size:30px;font-weight:600;letter-spacing:
 .dc-chip.warn{background:var(--c-amber-bg);color:var(--c-warning);border-color:#E6D29A}
 .dc-chip.bad{background:var(--c-danger-bg);color:var(--c-danger);border-color:#E3B7B6}
 .dc-chip.off{background:var(--c-slate-100);color:var(--c-slate-400);border-color:var(--c-slate-200)}
+.tb{background:var(--c-white);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:26px 18px 10px;margin-bottom:var(--s4);box-shadow:var(--sh)}
+.tb-grid{position:relative}
+.tb-row{display:grid;grid-template-columns:60px 1fr;align-items:center;gap:10px;height:27px}
+.tb-lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:700;color:var(--c-slate-600);white-space:nowrap}
+.tb-track{position:relative;height:18px}
+.tb-bar{position:absolute;top:3px;height:12px;border-radius:6px;min-width:7px}
+.tb-bar.ok{background:var(--c-success)}.tb-bar.warn{background:var(--c-warning)}.tb-bar.bad{background:var(--c-danger)}.tb-bar.off{background:var(--c-slate-300)}.tb-bar.done{background:var(--c-slate-400)}
+.tb-bar.est.ok{background:linear-gradient(90deg,rgba(43,160,73,0),var(--c-success) 55%)}.tb-bar.est.warn{background:linear-gradient(90deg,rgba(217,112,30,0),var(--c-warning) 55%)}.tb-bar.est.bad{background:linear-gradient(90deg,rgba(201,58,46,0),var(--c-danger) 55%)}.tb-bar.est.done{background:linear-gradient(90deg,rgba(169,169,163,0),var(--c-slate-400) 55%)}.tb-bar.est.off{background:linear-gradient(90deg,rgba(212,212,207,0),var(--c-slate-300) 55%)}
+.tb-end{position:absolute;top:4px;font-family:var(--f-mono);font-size:9px;color:var(--c-slate-500);white-space:nowrap}
+.tb-today{position:absolute;top:-6px;bottom:0;width:0;border-left:2px dashed var(--c-navy-900);opacity:.55;z-index:2}
+.tb-today-l{position:absolute;top:-19px;transform:translateX(-50%);font-family:var(--f-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--c-navy-900);background:var(--c-lime);padding:1px 6px;border-radius:99px;z-index:3}
+.tb-axis{position:relative;height:18px;margin:4px 0 0 70px;border-top:1px solid var(--c-slate-200)}
+.tb-tick{position:absolute;top:3px;transform:translateX(-50%);font-family:var(--f-mono);font-size:9px;color:var(--c-slate-400)}
+.tb-tick::before{content:'';position:absolute;top:-4px;left:50%;height:4px;border-left:1px solid var(--c-slate-300)}
+.tb-legend{display:flex;gap:14px;margin-top:8px;font-size:10.5px;color:var(--c-slate-500);flex-wrap:wrap}
+.tb-legend span{display:inline-flex;align-items:center;gap:5px}
+.tb-dot{width:10px;height:10px;border-radius:5px;display:inline-block}
 .dc-list{display:flex;flex-direction:column;gap:7px}
 .dc-ph{background:var(--c-white);border:1px solid var(--c-slate-200);border-left:3px solid var(--c-slate-300);border-radius:var(--r-md);box-shadow:var(--sh);overflow:hidden}
 .dc-ph.ok{border-left-color:var(--c-success)}.dc-ph.warn{border-left-color:var(--c-amber)}.dc-ph.bad{border-left-color:var(--c-danger)}.dc-ph.off{opacity:.7}
@@ -1254,6 +1271,43 @@ function renderDokuCheck(dc){
 const TC_LBL={ok:'im Plan',kritisch:'wird kritisch',verzug:'Verzug',unklar:'unklar','im-plan':'Plan deckt sich mit Ist',abweichung:'Plan weicht vom Ist ab',abgeschlossen:'abgeschlossen',laufend:'läuft',geplant:'geplant',eingehalten:'eingehalten',offen:'offen',ueberschritten:'überschritten',rahmen:'Rahmenterminplan',planung:'Planungsterminplan',bauzeit:'Bauzeitenplan',vergabe:'Vergabeterminplan',sonstig:'Zeitplan'};
 const tcL=s=>TC_LBL[s]||s||'';
 const tcCls=p=>p==='ok'?'ok':p==='kritisch'?'warn':p==='verzug'?'bad':'off';
+// Zeitbalken: eine Gantt-Leiste je LPH auf gemeinsamer Zeitachse, Heute-Marker, Farbe = Prognose.
+// soll_start kann fehlen (aeltere Laeufe): dann Kette ueber das Ende der Vorphase, erste Phase als
+// Fade-in-Balken (Klasse 'est' = Beginn unbekannt).
+function renderTerminBalken(ph){
+  const pd=s=>{const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?Date.parse(m[0]):null;};
+  const rows=[];let prevEnd=null;
+  for(const p of ph){
+    const end=pd(p.soll_ende);let start=pd(p.soll_start),est=false;
+    if(!end&&!start)continue;
+    if(!start){start=prevEnd;est=true;}
+    if(end)prevEnd=end;
+    rows.push({p,start,end:end||start,est});
+  }
+  if(rows.length<2)return '';
+  const today=Date.now(),W=864e5*7;
+  let min=today,max=today;
+  for(const r of rows){if(r.start)min=Math.min(min,r.start);if(r.end)max=Math.max(max,r.end);}
+  const span0=Math.max(max-min,W*8);
+  for(const r of rows)if(!r.start){r.start=r.end-span0*.14;r.est=true;}
+  min=Math.min(min,...rows.map(r=>r.start));
+  const pad=(max-min)*.03+W;min-=pad;max+=pad;
+  const span=max-min,x=t=>Math.max(0,Math.min(100,(t-min)/span*100));
+  let h='<div class="tb"><div class="tb-grid">';
+  for(const r of rows){
+    const p=r.p,done=p.status==='abgeschlossen',cls=(done?'done':tcCls(p.prognose))+(r.est?' est':'');
+    const l=x(r.start),w=Math.max(.6,x(r.end)-l);
+    const tip='LPH '+p.lph+' '+(p.titel||'')+(p.soll_start?' · ab '+fmtFrist(p.soll_start):'')+(p.soll_ende?' · fertig bis '+fmtFrist(p.soll_ende):'')+' · '+(done?'abgeschlossen':tcL(p.prognose||'unklar'))+(p.abweichung_wochen?' ('+(p.abweichung_wochen>0?'+':'')+p.abweichung_wochen+' Wo)':'');
+    const endLbl=p.soll_ende?'<span class="tb-end" style="'+(l+w>84?'right:'+(100-l)+'%;padding-right:6px':'left:'+(l+w)+'%;padding-left:6px')+'">'+fmtFrist(p.soll_ende)+'</span>':'';
+    h+='<div class="tb-row"><span class="tb-lbl" title="'+esc(p.titel||'')+'">LPH '+p.lph+'</span><div class="tb-track"><div class="tb-bar '+cls+'" style="left:'+l+'%;width:'+w+'%" title="'+esc(tip)+'"></div>'+endLbl+'</div></div>';
+  }
+  const tx=x(today);
+  h+='<div class="tb-today" style="left:calc(70px + (100% - 70px)*'+(tx/100).toFixed(4)+')"></div><div class="tb-today-l" style="left:calc(70px + (100% - 70px)*'+(tx/100).toFixed(4)+')">heute</div>';
+  h+='</div><div class="tb-axis">';
+  for(let y=new Date(min).getFullYear()+1;y<=new Date(max).getFullYear();y++){const t=Date.parse(y+'-01-01');if(t>min&&t<max)h+='<div class="tb-tick" style="left:'+x(t)+'%">'+y+'</div>';}
+  h+='</div><div class="tb-legend"><span><span class="tb-dot" style="background:var(--c-slate-400)"></span>abgeschlossen</span><span><span class="tb-dot" style="background:var(--c-success)"></span>im Plan</span><span><span class="tb-dot" style="background:var(--c-warning)"></span>wird kritisch</span><span><span class="tb-dot" style="background:var(--c-danger)"></span>Verzug</span><span><span class="tb-dot" style="background:linear-gradient(90deg,rgba(169,169,163,0),var(--c-slate-400))"></span>Beginn geschätzt</span></div></div>';
+  return h;
+}
 function renderTerminCheck(ex){
   const tc=ex.terminCheck;
   if(!tc)return '<div class="cta" style="margin:14px 0"><p>Der <strong>Termin-Agent</strong> liest die Zeitpläne aus dem Termine-Ordner (Rahmen-/Planungs-/Bauzeiten-/Vergabeterminplan), zieht die Fristen aus dem <strong>Vertrag</strong> und gleicht beides mit dem <strong>tatsächlichen Projektstand</strong> ab: Was muss noch erledigt werden, bis die Leistungsphase fertig ist? Wann muss sie fertig sein? Schaffen wir das — oder wird es kritisch? Noch nicht gelaufen.</p><button class="btn-sm" data-agent="termin-check">Zeitpläne abgleichen</button></div>';
@@ -1263,7 +1317,7 @@ function renderTerminCheck(ex){
   if(tc.hinweis)h+='<div class="vf-banner"><span class="vf-tag">Termine</span>'+esc(tc.hinweis)+'</div>';
   h+=ovHero([ovK('',ph.length,'Phasen abgeglichen'),verz?ovK('bad',verz,'in Verzug'):null,ovK(krit?'warn':'ok',krit,'kritisch'),zp.length?ovK('',zp.length,'Zeitpläne gelesen'):null]);
   if(ph.length){
-    h+='<div class="dc-strip">'+ph.map(p=>'<div class="dc-chip '+(p.status==='abgeschlossen'?'ok':tcCls(p.prognose))+'" title="LPH '+p.lph+' · '+esc(p.status==='abgeschlossen'?'abgeschlossen':tcL(p.prognose))+'">'+p.lph+'</div>').join('')+'</div>';
+    h+=renderTerminBalken(ph);
     h+='<div class="dc-list">'+ph.map(p=>{
       const done=p.status==='abgeschlossen',cls=done?'ok':tcCls(p.prognose),rp=p.restpunkte||[];
       const open=!done&&(p.status==='laufend'||p.prognose==='kritisch'||p.prognose==='verzug')?' open':'';
