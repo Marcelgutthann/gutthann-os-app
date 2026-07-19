@@ -263,6 +263,20 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .gfl-dot.w{background:var(--c-warning)}.gfl-dot.d{background:var(--c-danger)}
 .gfl-t{font-size:11.5px;color:var(--c-slate-600);line-height:1.45;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gfl-m{font-size:10px;color:var(--c-slate-400);margin-top:6px}.gfl-m strong{color:var(--c-danger)}
+/* ── Portfolio-Synthese (Cockpit): Firmen-Register, Muster, Kosten-Vergleich ── */
+.pf-ov{font-size:12.5px;color:var(--c-slate-700);line-height:1.55;margin-bottom:6px;max-width:780px}
+.pf-sec{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--c-slate-500);margin:18px 0 8px}
+.pf-c{border:1px solid var(--c-slate-200);border-radius:var(--r-md);background:#fff;padding:10px 12px;box-shadow:var(--sh)}
+.pf-meta{font-size:10.5px;color:var(--c-slate-400);margin-top:6px;line-height:1.4}
+.pf-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c-slate-300);margin-right:6px;vertical-align:1px;flex:none}
+.pf-dot.ok{background:var(--c-success)}.pf-dot.bad{background:var(--c-danger)}
+.pf-tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--c-slate-200);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh)}
+.pf-tbl th{font-family:var(--f-mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--c-slate-500);text-align:left;padding:8px 10px;border-bottom:1px solid var(--c-slate-200);background:var(--c-slate-50)}
+.pf-tbl td{font-size:12px;color:var(--c-slate-700);padding:7px 10px;border-bottom:1px solid var(--c-slate-100)}
+.pf-tbl tr:last-child td{border-bottom:none}
+.pf-tbl td.num{font-family:var(--f-mono);text-align:right;white-space:nowrap}.pf-tbl td.num.bad{color:var(--c-danger);font-weight:600}.pf-tbl td.num.okc{color:var(--c-success)}
+.pf-list{margin:0;padding:0;list-style:none}.pf-list li{font-size:12px;color:var(--c-slate-700);line-height:1.5;padding:4px 0 4px 15px;position:relative}
+.pf-list li:before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--c-slate-300)}
 .mail-noaddr{color:var(--c-slate-400);font-style:italic;font-size:11px}
 .mail-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .mail-hint{font-size:10px;color:var(--c-slate-400);margin-top:6px;line-height:1.4}.mail-hint em{font-style:italic;color:var(--c-slate-500)}
@@ -899,8 +913,9 @@ function renderSidebar(){
 }
 
 async function renderCockpit(){el('crumb').textContent='Cockpit';
-  const[{data:ps},{data:ts},{data:cs},{data:brs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff'),
-    sb.from('berichte').select('project_id,created_at,summary:inhalt->summary,gf:inhalt->gf_entscheidungsbedarf').eq('typ','lagebericht').order('created_at',{ascending:false}).limit(60)]);
+  const[{data:ps},{data:ts},{data:cs},{data:brs},{data:pfs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff'),
+    sb.from('berichte').select('project_id,created_at,summary:inhalt->summary,gf:inhalt->gf_entscheidungsbedarf').eq('typ','lagebericht').order('created_at',{ascending:false}).limit(60),
+    sb.from('portfolio_synthese').select('stand,inhalt').order('stand',{ascending:false}).limit(1)]);
   const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,offen:0,p1:0,od:0});
   (ts||[]).forEach(t=>{const b=m[t.project_id];if(b&&t.status!=='erledigt'){b.offen++;if(t.prio==='P1')b.p1++;}});
   const td=today();(cs||[]).forEach(c=>{const b=m[c.project_id];if(b&&(c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))))b.od++;});
@@ -917,6 +932,32 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
       +(b.summary.top_punkt?'<div class="gfl-t">'+esc(b.summary.top_punkt)+'</div>':'')
       +'<div class="gfl-m">'+(nGf?'<strong>'+nGf+'× Entscheidungsbedarf</strong> · ':'')+'Stand '+fmtD(b.created_at)+'</div></div>';}
     h+='</div>';}}
+  // Portfolio-Synthese: das projektuebergreifende Bild (Firmen-Register, Muster, Kosten-Vergleich)
+  {const pfRow=(pfs||[])[0];
+   if(pfRow&&pfRow.inhalt){const I=pfRow.inhalt;
+    h+='<h2 class="gfl-h">Portfolio <span class="gfl-sub">projektübergreifende Synthese · '+(I.projekte||'?')+' Projekte · Stand '+fmtD(pfRow.stand)+'</span></h2>';
+    if(I.ueberblick)h+='<div class="pf-ov">'+esc(I.ueberblick)+'</div>';
+    const mus=I.muster||[];
+    if(mus.length){h+='<div class="pf-sec">Muster über mehrere Projekte</div><div class="gfl">';
+     for(const m of mus)h+='<div class="pf-c"><div class="gfl-n">'+esc(m.thema||'')+'</div><div class="gfl-t" style="-webkit-line-clamp:4">'+esc(m.befund||'')+'</div>'+(m.empfehlung?'<div class="gfl-t" style="margin-top:4px"><strong>→ '+esc(m.empfehlung)+'</strong></div>':'')+'<div class="pf-meta">'+esc((m.projekte||[]).join(' · '))+'</div></div>';
+     h+='</div>';}
+    const fr=(I.firmen_register||[]).slice().sort((a,b)=>({verzoegert:0,verlaesslich:1}[a.bilanz]??2)-({verzoegert:0,verlaesslich:1}[b.bilanz]??2));
+    if(fr.length){h+='<div class="pf-sec">Firmen-Register · wer arbeitet wo</div><div class="gfl">';
+     for(const f of fr){const cls=f.bilanz==='verzoegert'?'bad':f.bilanz==='verlaesslich'?'ok':'';
+      h+='<div class="pf-c"><div class="gfl-top"><span class="gfl-n"><i class="pf-dot '+cls+'" title="'+esc(f.bilanz||'')+'"></i>'+esc(f.firma||'')+'</span></div>'
+       +'<div class="pf-meta">'+esc((f.rollen||[]).join(', '))+(f.personen&&f.personen.length?' · '+esc(f.personen.join(', ')):'')+'</div>'
+       +(f.befund?'<div class="gfl-t" style="-webkit-line-clamp:3;margin-top:4px">'+esc(f.befund)+'</div>':'')
+       +'<div class="pf-meta">'+(f.projekte||[]).map(x=>esc(x.projekt||'')).join(' · ')+'</div></div>';}
+     h+='</div>';}
+    const kv=(I.kosten_vergleich||[]).filter(x=>x.budget!=null||x.kostenstand!=null);
+    if(kv.length){const eur=v=>v==null?'—':(v/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €';
+     h+='<div class="pf-sec">Kosten-Vergleich</div><table class="pf-tbl"><tr><th>Projekt</th><th>LPH</th><th style="text-align:right">Budget</th><th style="text-align:right">Kostenstand</th><th style="text-align:right">Abweichung</th></tr>';
+     for(const x of kv)h+='<tr><td>'+esc(x.projekt||'')+'</td><td>'+(x.lph||'—')+'</td><td class="num">'+eur(x.budget)+'</td><td class="num">'+eur(x.kostenstand)+'</td><td class="num '+(x.abweichung_pct==null?'':x.abweichung_pct>0?'bad':'okc')+'">'+(x.abweichung_pct==null?'—':(x.abweichung_pct>0?'+':'')+x.abweichung_pct.toLocaleString('de-DE')+' %')+'</td></tr>';
+     h+='</table>';}
+    const ri=I.risiken||[],emp=I.empfehlungen||[];
+    if(ri.length){h+='<div class="pf-sec">Risiken im Portfolio</div><ul class="pf-list">'+ri.map(r=>'<li><strong>'+esc(r.projekt||'')+':</strong> '+esc(r.thema||'')+' — '+esc(r.warum||'')+(r.quelle?' <span class="pf-meta">('+esc(r.quelle)+')</span>':'')+'</li>').join('')+'</ul>';}
+    if(emp.length){h+='<div class="pf-sec">Empfehlungen</div><ul class="pf-list">'+emp.map(e=>'<li>'+esc(e)+'</li>').join('')+'</ul>';}
+   }}
   el('main').innerHTML=h;
   el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));
   el('main').querySelectorAll('.gfl-c').forEach(c=>c.onclick=()=>{view='project';current=c.dataset.ber;pview='bericht';berTyp='lagebericht';berSel=null;render();window.scrollTo(0,0);});}
