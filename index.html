@@ -216,25 +216,41 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .mail-gen{font-size:10.5px;color:var(--c-warning);background:var(--c-amber-bg);border-radius:var(--r-sm);padding:5px 9px;margin-bottom:8px;line-height:1.4}
 .det-warn{font-size:12px;color:var(--c-danger);background:var(--c-danger-bg);border:1px solid var(--c-danger);border-radius:var(--r-sm);padding:8px 11px;margin:8px 0;line-height:1.45}
 .tr-warn{color:var(--c-danger);font-size:13px;margin-left:4px}
-.nt-wrap{display:flex;gap:14px;align-items:flex-start}
-.nt-list{flex:0 0 200px;display:flex;flex-direction:column;gap:4px}
-.nt-li{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:7px 9px;cursor:pointer}
-.nt-li.sel{border-color:var(--c-danger);background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.nt-li-t{font-size:12px;font-weight:600;color:var(--c-slate-800);line-height:1.3}
-.nt-li-s{font-size:10px;color:var(--c-warning)}.nt-li-s.ok{color:var(--c-success)}
-.nt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
-.chat{display:flex;flex-direction:column;gap:8px;max-height:58vh;overflow-y:auto;padding:8px;background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md)}
-.chat-intro{font-size:12px;color:var(--c-slate-500);padding:14px;text-align:center;line-height:1.5}
-.cmsg{display:flex}.cmsg.u{justify-content:flex-end}.cmsg.a{justify-content:flex-start}
-.cb{max-width:84%;padding:8px 11px;border-radius:12px;font-size:13px;line-height:1.5}
-.cmsg.u .cb{background:var(--c-danger);color:#fff;border-bottom-right-radius:3px}
-.cmsg.a .cb{background:#fff;border:1px solid var(--c-slate-200);color:var(--c-slate-800);border-bottom-left-radius:3px}
-.cb.typing{color:var(--c-slate-500);font-style:italic}
-.chat-input{display:flex;gap:8px;align-items:flex-end}
-.chat-input textarea{flex:1;resize:vertical;border:1px solid var(--c-slate-300);border-radius:var(--r-md);padding:8px 10px;font:inherit;font-size:13px}
-.nt-doc{border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:10px;background:#fff}
-.nt-doc summary{font-weight:600;font-size:13px;cursor:pointer}
-.nt-doc-body{margin-top:8px;font-size:12.5px;line-height:1.55;max-height:48vh;overflow-y:auto;border-top:1px solid var(--c-slate-100);padding-top:8px}
+.ber-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ber-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.ber-tab{display:flex;flex-direction:column;align-items:flex-start;gap:1px;background:var(--c-slate-50);border:1px solid var(--c-slate-200);border-radius:var(--r-md);padding:7px 12px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:600;color:var(--c-slate-800)}
+.ber-tab span{font-size:10px;font-weight:400;color:var(--c-slate-500)}
+.ber-tab.sel{border-color:var(--c-navy-900);background:var(--c-navy-900);color:#fff}
+.ber-tab.sel span{color:var(--c-slate-300)}
+.ber-actions{display:flex;gap:8px;align-items:center}
+.ber-actions select{border:1px solid var(--c-slate-300);border-radius:var(--r-sm);padding:6px 8px;font:inherit;font-size:12px;background:#fff}
+.ber-amp{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:12px}
+.ber-amp-c{border:1px solid var(--c-slate-200);border-left:4px solid var(--c-success);border-radius:var(--r-md);background:#fff;padding:8px 10px}
+.ber-amp-c.w{border-left-color:var(--c-warning)}.ber-amp-c.d{border-left-color:var(--c-danger)}
+.ber-amp-d{font-size:10.5px;font-weight:700;letter-spacing:.03em;color:var(--c-slate-800);text-transform:uppercase}
+.ber-amp-s{font-size:11.5px;color:var(--c-slate-600);line-height:1.45;margin-top:2px}
+.ber-top{background:var(--c-navy-900);color:#fff;border-radius:var(--r-md);padding:10px 14px;font-size:13px;font-weight:600;line-height:1.5;margin-bottom:14px}
+.ber-card{border:1px solid var(--c-slate-200);border-radius:var(--r-md);background:#fff;padding:12px 14px;margin-bottom:12px;box-shadow:var(--sh)}
+.ber-card.gf{border-color:var(--c-danger);background:var(--c-danger-bg)}
+.ber-h{font-family:var(--f-disp);font-size:14px;font-weight:600;margin-bottom:6px;color:var(--c-navy-900)}
+.ber-li{font-size:12.5px;line-height:1.55;color:var(--c-slate-800);padding:6px 0}
+.ber-li+.ber-li{border-top:1px solid var(--c-slate-100)}
+.ber-sub{font-size:11px;color:var(--c-slate-500);line-height:1.5}
+.ber-tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.02em;border-radius:999px;padding:2px 8px;margin-right:6px;vertical-align:1px}
+.ber-tag.d{background:var(--c-danger-bg);color:var(--c-danger)}.ber-tag.w{background:var(--c-warning-bg);color:var(--c-warning)}.ber-tag.o{background:var(--c-success-bg);color:var(--c-success)}
+.ber-ziel-blk{padding:6px 0}.ber-ziel-blk+.ber-ziel-blk{border-top:1px solid var(--c-slate-100)}
+.ber-meta{font-size:10.5px;color:var(--c-slate-400);margin:6px 0 20px}
+.ber-ziele{border:1px dashed var(--c-slate-300);border-radius:var(--r-md);padding:10px 12px;background:var(--c-slate-50);margin-bottom:20px}
+.ber-ziele summary{font-size:12.5px;font-weight:600;cursor:pointer}
+.ber-ziele-b{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.ber-ziel{display:flex;gap:8px;align-items:baseline;font-size:12.5px;background:#fff;border:1px solid var(--c-slate-200);border-radius:var(--r-sm);padding:6px 9px}
+.ber-ziel-t{font-weight:600}
+.ber-ziel-k{color:var(--c-slate-500);font-size:11.5px;flex:1}
+.ber-ziel-d{font-size:11px;color:var(--c-slate-600)}
+.ber-ziel-x{margin-left:auto;border:0;background:none;color:var(--c-slate-400);cursor:pointer;font-size:14px;line-height:1}
+.ber-ziel-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.ber-ziel-add input{border:1px solid var(--c-slate-300);border-radius:var(--r-sm);padding:6px 8px;font:inherit;font-size:12px}
+#zt{flex:2;min-width:170px}#zk{flex:2;min-width:150px}
 .mail-noaddr{color:var(--c-slate-400);font-style:italic;font-size:11px}
 .mail-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .mail-hint{font-size:10px;color:var(--c-slate-400);margin-top:6px;line-height:1.4}.mail-hint em{font-style:italic;color:var(--c-slate-500)}
@@ -720,59 +736,92 @@ const AGENT_VIEWS=[
   {id:'aktivitaet',key:'aktivitaet',ico:'mail',kicker:'Agent · E-Mail-Wissensbasis',title:'Aktivität seit letztem Stand',desc:'Neue Mails & Vorgänge seit dem letzten Dashboard-Stand — chronologisch aus der Mail-Wissensbasis.'},
   {id:'fachplaner',key:'fachplaner',ico:'users',kicker:'Agent · Multi-Persona-Analyse',title:'Fachplaner & Schnittstellen',desc:'Alle beteiligten Fachplaner und Büro-Schnittstellen mit aktuellem Status.'},
   {id:'angebote',key:'angebote',ico:'euro',kicker:'Agent · Vergabe & Honorar',title:'Angebote / Nachträge',desc:'Angebotsvergleich je Vergabeeinheit (aus den Mail-Anhängen), fehlende Angebote, Nachträge und Honorar-Vorgänge.'},
-  {id:'nachtraege',key:null,ico:'doc',kicker:'KI-Interview',title:'Nachtrag-Chat',desc:'Per Chat einen Nachtrag erstellen — die KI fragt gezielt nach und lernt das Projekt mit.'},
+  {id:'bericht',key:null,ico:'doc',kicker:'Agent · GF-Bericht',title:'Projektbericht',desc:'Projektakte, Lagebericht (letzte 3 Monate) und Zielpfad — der ungeschönte Blick aufs Projekt, nur für intern.'},
   {id:'doku',key:'dokumentationen',ico:'doc',kicker:'Agent · Dokumenten-Volltext',title:'Dokumentationen',desc:'Die wichtigsten Dokumente je Kategorie — plus Volltextsuche über alle Dateien.'},
   {id:'historie',key:'historie',ico:'clock',kicker:'Agent · Wissensbasis chronologisch',title:'Projekt-Historie',desc:'Zeitstrahl der Meilensteine — chronologisch aus Protokollen und Mails.'},
   {id:'termine',key:null,ico:'cal',kicker:'Agent · Bauzeitenplan & Zwangspunkte',title:'Termine & Fristen',desc:'Zwangspunkte, Fristen und anstehende Termine — knüpft an den Bauzeitplan an.'}];
 function icoPath(n){return({grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',users:'<circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6a3 3 0 010 6M20.5 20c0-2-1-3.7-2.8-4.4"/>',euro:'<circle cx="12" cy="12" r="9"/><path d="M15.5 9a4 4 0 100 6M7.5 11h6M7.5 13.5h5"/>',doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'}[n]||'');}
 function navIco(n){return '<svg viewBox="0 0 24 24">'+icoPath(n)+'</svg>';}
 function navItem(id,label,ic,badge){return '<button class="sb-nav'+(pview===id?' active':'')+'" data-pview="'+id+'"><span class="ni">'+ic+'</span><span class="nt">'+esc(label)+'</span>'+(badge?'<span class="nb">'+badge+'</span>':'')+'</button>';}
-const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse','lph-katalog':'LPH-Katalog',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
+const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhaken:'Nachhaken',ping:'KI-Test','email-draft':'Outlook-Entwurf','dashboard-analyse':'Dashboard-Analyse','lph-katalog':'LPH-Katalog',projektbericht:'Projektbericht',lph2:'LPH 2',lph3:'LPH 3',lph4:'LPH 4',lph5:'LPH 5',lph6:'LPH 6',lph7:'LPH 7',lph8:'LPH 8'};
 let view='cockpit',current=null,currentName='',pview='dashboard',lastD={},lastStand=null,started=false,openRun=null,tab='alle',prioFilters=new Set(),openWin=null;
 let selTask=null,taskMap={},peopleMail={},lastChecklist={},openCl=new Set(),lastL1=null;
 let fbClosed={},fbUid=0,lastKat=null,lastKatLph=1;
-let selNachtrag=null,ntPollTimer=null;
-async function renderNachtraege(proj){el('crumb').textContent=short(proj.name||currentName)+' · Nachträge';
-  const{data:list}=await sb.from('nachtraege').select('id,titel,status,created_at').eq('project_id',current).order('created_at',{ascending:false});
-  if(selNachtrag&&!(list||[]).some(n=>n.id===selNachtrag))selNachtrag=null;
-  if(!selNachtrag&&list&&list.length)selNachtrag=list[0].id;
-  let h='<h1 class="page">Nachtrag-Chat</h1><div class="page-sub">Per Chat einen Nachtrag erstellen — die KI fragt gezielt nach und das Wissen fließt zurück ins Projekt.</div>';
-  h+='<div class="nt-wrap"><div class="nt-list"><button class="btn-sm" id="nt-neu" style="width:100%;margin-bottom:8px">+ Neuer Nachtrag</button>';
-  for(const n of(list||[]))h+='<button class="nt-li'+(n.id===selNachtrag?' sel':'')+'" data-nt="'+n.id+'"><span class="nt-li-t">'+esc(n.titel)+'</span><span class="nt-li-s '+(n.status==='fertig'?'ok':'')+'">'+(n.status==='fertig'?'fertig':'läuft')+'</span></button>';
-  if(!list||!list.length)h+='<div class="empty" style="padding:14px;font-size:12px">Noch keiner.</div>';
-  h+='</div><div class="nt-main" id="nt-main"></div></div>';
-  el('main').innerHTML=h;
-  el('nt-neu').onclick=neuerNachtrag;
-  el('main').querySelectorAll('button[data-nt]').forEach(b=>b.onclick=()=>{selNachtrag=b.dataset.nt;renderNachtraege(proj);});
-  if(selNachtrag)await renderNachtragChat(selNachtrag);else el('nt-main').innerHTML='<div class="empty" style="padding:34px">Klick „+ Neuer Nachtrag" und beschreibe kurz, worum es geht.</div>';}
-async function neuerNachtrag(){const{data,error}=await sb.from('nachtraege').insert({project_id:current,titel:'Neuer Nachtrag'}).select('id').single();
-  if(error){alert('Fehler: '+error.message);return;}selNachtrag=data.id;renderNachtraege({name:currentName});}
-async function renderNachtragChat(nid){const main=el('nt-main');if(!main)return;
-  const[{data:nt},{data:msgs},{data:runs}]=await Promise.all([
-    sb.from('nachtraege').select('*').eq('id',nid).single(),
-    sb.from('nachtrag_messages').select('role,content').eq('nachtrag_id',nid).order('created_at'),
-    sb.from('agent_runs').select('status').eq('agent','nachtrag-chat').contains('meta',{nachtrag_id:nid}).in('status',['queued','running'])]);
+// ---- Projektbericht (ersetzt den Nachtrag-Chat; Konzept: PROJEKTBERICHT-KONZEPT.md) ----
+let berTyp='lagebericht',berSel=null,berPollTimer=null;
+const BER_TYPEN=[['lagebericht','Lagebericht','letzte 3 Monate'],['projektakte','Projektakte','ganzes Projekt'],['zielpfad','Zielpfad','Ausblick']];
+const BER_DIM={kosten:'Kosten',termine:'Termine',planung:'Planung',bauherr:'Bauherr',team:'Team',dokumentation:'Doku/Risiko'};
+const berCls=s=>s==='danger'||s==='ueberfaellig'?'d':s==='warn'?'w':'o';
+const BER_LBL={offen:'OFFEN',laeuft:'LÄUFT',erledigt:'ERLEDIGT',ueberfaellig:'ÜBERFÄLLIG',problemquelle:'PROBLEMQUELLE',leistungstraeger:'LEISTUNGSTRÄGER',neutral:'NEUTRAL'};
+const berLbl=s=>BER_LBL[s]||String(s||'').toUpperCase();
+const berEur=n=>n!=null?Number(n).toLocaleString('de-DE',{maximumFractionDigits:0})+' €':null;
+async function renderBericht(proj){el('crumb').textContent=short(proj.name||currentName)+' · Projektbericht';
+  const[{data:list},{data:runs}]=await Promise.all([
+    sb.from('berichte').select('id,typ,von,bis,created_at').eq('project_id',current).order('created_at',{ascending:false}).limit(60),
+    sb.from('agent_runs').select('id,status,meta').eq('project_id',current).eq('agent','projektbericht').in('status',['queued','running'])]);
   const busy=!!(runs&&runs.length);
-  let h='<div class="chat" id="nt-chat">';
-  if(!msgs||!msgs.length)h+='<div class="chat-intro">Beschreibe kurz, worum es geht — z. B. „Nachtrag wegen Mehraushub Baugrund". Die KI fragt dann gezielt nach.</div>';
-  for(const m of(msgs||[]))h+='<div class="cmsg '+(m.role==='user'?'u':'a')+'"><div class="cb">'+esc(m.content).replace(/\n/g,'<br>')+'</div></div>';
-  if(busy)h+='<div class="cmsg a"><div class="cb typing">KI denkt nach…</div></div>';
-  h+='</div>';
-  h+='<div class="chat-input"><textarea id="nt-inp" rows="2" placeholder="'+(busy?'KI antwortet…':'Nachricht… (Enter sendet, Shift+Enter = Zeile)')+'" '+(busy?'disabled':'')+'></textarea><button class="btn-sm" id="nt-send" '+(busy?'disabled':'')+'>Senden</button></div>';
-  if(nt&&nt.status==='fertig'&&nt.dokument)h+='<details class="nt-doc" open><summary>📄 Erstellter Nachtrag — Entwurf</summary><div class="nt-doc-body">'+esc(nt.dokument).replace(/\n/g,'<br>')+'</div><button class="btn-sm ghost" id="nt-copy" style="margin-top:8px">Text kopieren</button></details>';
-  main.innerHTML=h;
-  const ch=el('nt-chat');if(ch)ch.scrollTop=ch.scrollHeight;
-  const send=()=>sendNachtrag(nid);
-  if(el('nt-send'))el('nt-send').onclick=send;
-  const inp=el('nt-inp');if(inp){inp.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}};if(!busy)inp.focus();}
-  if(el('nt-copy'))el('nt-copy').onclick=()=>{if(navigator.clipboard)navigator.clipboard.writeText(nt.dokument);const b=el('nt-copy');b.textContent='✓ kopiert';setTimeout(()=>b.textContent='Text kopieren',1500);};
-  clearTimeout(ntPollTimer);
-  if(busy)ntPollTimer=setTimeout(()=>{if(view==='project'&&pview==='nachtraege'&&selNachtrag===nid)renderNachtragChat(nid);},3000);}
-async function sendNachtrag(nid){const inp=el('nt-inp');if(!inp)return;const txt=(inp.value||'').trim();if(!txt)return;inp.disabled=true;inp.value='';
-  await sb.from('nachtrag_messages').insert({nachtrag_id:nid,role:'user',content:txt});
-  const{error}=await sb.from('agent_runs').insert({project_id:current,agent:'nachtrag-chat',status:'queued',meta:{nachtrag_id:nid}});
-  if(error&&error.code!=='23505')alert('Konnte nicht senden: '+error.message);
-  renderNachtragChat(nid);}
+  const mine=(list||[]).filter(b=>b.typ===berTyp);
+  if(berSel&&!mine.some(b=>b.id===berSel))berSel=null;
+  if(!berSel&&mine.length)berSel=mine[0].id;
+  let h='<h1 class="page">Projektbericht</h1><div class="page-sub">Der ungeschönte Blick aufs Projekt: Projektakte (ganzes Projekt), Lagebericht (letzte 3 Monate) und Zielpfad (Ausblick). Nur für den internen Gebrauch.</div>';
+  h+='<div class="ber-bar"><div class="ber-tabs">'+BER_TYPEN.map(t=>'<button class="ber-tab'+(t[0]===berTyp?' sel':'')+'" data-btyp="'+t[0]+'">'+t[1]+'<span>'+t[2]+'</span></button>').join('')+'</div>';
+  h+='<div class="ber-actions">';
+  if(mine.length>1)h+='<select id="ber-hist">'+mine.map(b=>'<option value="'+b.id+'"'+(b.id===berSel?' selected':'')+'>Stand '+fmtD(b.created_at)+'</option>').join('')+'</select>';
+  h+='<button class="btn-sm" id="ber-neu" '+(busy?'disabled':'')+'>'+(busy?'⏳ Bericht läuft…':'▶ Neu erzeugen')+'</button></div></div>';
+  h+='<div id="ber-body"></div>';
+  el('main').innerHTML=h;
+  el('main').querySelectorAll('button[data-btyp]').forEach(b=>b.onclick=()=>{berTyp=b.dataset.btyp;berSel=null;renderBericht(proj);});
+  const hs=el('ber-hist');if(hs)hs.onchange=()=>{berSel=hs.value;renderBericht(proj);};
+  el('ber-neu').onclick=async()=>{const{error}=await sb.from('agent_runs').insert({project_id:current,agent:'projektbericht',status:'queued',meta:{typ:berTyp,trigger:'app'}});
+    if(error&&error.code!=='23505'){alert('Konnte nicht starten: '+error.message);return;}renderBericht(proj);};
+  const body=el('ber-body');
+  if(!berSel){body.innerHTML='<div class="empty" style="padding:34px">'+(busy?'Der Bericht wird gerade erstellt — das dauert ein paar Minuten.':'Noch kein '+((BER_TYPEN.find(t=>t[0]===berTyp)||[])[1]||'Bericht')+' vorhanden. Klick „▶ Neu erzeugen".')+'</div>'+berZieleCard(proj);}
+  else{const{data:ber}=await sb.from('berichte').select('*').eq('id',berSel).single();body.innerHTML=(ber?berHtml(ber):'<div class="empty">Bericht nicht ladbar.</div>')+berZieleCard(proj);}
+  wireZiele(proj);
+  clearTimeout(berPollTimer);
+  if(busy)berPollTimer=setTimeout(()=>{if(view==='project'&&pview==='bericht')renderBericht(proj);},5000);}
+function berCard(title,inner,cls){return inner?'<section class="ber-card'+(cls?' '+cls:'')+'"><div class="ber-h">'+title+'</div>'+inner+'</section>':'';}
+const berLis=a=>(a&&a.length)?a.map(x=>'<div class="ber-li">'+x+'</div>').join(''):'';
+function berHtml(ber){const j=ber.inhalt||{};let h='';
+  const amp=(j.summary&&j.summary.ampeln)||[];
+  if(amp.length)h+='<div class="ber-amp">'+amp.map(a=>'<div class="ber-amp-c '+berCls(a.status)+'"><div class="ber-amp-d">'+esc(BER_DIM[a.dimension]||a.dimension||'')+'</div><div class="ber-amp-s">'+esc(a.satz||'')+'</div></div>').join('')+'</div>';
+  if(j.summary&&j.summary.top_punkt)h+='<div class="ber-top">⚠ '+esc(j.summary.top_punkt)+'</div>';
+  h+=berCard('Wo der Chef ran muss',berLis((j.gf_entscheidungsbedarf||[]).map(g=>'<strong>'+esc(g.punkt||'')+'</strong><div class="ber-sub">'+esc(g.warum_nur_gf||'')+(g.vorschlag?' · Vorschlag: '+esc(g.vorschlag):'')+'</div>')),'gf');
+  const dl=j.delta||{};const dHas=['neu','verschaerft','entschaerft','erledigt'].some(k=>(dl[k]||[]).length);
+  if(dHas)h+=berCard('Seit dem letzten Bericht',['neu','verschaerft','entschaerft','erledigt'].map(k=>(dl[k]||[]).map(x=>'<div class="ber-li"><span class="ber-tag '+(k==='verschaerft'?'d':k==='neu'?'w':'o')+'">'+({neu:'NEU',verschaerft:'VERSCHÄRFT',entschaerft:'ENTSCHÄRFT',erledigt:'ERLEDIGT'})[k]+'</span>'+esc(x)+'</div>').join('')).join(''));
+  const kh=j.kosten_honorar||{};
+  if(kh.lage||kh.kostenstand!=null)h+=berCard('Kosten & Honorar',(kh.lage?'<div class="ber-li">'+esc(kh.lage)+'</div>':'')
+    +berLis([kh.kostenstand!=null?'Kostenstand: <strong>'+berEur(kh.kostenstand)+'</strong>'+(kh.budget!=null?' · Budget '+berEur(kh.budget):''):null,
+      kh.abweichung_hinweis?esc(kh.abweichung_hinweis):null,kh.nachtraege?'Nachträge: '+esc(kh.nachtraege):null,
+      kh.honorar_hinweis?'<strong>Honorar:</strong> '+esc(kh.honorar_hinweis):null].filter(Boolean)));
+  const tm=j.termine||{};
+  if(tm.lage||(tm.zwangspunkte||[]).length||(tm.verschiebungen||[]).length)h+=berCard('Termine & Zwangspunkte',(tm.lage?'<div class="ber-li">'+esc(tm.lage)+'</div>':'')
+    +berLis((tm.zwangspunkte||[]).map(z=>'<span class="ber-tag '+berCls(z.status)+'">'+(z.puffer_wochen!=null?z.puffer_wochen+' Wo.':'—')+'</span><strong>'+esc(z.name||'')+'</strong> · Frist '+esc(z.frist||'—'))
+      .concat((tm.verschiebungen||[]).map(v=>'<span class="ber-tag w">VERSCHOBEN</span>'+esc(v.was||'')+' — '+esc(v.von||'?')+' → '+esc(v.auf||'offen')+' ('+esc(v.wer||'?')+')'+(v.beleg?'<div class="ber-sub">Beleg: '+esc(v.beleg)+'</div>':'')))));
+  h+=berCard('Konfliktherde & Schwachstellen',berLis((j.konfliktherde||[]).map(k=>'<strong>'+esc(k.thema||'')+'</strong>'+(k.seit?' <span class="ber-sub">seit '+esc(k.seit)+'</span>':'')+'<div class="ber-sub">'+esc(k.stand||'')+((k.beteiligte||[]).length?' · Beteiligte: '+esc(k.beteiligte.join(', ')):'')+(k.beleg?' · '+esc(k.beleg):'')+'</div>'+(k.eigenanteil?'<div class="ber-sub"><strong>Unser Anteil:</strong> '+esc(k.eigenanteil)+'</div>':''))));
+  h+=berCard('Beteiligten-Bilanz <span class="ber-sub">(belegbasiert · nur intern)</span>',berLis((j.beteiligten_bilanz||[]).map(b=>'<span class="ber-tag '+(b.einstufung==='problemquelle'?'d':b.einstufung==='leistungstraeger'?'o':'w')+'">'+esc(berLbl(b.einstufung||'neutral'))+'</span><strong>'+esc(b.name||b.firma||'')+'</strong>'+(b.name&&b.firma?' · '+esc(b.firma):'')+(b.rolle?' <span class="ber-sub">('+esc(b.rolle)+')</span>':'')+'<div class="ber-sub">'+esc(b.befund||'')+(b.beleg?' · '+esc(b.beleg):'')+'</div>')));
+  const en=j.entscheidungen||{};
+  if((en.getroffen||[]).length||(en.offen||[]).length)h+=berCard('Entscheidungslage',
+    berLis((en.offen||[]).map(o=>'<span class="ber-tag w">OFFEN</span><strong>'+esc(o.thema||'')+'</strong> — '+esc(o.wer||'?')+(o.seit?' <span class="ber-sub">seit '+esc(o.seit)+'</span>':'')+(o.blockiert?'<div class="ber-sub">Blockiert: '+esc(o.blockiert)+'</div>':''))
+      .concat((en.getroffen||[]).map(g=>'<span class="ber-tag o">BESCHLUSS</span>'+esc(g.datum||'')+' — '+esc(g.text||'')+(g.quelle?'<div class="ber-sub">'+esc(g.quelle)+'</div>':'')))));
+  h+=berCard('Was gut läuft',berLis((j.gut_gelaufen||[]).map(esc)));
+  h+=berCard('Zielpfad — was laufen muss',(j.zielpfad||[]).map(z=>'<div class="ber-ziel-blk"><div class="ber-li"><strong>'+esc(z.ziel||'')+'</strong>'+(z.termin?' <span class="mono ber-sub">bis '+esc(z.termin)+'</span>':'')+'</div>'
+    +berLis((z.voraussetzungen||[]).map(v=>'<span class="ber-tag '+(v.status==='ueberfaellig'?'d':v.status==='erledigt'?'o':'w')+'">'+esc(berLbl(v.status||'offen'))+'</span>'+esc(v.was||'')+' — '+esc(v.wer||'?')+(v.bis?' bis '+esc(v.bis):'')))
+    +(z.risiko?'<div class="ber-sub" style="margin-top:4px"><strong>Risiko:</strong> '+esc(z.risiko)+'</div>':'')
+    +(z.plan_b?'<div class="ber-sub"><strong>Plan B:</strong> '+esc(z.plan_b)+'</div>':'')+'</div>').join(''));
+  h+=berCard('Chronologie',berLis((j.chronologie||[]).map(c=>'<span class="mono ber-sub">'+esc(c.datum||'')+'</span> '+(c.wendepunkt?'<span class="ber-tag d">WENDEPUNKT</span>':'')+esc(c.ereignis||''))));
+  h+=berCard('Belege — „wir haben es schriftlich"',berLis((j.belege||[]).map(b=>esc(b.aussage||'')+'<div class="ber-sub">📄 '+esc(b.datei||'')+(b.fundstelle?' · '+esc(b.fundstelle):'')+'</div>')));
+  h+='<div class="ber-meta">Erstellt '+fmtD(ber.created_at)+(ber.von?' · Zeitraum '+fmtD(ber.von)+' – '+fmtD(ber.bis):'')+' · nur für den internen Gebrauch</div>';
+  return h;}
+function berZieleCard(proj){const z=Array.isArray(proj.ziele)?proj.ziele:[];
+  let h='<details class="ber-ziele"'+(z.length?'':' open')+'><summary>🎯 Projektziele ('+z.length+') — Vorgaben für den Zielpfad</summary><div class="ber-ziele-b">';
+  h+=z.map((g,i)=>'<div class="ber-ziel"><span class="ber-ziel-t">'+esc(g.titel||'')+'</span>'+(g.termin?'<span class="mono ber-ziel-d">'+esc(g.termin)+'</span>':'')+(g.kontext?'<span class="ber-ziel-k">'+esc(g.kontext)+'</span>':'')+'<button class="ber-ziel-x" data-zdel="'+i+'" title="Ziel löschen">×</button></div>').join('');
+  h+='<div class="ber-ziel-add"><input id="zt" placeholder="Ziel (z.B. Bauantrag eingereicht)"><input id="zd" type="date" title="Termin"><input id="zk" placeholder="Kontext (optional)"><button class="btn-sm" id="zadd">+ Ziel</button></div>';
+  h+='</div></details>';return h;}
+async function saveZiele(proj,z){proj.ziele=z;const{error}=await sb.from('projects').update({ziele:z}).eq('id',current);if(error)alert('Ziele nicht gespeichert: '+error.message);renderBericht(proj);}
+function wireZiele(proj){const z=Array.isArray(proj.ziele)?proj.ziele:[];
+  el('main').querySelectorAll('button[data-zdel]').forEach(b=>b.onclick=()=>{const c=[...z];c.splice(Number(b.dataset.zdel),1);saveZiele(proj,c);});
+  const add=el('zadd');if(add)add.onclick=()=>{const t=(el('zt').value||'').trim();if(!t)return;const g={titel:t};const d=el('zd').value;if(d)g.termin=d;const k=(el('zk').value||'').trim();if(k)g.kontext=k;saveZiele(proj,[...z,g]);};}
 
 function showAuthed(s){el('login').hidden=!!s;el('shell').hidden=!s;if(s){el('useremail').textContent=s.user.email;boot();}else started=false;}
 sb.auth.getSession().then(({data})=>showAuthed(data.session));sb.auth.onAuthStateChange((_e,s)=>showAuthed(s));
@@ -848,7 +897,7 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
 async function renderProject(){
   const td=today();
   const[{data:proj},{data:tasks},{data:comms},{count:docCount},{data:recent},{data:folders},{data:costDocs},{data:fbRows}]=await Promise.all([
-    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist,lph1,lph1_stand,lph_kataloge,angebote_check,angebote_stand').eq('id',current).single(),
+    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist,lph1,lph1_stand,lph_kataloge,angebote_check,angebote_stand,ziele').eq('id',current).single(),
     sb.from('tasks').select('id,title,status,prio,kategorie,assignee,due_date,meta').eq('project_id',current).order('prio'),
     sb.from('communications').select('id,typ,betreff,empfaenger,empfaenger_email,status,frist,betrag,meta').eq('project_id',current),
     sb.from('documents').select('id',{count:'exact',head:true}).eq('project_id',current),
@@ -869,7 +918,7 @@ async function renderProject(){
   const nr=(proj.name.match(/(\d{4})/)||[])[1]||'',lph=proj.lph||0;
   const kostenVal=D&&D.kosten&&D.kosten.summe_brutto?D.kosten.summe_brutto:null;
   const honVal=D&&D.honorare?D.honorare:null;
-  if(pview==='nachtraege'){await renderNachtraege(proj);return;}
+  if(pview==='bericht'){await renderBericht(proj);return;}
   if(pview!=='dashboard'){renderAgentPanel(pview,D,{recent:recent||[],costDocs:costDocs||[],folders:folders||[],docCount:docCount||0,dokuCheck:proj.doku_check,angeboteCheck:proj.angebote_check,angeboteStand:proj.angebote_stand,lph:proj.lph||0});return;}
 
   let h='<header class="hdr"><div><div class="hdr-brand">Gutthann HIW · Projekt-Dashboard · Live</div><h1 class="hdr-title">'+esc(short(proj.name))+'</h1>'+
@@ -1110,11 +1159,10 @@ function renderAgentPanel(viewId,D,ex){
   const cfg=AGENT_VIEWS.find(v=>v.id===viewId);
   if(!cfg){pview='dashboard';renderProject();return;}
   const hasD=D&&Object.keys(D).length;
-  const side=(viewId==='angebote'?'<button class="av-run" data-agent="angebote-check">▶ Angebote prüfen</button> <button class="av-run" data-newnachtrag="1">✎ Nachtrag erstellen</button> ':'')+'<button class="av-run" data-agent="dashboard-analyse">▶ Aktualisieren</button><div class="av-lastrun">'+(hasD?'Stand <strong>'+fmtD(lastStand||today())+'</strong>':'noch nicht analysiert')+'</div>';
+  const side=(viewId==='angebote'?'<button class="av-run" data-agent="angebote-check">▶ Angebote prüfen</button> ':'')+'<button class="av-run" data-agent="dashboard-analyse">▶ Aktualisieren</button><div class="av-lastrun">'+(hasD?'Stand <strong>'+fmtD(lastStand||today())+'</strong>':'noch nicht analysiert')+'</div>';
   const body=hasD?panelBody(viewId,D,ex):panelCTA();
   el('main').innerHTML='<section class="av-panel active"><div class="av-hero"><div class="av-hero-ico">'+navIco(cfg.ico)+'</div><div><div class="av-hero-kicker">'+esc(cfg.kicker)+'</div><div class="av-hero-title">'+esc(cfg.title)+'</div><div class="av-hero-desc">'+esc(cfg.desc)+'</div></div><div class="av-hero-side">'+side+'</div></div>'+body+'</section>';
   el('main').querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
-  {const nb=el('main').querySelector('button[data-newnachtrag]');if(nb)nb.onclick=()=>{pview='nachtraege';selNachtrag=null;renderSidebar();neuerNachtrag();};}
   const dq=el('docq'),dg=el('docgo');if(dg)dg.onclick=docSearch;if(dq)dq.onkeydown=e=>{if(e.key==='Enter')docSearch();};
   const tc=el('toC');if(tc)tc.onclick=()=>go('cockpit');
 }
