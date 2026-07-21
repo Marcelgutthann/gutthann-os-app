@@ -930,8 +930,7 @@ function renderSidebar(){
 }
 
 async function renderCockpit(){el('crumb').textContent='Cockpit';
-  const[{data:ps},{data:ts},{data:cs},{data:pfs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff'),
-    sb.from('portfolio_synthese').select('stand,inhalt').order('stand',{ascending:false}).limit(1)]);
+  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
   const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,offen:0,p1:0,od:0});
   (ts||[]).forEach(t=>{const b=m[t.project_id];if(b&&t.status!=='erledigt'){b.offen++;if(t.prio==='P1')b.p1++;}});
   const td=today();(cs||[]).forEach(c=>{const b=m[c.project_id];if(b&&(c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))))b.od++;});
@@ -939,32 +938,6 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
   h+='<div class="grid">';
   for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
   h+='</div>';
-  // Portfolio-Synthese: das projektuebergreifende Bild (Firmen-Register, Muster, Kosten-Vergleich)
-  {const pfRow=(pfs||[])[0];
-   if(pfRow&&pfRow.inhalt){const I=pfRow.inhalt;
-    h+='<h2 class="gfl-h">Portfolio <span class="gfl-sub">projektübergreifende Synthese · '+(I.projekte||'?')+' Projekte · Stand '+fmtD(pfRow.stand)+'</span></h2>';
-    if(I.ueberblick)h+='<div class="pf-ov">'+esc(I.ueberblick)+'</div>';
-    const mus=I.muster||[];
-    if(mus.length){h+='<div class="pf-sec">Muster über mehrere Projekte</div><div class="gfl">';
-     for(const m of mus)h+='<div class="pf-c"><div class="gfl-n">'+esc(m.thema||'')+'</div><div class="gfl-t" style="-webkit-line-clamp:4">'+esc(m.befund||'')+'</div>'+(m.empfehlung?'<div class="gfl-t" style="margin-top:4px"><strong>→ '+esc(m.empfehlung)+'</strong></div>':'')+'<div class="pf-meta">'+esc((m.projekte||[]).join(' · '))+'</div></div>';
-     h+='</div>';}
-    const fr=(I.firmen_register||[]).slice().sort((a,b)=>({verzoegert:0,verlaesslich:1}[a.bilanz]??2)-({verzoegert:0,verlaesslich:1}[b.bilanz]??2));
-    if(fr.length){h+='<div class="pf-sec">Firmen-Register · wer arbeitet wo</div><div class="gfl">';
-     for(const f of fr){const cls=f.bilanz==='verzoegert'?'bad':f.bilanz==='verlaesslich'?'ok':'';
-      h+='<div class="pf-c"><div class="gfl-top"><span class="gfl-n"><i class="pf-dot '+cls+'" title="'+esc(f.bilanz||'')+'"></i>'+esc(f.firma||'')+'</span></div>'
-       +'<div class="pf-meta">'+esc((f.rollen||[]).join(', '))+(f.personen&&f.personen.length?' · '+esc(f.personen.join(', ')):'')+'</div>'
-       +(f.befund?'<div class="gfl-t" style="-webkit-line-clamp:3;margin-top:4px">'+esc(f.befund)+'</div>':'')
-       +'<div class="pf-meta">'+(f.projekte||[]).map(x=>esc(x.projekt||'')).join(' · ')+'</div></div>';}
-     h+='</div>';}
-    const kv=(I.kosten_vergleich||[]).filter(x=>x.budget!=null||x.kostenstand!=null);
-    if(kv.length){const eur=v=>v==null?'—':(v/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €';
-     h+='<div class="pf-sec">Kosten-Vergleich</div><table class="pf-tbl"><tr><th>Projekt</th><th>LPH</th><th style="text-align:right">Budget</th><th style="text-align:right">Kostenstand</th><th style="text-align:right">Abweichung</th></tr>';
-     for(const x of kv)h+='<tr><td>'+esc(x.projekt||'')+'</td><td>'+(x.lph||'—')+'</td><td class="num">'+eur(x.budget)+'</td><td class="num">'+eur(x.kostenstand)+'</td><td class="num '+(x.abweichung_pct==null?'':x.abweichung_pct>0?'bad':'okc')+'">'+(x.abweichung_pct==null?'—':(x.abweichung_pct>0?'+':'')+x.abweichung_pct.toLocaleString('de-DE')+' %')+'</td></tr>';
-     h+='</table>';}
-    const ri=I.risiken||[],emp=I.empfehlungen||[];
-    if(ri.length){h+='<div class="pf-sec">Risiken im Portfolio</div><ul class="pf-list">'+ri.map(r=>'<li><strong>'+esc(r.projekt||'')+':</strong> '+esc(r.thema||'')+' — '+esc(r.warum||'')+(r.quelle?' <span class="pf-meta">('+esc(r.quelle)+')</span>':'')+'</li>').join('')+'</ul>';}
-    if(emp.length){h+='<div class="pf-sec">Empfehlungen</div><ul class="pf-list">'+emp.map(e=>'<li>'+esc(e)+'</li>').join('')+'</ul>';}
-   }}
   el('main').innerHTML=h;
   el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));}
 
