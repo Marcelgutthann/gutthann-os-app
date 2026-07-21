@@ -930,8 +930,7 @@ function renderSidebar(){
 }
 
 async function renderCockpit(){el('crumb').textContent='Cockpit';
-  const[{data:ps},{data:ts},{data:cs},{data:brs},{data:pfs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff'),
-    sb.from('berichte').select('project_id,created_at,summary:inhalt->summary,gf:inhalt->gf_entscheidungsbedarf').eq('typ','lagebericht').order('created_at',{ascending:false}).limit(60),
+  const[{data:ps},{data:ts},{data:cs},{data:pfs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff'),
     sb.from('portfolio_synthese').select('stand,inhalt').order('stand',{ascending:false}).limit(1)]);
   const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,offen:0,p1:0,od:0});
   (ts||[]).forEach(t=>{const b=m[t.project_id];if(b&&t.status!=='erledigt'){b.offen++;if(t.prio==='P1')b.p1++;}});
@@ -940,15 +939,6 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
   h+='<div class="grid">';
   for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
   h+='</div>';
-  // Projektlage: neuester Lagebericht je Projekt — Ampeln, Top-Punkt, Entscheidungsbedarf auf einen Blick
-  {const latest={};(brs||[]).forEach(b=>{if(!latest[b.project_id])latest[b.project_id]=b;});
-   const rows=(ps||[]).map(p=>({p,b:latest[p.id]})).filter(x=>x.b&&x.b.summary);
-   if(rows.length){h+='<h2 class="gfl-h">Projektlage <span class="gfl-sub">aktuelle Lageberichte · klick öffnet den Bericht</span></h2><div class="gfl">';
-    for(const{p,b}of rows){const amp=(b.summary&&b.summary.ampeln)||[],nGf=(b.gf||[]).length;
-     h+='<div class="gfl-c" data-ber="'+p.id+'"><div class="gfl-top"><span class="gfl-n">'+esc(short(p.name))+'</span><span class="gfl-dots">'+amp.map(a=>'<i class="gfl-dot '+berCls(a.status)+'" title="'+glAttr((BER_DIM[a.dimension]||a.dimension||'')+': '+(a.satz||''))+'"></i>').join('')+'</span></div>'
-      +(b.summary.top_punkt?'<div class="gfl-t">'+esc(b.summary.top_punkt)+'</div>':'')
-      +'<div class="gfl-m">'+(nGf?'<strong>'+nGf+'× Entscheidungsbedarf</strong> · ':'')+'Stand '+fmtD(b.created_at)+'</div></div>';}
-    h+='</div>';}}
   // Portfolio-Synthese: das projektuebergreifende Bild (Firmen-Register, Muster, Kosten-Vergleich)
   {const pfRow=(pfs||[])[0];
    if(pfRow&&pfRow.inhalt){const I=pfRow.inhalt;
@@ -976,8 +966,7 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
     if(emp.length){h+='<div class="pf-sec">Empfehlungen</div><ul class="pf-list">'+emp.map(e=>'<li>'+esc(e)+'</li>').join('')+'</ul>';}
    }}
   el('main').innerHTML=h;
-  el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));
-  el('main').querySelectorAll('.gfl-c').forEach(c=>c.onclick=()=>{view='project';current=c.dataset.ber;pview='bericht';berTyp='lagebericht';berSel=null;render();window.scrollTo(0,0);});}
+  el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));}
 
 async function renderProject(){
   const td=today();
