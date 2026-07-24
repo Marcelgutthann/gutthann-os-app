@@ -465,6 +465,9 @@ button{font-family:inherit;cursor:pointer}.mono{font-family:var(--f-mono)}
 .acard .an{font-size:12.5px;font-weight:600;color:var(--c-navy-900)}.acard .ad{font-size:10.5px;color:var(--c-slate-500);line-height:1.4;margin:4px 0 10px;min-height:28px}
 h1.page{font-family:var(--f-disp);font-size:30px;font-weight:600;letter-spacing:-.03em;margin-bottom:3px;color:var(--c-navy-900)}.page-sub{color:var(--c-slate-600);font-size:12px;margin-bottom:18px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:13px}
+.jahrrow{display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;align-items:start}.jahrrow+.jahrrow{margin-top:28px}
+.jahr{font-family:var(--f-disp);font-size:68px;font-weight:600;line-height:.9;letter-spacing:-.04em;color:var(--c-slate-300);text-align:right;padding-top:8px;user-select:none}
+@media(max-width:760px){.jahrrow{grid-template-columns:1fr;gap:6px}.jahr{text-align:left;font-size:36px;padding-top:0}}
 .pcard{position:relative;background:var(--c-white);border:none;border-radius:20px;box-shadow:var(--sh);padding:17px 18px;cursor:pointer;transition:box-shadow .15s,transform .15s}
 .pcard-nr{position:absolute;top:14px;right:16px;font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--c-slate-400);letter-spacing:.5px}
 .pcard:hover{box-shadow:var(--sh-lift);transform:translateY(-2px)}.pcard.alert{box-shadow:var(--sh),inset 0 0 0 1.5px #EBC4BC}.pcard.alert:hover{box-shadow:var(--sh-lift),inset 0 0 0 1.5px #EBC4BC}
@@ -930,14 +933,19 @@ function renderSidebar(){
 }
 
 async function renderCockpit(){el('crumb').textContent='Cockpit';
-  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
+  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph,unc_path').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
   const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,offen:0,p1:0,od:0});
   (ts||[]).forEach(t=>{const b=m[t.project_id];if(b&&t.status!=='erledigt'){b.offen++;if(t.prio==='P1')b.p1++;}});
   const td=today();(cs||[]).forEach(c=>{const b=m[c.project_id];if(b&&(c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))))b.od++;});
   let h='<h1 class="page">Cockpit</h1><div class="page-sub">'+(ps||[]).length+' Projekte · klick für das Projekt-Dashboard</div>';
-  h+='<div class="grid">';
-  for(const p of(ps||[])){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
-  h+='</div>';
+  const byJahr={};
+  for(const p of(ps||[])){const jm=(p.unc_path||'').match(/[\\/](?:_ )?(\d{2}) - /);const j=jm?jm[1]:'';(byJahr[j]=byJahr[j]||[]).push(p);}
+  const jahre=Object.keys(byJahr).sort((a,b)=>(b||'0')-(a||'0'));
+  for(const j of jahre){
+  h+='<div class="jahrrow"><div class="jahr">'+(j||'···')+'</div><div class="grid">';
+  for(const p of byJahr[j]){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
+  h+='</div></div>';
+  }
   el('main').innerHTML=h;
   el('main').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>go('project',c.dataset.id));}
 
