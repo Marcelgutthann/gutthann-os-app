@@ -8,6 +8,35 @@ const fmtD=d=>d?new Date(d).toLocaleDateString('de-DE'):'—';
 const LPH=['Grundlagen','Vorentwurf','Entwurf','Genehmigung','Ausführung','Vergabe-Vorb.','Vergabe','Objekt-ÜW','Gewährl.'];
 // Phasen-Titel fuer das LPH-Katalog-Fenster (deckungsgleich mit LPH_KATALOG_DEF im Runner)
 const LPH_KAT_TITEL={1:'Grundlagenermittlung',2:'Vorplanung',3:'Entwurfsplanung',4:'Genehmigungsplanung',5:'Ausführungsplanung',6:'Vorbereitung der Vergabe',7:'Mitwirkung bei der Vergabe',8:'Objektüberwachung',9:'Objektbetreuung'};
+// ── Phasenlage: ein Projekt läuft real oft in mehreren HOAI-Phasen gleichzeitig (z.B. 6+7+8) ──
+// projects.lph = effektive Leitphase (Schwerpunkt), projects.lph_phasen = Set + Quelle + unangetasteter
+// Scan-Stand. Ein Klick in der Leiste ändert nur die ANSICHT (viewLph), nie die Daten — der erkannte
+// Stand ist damit nie „verloren" und muss nicht auf den nächsten Scan warten.
+const normLph=a=>[...new Set((a||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=9))].sort((x,y)=>x-y);
+function phasenlage(proj){
+  const P=proj.lph_phasen||{},leit=+proj.lph||0;
+  let aktiv=normLph(P.aktiv);
+  // Fallback für Projekte ohne neuen Scan: die laufenden Phasen aus dem Termin-Abgleich.
+  if(!aktiv.length)aktiv=normLph((((proj.termin_check||{}).phasen)||[]).filter(p=>p&&p.status==='laufend').map(p=>p.lph));
+  if(leit)aktiv=normLph(aktiv.concat(leit));
+  const s=P.scan||{},sl=+s.leit||0,sa=normLph(s.aktiv);
+  return{aktiv,leit,quelle:P.quelle==='manuell'?'manuell':'scan',stand:P.stand||null,
+         scan:{aktiv:sa.length?sa:(sl?[sl]:[]),leit:sl,stand:s.stand||null}};
+}
+const lphTxt=a=>(a&&a.length)?'LPH '+a.join('·'):'—';
+// Sicherheitsnetz unter der Leiste: sagt jederzeit, was du gerade siehst und was laut Analyse gilt —
+// und hält beide Rückwege offen (zur aktiven Phase zurück / manuelle Korrektur auf den Scan-Stand).
+function phasenBar(PL,vw){
+  let r='';
+  if(vw&&PL.leit&&vw!==PL.leit)
+    r+='<div class="ph-bar"><span class="ph-tag view">Ansicht</span><span class="ph-tx">Du siehst <strong>LPH '+vw+' · '+esc(LPH_KAT_TITEL[vw]||'')+'</strong> — aktiv '+(PL.aktiv.length>1?'sind':'ist')+' <strong>'+lphTxt(PL.aktiv)+'</strong>'+(PL.aktiv.length>1?' (Schwerpunkt '+PL.leit+')':'')+'.</span>'+
+       '<button class="btn-sm" data-lphview="0">Zurück zur aktiven Phase</button><button class="btn-sm ghost" data-lphset="'+vw+'">LPH '+vw+' als aktiv setzen</button></div>';
+  const s=PL.scan,abw=s.leit&&(s.leit!==PL.leit||s.aktiv.join()!==PL.aktiv.join());
+  if(PL.quelle==='manuell'&&abw)
+    r+='<div class="ph-bar man"><span class="ph-tag man">manuell</span><span class="ph-tx">Aktive Phase '+(PL.stand?'am '+fmtD(PL.stand)+' ':'')+'von Hand gesetzt — die Analyse sieht <strong>'+lphTxt(s.aktiv)+'</strong>'+(s.aktiv.length>1?' (Schwerpunkt '+s.leit+')':'')+'.</span>'+
+       '<button class="btn-sm ghost" data-lphreset="1">Auf Analyse-Stand zurücksetzen</button></div>';
+  return r;
+}
 // ── Glossar & Erklärbarkeit: ein Außenstehender muss erklären können, was abgeht ──
 const GLOSS={
  'LPH':'Leistungsphase nach HOAI (1–9) — Stufe der Planung bzw. Ausführung. „Aktive Phase" = woran gerade gearbeitet wird.',
@@ -47,10 +76,14 @@ const AGENT_GROUPS=[
     {id:'ingest',ic:'↑',t:'Schnell-Sync',s:'DB aus letztem Scan aktualisieren'}]},
   {h:'Verfolgung',items:[
     {id:'nachhaken',ic:'⏰',t:'Nachhaken-Prüfung',s:'Überfällige Vorgänge markieren'}]},
-  {h:'LPH-Berichte',items:[
+  {h:'LPH-Berichte (HOAI)',items:[
+    {id:'lph2',ic:'2',t:'LPH 2 · Vorentwurf',s:'Vorentwurfsbericht erzeugen'},
     {id:'lph3',ic:'3',t:'LPH 3 · Entwurf',s:'Entwurfsbericht erzeugen'},
-    {id:'lph4',ic:'4',t:'LPH 4 · Genehmigung',s:'Genehmigungsbericht'},
-    {id:'lph5',ic:'5',t:'LPH 5 · Ausführung',s:'Ausführungsbericht'}]}];
+    {id:'lph4',ic:'4',t:'LPH 4 · Genehmigung',s:'Genehmigungsbericht erzeugen'},
+    {id:'lph5',ic:'5',t:'LPH 5 · Ausführung',s:'Ausführungsbericht erzeugen'},
+    {id:'lph6',ic:'6',t:'LPH 6 · Vergabe-Vorb.',s:'Bericht Vorbereitung der Vergabe'},
+    {id:'lph7',ic:'7',t:'LPH 7 · Vergabe',s:'Bericht Mitwirkung bei der Vergabe'},
+    {id:'lph8',ic:'8',t:'LPH 8 · ObjektÜW',s:'Bericht Objektüberwachung'}]}];
 const AGENT_VIEWS=[
   {id:'aktivitaet',key:'aktivitaet',ico:'mail',kicker:'Agent · E-Mail-Wissensbasis',title:'Aktivität seit letztem Stand',desc:'Neue Mails & Vorgänge seit dem letzten Dashboard-Stand — chronologisch aus der Mail-Wissensbasis.'},
   {id:'fachplaner',key:'fachplaner',ico:'users',kicker:'Agent · Multi-Persona-Analyse',title:'Fachplaner & Schnittstellen',desc:'Alle beteiligten Fachplaner und Büro-Schnittstellen mit aktuellem Status.'},
@@ -66,6 +99,7 @@ const AL={ingest:'Schnell-Sync',scan:'Voll-Scan','auto-sync':'Auto-Sync',nachhak
 let view='cockpit',current=null,currentName='',pview='dashboard',lastD={},lastStand=null,started=false,openRun=null,tab='alle',prioFilters=new Set(),openWin=null;
 let selTask=null,taskMap={},peopleMail={},lastChecklist={},openCl=new Set(),lastL1=null;
 let fbClosed={},fbUid=0,lastKat=null,lastKatLph=1,lastKz=null,lastKzName='';
+let viewLph=null,lastPL=null;   // viewLph = nur angesehene Phase (nie in der DB), lastPL = Phasenlage des letzten Renders
 // ---- Projektbericht (ersetzt den Nachtrag-Chat; Konzept: PROJEKTBERICHT-KONZEPT.md) ----
 let berTyp='lagebericht',berSel=null,berPollTimer=null;
 const BER_TYPEN=[['lagebericht','Lagebericht','letzte 3 Monate'],['projektakte','Projektakte','ganzes Projekt'],['zielpfad','Zielpfad','Ausblick']];
@@ -161,7 +195,7 @@ function boot(){if(started){render();return;}started=true;render();loadRuns();
    .on('postgres_changes',{event:'*',schema:'public',table:'communications'},()=>render())
    .on('postgres_changes',{event:'*',schema:'public',table:'projects'},()=>{if(view==='project')render();})
    .subscribe(st=>{if(st==='SUBSCRIBED')el('runlive').textContent='● live';});}
-function go(v,id){view=v;current=id||null;openWin=null;document.body.style.overflow='';if(v==='project'){pview='dashboard';tab='alle';prioFilters.clear();}setDrawer(false);render();}
+function go(v,id){view=v;current=id||null;openWin=null;document.body.style.overflow='';if(v==='project'){pview='dashboard';tab='alle';prioFilters.clear();viewLph=null;}setDrawer(false);render();}
 async function render(){renderSidebar();if(view==='cockpit')await renderCockpit();else if(view==='project'&&pview==='system')await renderSystemPanel();else await renderProject();}
 function timeAgo(d){if(!d)return '—';const s=(Date.now()-new Date(d).getTime())/1000;if(s<90)return 'gerade';if(s<5400)return 'vor '+Math.round(s/60)+' min';if(s<172800)return 'vor '+Math.round(s/3600)+' h';return 'vor '+Math.round(s/86400)+' d';}
 async function queueAgentFor(projectId,agent,btn){if(btn){btn.disabled=true;btn.textContent='…';}const{error}=await sb.from('agent_runs').insert({project_id:projectId,agent,status:'queued',meta:{trigger:'manuell'}});const dup=error&&error.code==='23505';if(error&&!dup)alert('Konnte nicht starten: '+error.message);if(btn){btn.textContent=dup?'läuft bereits':'…';setTimeout(()=>{btn.disabled=false;btn.textContent='Aktualisieren';},1600);}loadRuns();}
@@ -197,17 +231,20 @@ function renderSidebar(){
   for(const v of AGENT_VIEWS){let cnt=v.key&&D[v.key]?D[v.key].length:0;if(v.id==='termine'&&D.vorausschau)cnt=(D.vorausschau.zwangspunkte||[]).length+(D.vorausschau.diese_woche||[]).length;h+=navItem(v.id,v.title,navIco(v.ico),cnt||null);}
   h+=navItem('system','System & Automatik',navIco('cog'),null);
   h+='</div>';
-  h+='<div class="sb-group"><div class="sb-group-h">Werkzeuge<span class="ln"></span></div>';
-  for(const g of AGENT_GROUPS)for(const a of g.items)h+='<button class="sb-ag'+(a.doku?' doku':'')+'" data-agent="'+a.id+'"><span class="ai">'+a.ic+'</span><span class="sb-ag-tx"><span class="at">'+esc(a.t)+'</span><span class="as">'+esc(a.s)+'</span></span></button>';
-  h+='</div><div class="page-sub" style="font-size:10px;padding:0 2px 10px;line-height:1.4">Läuft, wenn der <strong>Runner</strong> aktiv ist (Status oben rechts).</div>';
+  for(const g of AGENT_GROUPS){
+    h+='<div class="sb-group"><div class="sb-group-h">'+esc(g.h)+'<span class="ln"></span></div>';
+    for(const a of g.items)h+='<button class="sb-ag'+(a.doku?' doku':'')+'" data-agent="'+a.id+'"><span class="ai">'+a.ic+'</span><span class="sb-ag-tx"><span class="at">'+esc(a.t)+'</span><span class="as">'+esc(a.s)+'</span></span></button>';
+    h+='</div>';
+  }
+  h+='<div class="page-sub" style="font-size:10px;padding:0 2px 10px;line-height:1.4">Läuft, wenn der <strong>Runner</strong> aktiv ist (Status oben rechts).</div>';
   box.innerHTML=h;
   box.querySelectorAll('.sb-nav').forEach(b=>b.onclick=()=>{pview=b.dataset.pview;openWin=null;document.body.style.overflow='';setDrawer(false);renderSidebar();render();window.scrollTo(0,0);});
   box.querySelectorAll('button[data-agent]').forEach(b=>b.onclick=()=>queueAgent(b.dataset.agent,{},b));
 }
 
 async function renderCockpit(){el('crumb').textContent='Cockpit';
-  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph,unc_path').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
-  const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,offen:0,p1:0,od:0});
+  const[{data:ps},{data:ts},{data:cs}]=await Promise.all([sb.from('projects').select('id,name,lph,lph_phasen,unc_path').order('name'),sb.from('tasks').select('project_id,status,prio,title,due_date'),sb.from('communications').select('project_id,status,frist,betreff')]);
+  const m={};(ps||[]).forEach(p=>m[p.id]={name:p.name,lph:p.lph,aktiv:phasenlage(p).aktiv,offen:0,p1:0,od:0});
   (ts||[]).forEach(t=>{const b=m[t.project_id];if(b&&t.status!=='erledigt'){b.offen++;if(t.prio==='P1')b.p1++;}});
   const td=today();(cs||[]).forEach(c=>{const b=m[c.project_id];if(b&&(c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))))b.od++;});
   let h='<h1 class="page">Cockpit</h1><div class="page-sub">'+(ps||[]).length+' Projekte · klick für das Projekt-Dashboard</div>';
@@ -216,7 +253,7 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
   const jahre=Object.keys(byJahr).sort((a,b)=>(b||'0')-(a||'0'));
   for(const j of jahre){
   h+='<div class="jahrrow"><div class="jahr">'+(j||'···')+'</div><div class="grid">';
-  for(const p of byJahr[j]){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.lph?'LPH '+b.lph+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
+  for(const p of byJahr[j]){const b=m[p.id];const nr=(p.name.match(/\d{3,4}/)||[''])[0];h+='<div class="pcard'+(b.od?' alert':'')+'" data-id="'+p.id+'">'+(nr?'<div class="pcard-nr">'+nr+'</div>':'')+'<div class="pn">'+esc(short(p.name))+'</div><div class="plph">'+(b.aktiv.length?lphTxt(b.aktiv)+' aktiv':'Phase offen')+'</div><div class="pk"><div><div class="v">'+dm(b.offen,2.5,'var(--c-navy-900)')+'</div><div class="k">offen</div></div><div><div class="v">'+dm(b.p1,2.5,b.p1?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">P1</div></div><div><div class="v">'+dm(b.od,2.5,b.od?'var(--c-danger)':'var(--c-navy-900)')+'</div><div class="k">überfällig</div></div></div></div>';}
   h+='</div></div>';
   }
   el('main').innerHTML=h;
@@ -225,7 +262,7 @@ async function renderCockpit(){el('crumb').textContent='Cockpit';
 async function renderProject(){
   const td=today();
   const[{data:proj},{data:tasks},{data:comms},{count:docCount},{data:recent},{data:folders},{data:costDocs},{data:fbRows}]=await Promise.all([
-    sb.from('projects').select('id,name,lph,dashboard,dashboard_stand,doku_check,checklist,lph1,lph1_stand,lph_kataloge,angebote_check,angebote_stand,termin_check,termin_stand,ziele,kennzahlen,kennzahlen_stand').eq('id',current).single(),
+    sb.from('projects').select('id,name,lph,lph_phasen,dashboard,dashboard_stand,doku_check,checklist,lph1,lph1_stand,lph_kataloge,angebote_check,angebote_stand,termin_check,termin_stand,ziele,kennzahlen,kennzahlen_stand').eq('id',current).single(),
     sb.from('tasks').select('id,title,status,prio,kategorie,assignee,due_date,meta').eq('project_id',current).order('prio'),
     sb.from('communications').select('id,typ,betreff,empfaenger,empfaenger_email,status,frist,betrag,meta').eq('project_id',current),
     sb.from('documents').select('id',{count:'exact',head:true}).eq('project_id',current),
@@ -244,24 +281,36 @@ async function renderProject(){
   const offen=AL.filter(t=>t.status!=='erledigt').length,p1=AL.filter(t=>t.status!=='erledigt'&&t.prio==='P1').length;
   const cOpen=C.filter(c=>!['beantwortet','erledigt'].includes(c.status)).length,cOver=C.filter(c=>c.status==='ueberfaellig'||(c.frist&&c.frist<td&&!['beantwortet','erledigt'].includes(c.status))).length;
   const nr=(proj.name.match(/(\d{4})/)||[])[1]||'',lph=proj.lph||0;
+  // Phasenlage + angesehene Phase: 'lph' bleibt die Leitphase (Datenbezug der Analyse), 'vw' steuert nur,
+  // welche Phase die phasenabhängigen Fenster zeigen (Katalog, Checkliste).
+  const PL=phasenlage(proj);lastPL=PL;
+  const vw=(viewLph>=1&&viewLph<=9)?viewLph:(PL.leit||0);
   const kostenVal=D&&D.kosten&&D.kosten.summe_brutto?D.kosten.summe_brutto:null;
   const honVal=D&&D.honorare?D.honorare:null;
   if(pview==='bericht'){await renderBericht(proj);return;}
   if(pview!=='dashboard'){renderAgentPanel(pview,D,{recent:recent||[],costDocs:costDocs||[],folders:folders||[],docCount:docCount||0,dokuCheck:proj.doku_check,angeboteCheck:proj.angebote_check,angeboteStand:proj.angebote_stand,terminCheck:proj.termin_check,terminStand:proj.termin_stand,lph:proj.lph||0});return;}
 
   let h='<header class="hdr"><div><div class="hdr-brand">Gutthann HIW · Projekt-Dashboard · Live</div><h1 class="hdr-title">'+esc(short(proj.name))+'</h1>'+
-    '<div class="hdr-meta">'+(nr?'<span><strong>Nr.</strong> '+nr+'</span>':'')+'<span><strong>Phase</strong> '+(lph?'LPH '+lph:'—')+'</span><span><strong>Dokumente</strong> '+(docCount||0)+'</span><span><strong>Aufgaben</strong> '+offen+' offen</span></div></div>'+
+    '<div class="hdr-meta">'+(nr?'<span><strong>Nr.</strong> '+nr+'</span>':'')+'<span><strong>Phase</strong> '+lphTxt(PL.aktiv)+(PL.aktiv.length>1?' · Schwerpunkt '+PL.leit:'')+'</span><span><strong>Dokumente</strong> '+(docCount||0)+'</span><span><strong>Aufgaben</strong> '+offen+' offen</span></div></div>'+
     '<div class="hdr-status">'+(D?'Analyse-Stand':'Stand')+'<span class="stamp">'+(proj.dashboard_stand?fmtD(proj.dashboard_stand):fmtD(today()))+'</span></div></header>';
   const kk=D&&D.kosten,kBudget=(kk&&kk.budget!=null&&!isNaN(+kk.budget)&&+kk.budget>0)?+kk.budget:null;
   let kostenSub=kostenVal?('brutto'+(kk&&kk.stand?' · Stand '+esc(kk.stand):' · Stand lt. Analyse')):'Tiefenanalyse nötig',kostenBar='';
   if(kostenVal&&kBudget){const dlt=kostenVal-kBudget;kostenSub=(dlt>0?'<span class="up">+':'<span class="okc">−')+Math.abs(Math.round(dlt/1000)).toLocaleString('de-DE')+' T€</span> vs. Budget '+(kBudget/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €';kostenBar='<div class="kpi-bar"><i class="'+(dlt>0?'over':'')+'" style="width:'+Math.min(100,Math.round(kostenVal/kBudget*100))+'%"></i></div>';}
-  h+='<div class="kpi-strip">'+kpi('accent','Aktive Phase',lph?gl('LPH')+' '+lph:'—','','HOAI § 34')+
+  h+='<div class="kpi-strip">'+kpi('accent','Aktive Phase',PL.aktiv.length?gl('LPH')+' '+PL.aktiv.join('·'):'—','',PL.aktiv.length>1?(PL.aktiv.length+' Phasen parallel · Schwerpunkt LPH '+PL.leit):'HOAI § 34')+
     kpi(kostenVal?'':'','Kosten aktuell',kostenVal?(kostenVal/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}):'—',kostenVal?'Mio €':'',kostenSub,kostenBar)+
     kpi(cOver?'alert':'','Überfällige Vorgänge',cOver,'',cOver?'Nachhaken nötig · '+cOpen+' offen gesamt':(cOpen?cOpen+' offen · nichts überfällig':'nichts offen'))+
     kzKpi(proj.kennzahlen,kostenVal)+'</div>';
-  h+='<nav class="pilgrim"><div class="pilgrim-label">Leistungsphasen HOAI · klick zum Setzen der aktiven Phase</div><div class="pilgrim-track"><div class="pilgrim-line"></div><div class="pilgrim-line-progress" style="width:'+(lph?((lph-1)/8*89+5.5):0)+'%"></div>';
-  for(let i=1;i<=9;i++){const cl=lph&&i<lph?'done':lph&&i===lph?'active':'';h+='<div class="pilgrim-station '+cl+'" data-lph="'+i+'"><div class="pilgrim-dot">'+i+'</div><div class="pilgrim-labelset">'+LPH[i-1]+'</div></div>';}
-  h+='</div></nav>';
+  // Phasen-Leiste: durchgezogene Linie bis zur ersten laufenden Phase (= abgeschlossen), gestrichelte Spange
+  // über die parallel laufenden. Lime-Ring = Schwerpunkt, grauer Ring = die Phase, die du gerade ansiehst.
+  {const pos=i=>(i-.5)/9*100,fa=PL.aktiv[0]||0,la=PL.aktiv[PL.aktiv.length-1]||0;
+   h+='<nav class="pilgrim"><div class="pilgrim-label">Leistungsphasen HOAI · Klick zeigt eine Phase an — die aktive Phase ändert sich dadurch nicht</div><div class="pilgrim-track"><div class="pilgrim-line"></div>'+
+     (fa>1?'<div class="pilgrim-line-progress" style="width:'+(pos(fa)-pos(1)).toFixed(2)+'%"></div>':'')+
+     (la>fa?'<div class="pilgrim-line-parallel" style="left:'+pos(fa).toFixed(2)+'%;width:'+(pos(la)-pos(fa)).toFixed(2)+'%"></div>':'');
+   for(let i=1;i<=9;i++){const on=PL.aktiv.includes(i);
+     const cl=[fa&&i<fa?'done':'',on?'active':'',i===PL.leit?'lead':'',i===vw&&i!==PL.leit?'viewing':''].filter(Boolean).join(' ');
+     const tip='LPH '+i+' · '+LPH_KAT_TITEL[i]+(on?(i===PL.leit?' · Schwerpunkt':' · läuft parallel'):(fa&&i<fa?' · abgeschlossen':' · noch nicht begonnen'));
+     h+='<div class="pilgrim-station '+cl+'" data-lph="'+i+'" title="'+esc(tip)+'"><div class="pilgrim-dot">'+i+'</div><div class="pilgrim-labelset">'+LPH[i-1]+'</div></div>';}
+   h+='</div>'+phasenBar(PL,vw)+'</nav>';}
   // Aura-Fenster: Phasen-Reife + engster Zwangspunkt-Puffer (echte Analyse-Werte) + „Diese Woche" —
   // alle drei sind Einstiege in dasselbe Vorausschau-Fenster (Termin-Radar, Reife, Jour-Fixe …)
   {const vs=(D&&D.vorausschau)||{};
@@ -285,7 +334,7 @@ async function renderProject(){
    h+=sec('kennzahlen','prominent','▤','Projekt-Kennzahlen',KZ?('Hardfacts · Stand '+(proj.kennzahlen_stand?fmtD(proj.kennzahlen_stand):'—')):'Flächen, Kubatur, Kennwerte, Auftrag',
      (KZ?'<span class="stat ok">'+nBel+' Werte</span>':'<span class="stat warn">offen</span>'),renderKennzahlen(KZ,D,proj.name),tKz);}
   // LPH-Katalog der AKTIVEN Phase — Fragenkatalog + Abschnitts-Stand je LPH (LPH 1 = Grundlagen inkl. Raumprogramm, Fallback lph1-Spalte)
-  {const kLph=lph||1;const kat=(proj.lph_kataloge&&proj.lph_kataloge[String(kLph)])||(kLph===1?(proj.lph1||null):null);
+  {const kLph=vw||1;const kat=(proj.lph_kataloge&&proj.lph_kataloge[String(kLph)])||(kLph===1?(proj.lph1||null):null);
     lastKat=kat;lastKatLph=kLph;
     const frOff=kat?((kat.fragenkatalog||[]).filter(x=>x&&!fbClosed[fbKey('frage',x.frage)])):[];
     const muss=frOff.filter(x=>x.prioritaet==='muss').length;
@@ -319,7 +368,7 @@ async function renderProject(){
    h+=sec('lphbew','','✓','LPH-Bewertung',(lph?'LPH '+lph+' Grundleistungen':'Grundleistungen'),'','<div class="inner">'+renderLphBew(D)+'</div>',tLb);}
   // LPH-Checkliste (HOAI-Grundleistungen + Vergabe/ZVB) — abhakbar, persistent
   {const cdone=clCounts(lastChecklist);const clPct=cdone.total?Math.round(cdone.done/cdone.total*100):0;
-   h+=sec('checkliste','','☑','LPH-Checkliste','HOAI-Grundleistungen + Vergabe/ZVB je Phase','<span class="stat">'+cdone.done+'/'+cdone.total+'</span>','<div class="inner">'+renderChecklist(lph)+'</div>',tz(null,'Abgehakt über alle Phasen',cdone.done+'/'+cdone.total)+'<span class="win-bar"><i style="width:'+clPct+'%"></i></span>');}
+   h+=sec('checkliste','','☑','LPH-Checkliste','HOAI-Grundleistungen + Vergabe/ZVB je Phase','<span class="stat">'+cdone.done+'/'+cdone.total+'</span>','<div class="inner">'+renderChecklist(PL,vw)+'</div>',tz(null,'Abgehakt über alle Phasen',cdone.done+'/'+cdone.total)+'<span class="win-bar"><i style="width:'+clPct+'%"></i></span>');}
   // Offene Entscheidungen (getrennt von gefassten Beschlüssen) — mit Kommentar abgeschlossene zählen nicht mehr als offen
   const eoAll=(D&&D.entscheidungen_offen)||[];
   const eo=eoAll.filter(e=>e&&!fbClosed[fbKey('entscheidung',e.thema||e.titel||e.text||'')]);
@@ -924,13 +973,33 @@ const LPH_CL={
  9:['Begehung zur Mängelbeseitigung','Gewährleistungsfristen überwacht','Objektdokumentation übergeben']};
 function clKey(l,i){return 'L'+l+'-'+i;}
 function clCounts(cl){cl=cl||{};let d=0,t=0;for(const l in LPH_CL){LPH_CL[l].forEach((_,i)=>{t++;if(cl[clKey(l,i)])d++;});}return{done:d,total:t};}
-function renderChecklist(activeLph){
+function renderChecklist(PL,vw){
+  const akt=(PL&&PL.aktiv)||[],leit=(PL&&PL.leit)||0;
   let h='<div class="cl-note">HOAI §34-Grundleistungen je Leistungsphase, ergänzt um Vergabe-/Vertrags-Prüfpunkte (AVB/ZVB). Abhaken wird teamweit gespeichert. <em>Annahme zu „Havkom/ZVB": Standard-Prüfpunkte — sag Bescheid, wenn du ein bestimmtes Regelwerk gemappt haben willst.</em></div>';
-  for(let l=1;l<=9;l++){const items=LPH_CL[l]||[];const op=openCl.has(l)||l===activeLph;const done=items.filter((_,i)=>lastChecklist[clKey(l,i)]).length;
+  for(let l=1;l<=9;l++){const items=LPH_CL[l]||[];const op=openCl.has(l)||l===vw;const done=items.filter((_,i)=>lastChecklist[clKey(l,i)]).length;
     const cls=items.length&&done===items.length?'ok':done>0?'part':'';
-    h+='<details class="cl-ph"'+(op?' open':'')+' data-cllph="'+l+'"><summary class="cl-sum"><span class="cl-lph '+cls+'">LPH '+l+'</span><span class="cl-name">'+esc(LPH[l-1])+(l===activeLph?' · aktiv':'')+'</span><span class="cl-prog">'+done+'/'+items.length+'</span></summary><div class="cl-body">'+
+    h+='<details class="cl-ph"'+(op?' open':'')+' data-cllph="'+l+'"><summary class="cl-sum"><span class="cl-lph '+cls+'">LPH '+l+'</span><span class="cl-name">'+esc(LPH[l-1])+(akt.includes(l)?(l===leit?' · aktiv':' · läuft parallel'):'')+'</span><span class="cl-prog">'+done+'/'+items.length+'</span></summary><div class="cl-body">'+
       items.map((it,i)=>{const k=clKey(l,i),ck=!!lastChecklist[k];return '<label class="cl-item'+(ck?' done':'')+'"><input type="checkbox" class="cl-cb" data-clkey="'+k+'"'+(ck?' checked':'')+'><span>'+esc(it)+'</span></label>';}).join('')+'</div></details>';}
   return h;}
+// Manuelle Korrektur der aktiven Phase. Der Scan-Stand wird dabei NICHT angefasst (bleibt in lph_phasen.scan)
+// und ist jederzeit per Knopfdruck wiederherstellbar — kein Warten auf den nächsten Scan.
+// Liegt die gewählte Phase schon im laufenden Set, wandert nur der Schwerpunkt; sonst ersetzt sie das Set.
+async function setLeitphase(i,btn){
+  const PL=lastPL;if(!PL||!(i>=1&&i<=9))return;
+  const P={aktiv:PL.aktiv.includes(i)?PL.aktiv:[i],leit:i,quelle:'manuell',stand:new Date().toISOString(),scan:PL.scan.leit?PL.scan:null};
+  if(btn)btn.disabled=true;
+  const{error}=await sb.from('projects').update({lph:i,lph_phasen:P}).eq('id',current);
+  if(error){alert('Phase konnte nicht gesetzt werden: '+error.message);if(btn)btn.disabled=false;return;}
+  viewLph=null;render();
+}
+async function resetLeitphase(btn){
+  const PL=lastPL;if(!PL||!PL.scan.leit)return;
+  const P={aktiv:PL.scan.aktiv,leit:PL.scan.leit,quelle:'scan',stand:PL.scan.stand,scan:PL.scan};
+  if(btn)btn.disabled=true;
+  const{error}=await sb.from('projects').update({lph:PL.scan.leit,lph_phasen:P}).eq('id',current);
+  if(error){alert('Zurücksetzen fehlgeschlagen: '+error.message);if(btn)btn.disabled=false;return;}
+  viewLph=null;render();
+}
 async function toggleChecklist(key,val){const nc=Object.assign({},lastChecklist);if(val)nc[key]=true;else delete nc[key];lastChecklist=nc;const{error}=await sb.from('projects').update({checklist:nc}).eq('id',current);if(error)alert('Fehler beim Speichern: '+error.message);}
 function renderLphBew(D){if(D&&D.lph_bewertung&&D.lph_bewertung.length)return D.lph_bewertung.map(r=>'<div class="lrow"><span>'+esc(r.leistung)+'</span><span class="ls '+slug(r.status)+'">'+esc(stL(r.status))+'</span></div>').join('');
   return '<div class="cta"><p>Die Bewertung der HOAI-Grundleistungen (vollständig / teilweise / fehlend) kommt aus der Dashboard-Analyse.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';}
@@ -989,7 +1058,11 @@ function wire(T,C){
   {const cb=el('main').querySelector('#kzcopy');if(cb)cb.onclick=async()=>{
     try{await navigator.clipboard.writeText(kzRefText());const h=el('main').querySelector('#kzcopyh');if(h){h.textContent='kopiert ✓';setTimeout(()=>{h.textContent='';},2500);}}
     catch(e){alert('Kopieren nicht möglich: '+e.message);}};}
-  el('main').querySelectorAll('.pilgrim-station').forEach(st=>st.onclick=async()=>{await sb.from('projects').update({lph:+st.dataset.lph}).eq('id',current);render();});
+  // Klick = nur ansehen (kein Schreibvorgang). Gesetzt wird die aktive Phase nur über den Button in der ph-bar.
+  el('main').querySelectorAll('.pilgrim-station').forEach(st=>st.onclick=()=>{viewLph=+st.dataset.lph;render();});
+  el('main').querySelectorAll('[data-lphview]').forEach(b=>b.onclick=()=>{viewLph=null;render();});
+  el('main').querySelectorAll('[data-lphset]').forEach(b=>b.onclick=()=>setLeitphase(+b.dataset.lphset,b));
+  el('main').querySelectorAll('[data-lphreset]').forEach(b=>b.onclick=()=>resetLeitphase(b));
   el('main').querySelectorAll('.task-row').forEach(r=>r.onclick=e=>{if(e.target.classList.contains('tcheck'))return;selTask=r.dataset.trow;el('main').querySelectorAll('.task-row').forEach(x=>x.classList.toggle('sel',x.dataset.trow===selTask));const d=el('aufgdetail');if(d){d.innerHTML=renderTaskDetail(taskMap[selTask]);wireDetail();}});
   el('main').querySelectorAll('.tcheck').forEach(cb=>cb.onchange=()=>toggleTask(cb.dataset.task,cb));
   wireDetail();
