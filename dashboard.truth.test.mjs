@@ -20,3 +20,11 @@ test('unverified project metrics are not promoted into the leading KPI',()=>{
   assert.match(source,/bgf_m2'\)\.verifiziert===true/);
   assert.match(source,/Export gesperrt/);
 });
+
+test('phase progress is independent for each parallel phase and requires a source',()=>{
+  assert.match(source,/function phasePct\(/);
+  assert.match(source,/fortschritt\[i\]/);
+  assert.match(source,/quelle\.length<8/);
+  assert.match(source,/art:'manuelle_einschaetzung'/);
+  assert.doesNotMatch(source,/kpi\('accent','Aktive Phase'/);
+});
