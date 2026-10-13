@@ -21,7 +21,16 @@ function phasenlage(proj){
   if(leit)aktiv=normLph(aktiv.concat(leit));
   const s=P.scan||{},sl=+s.leit||0,sa=normLph(s.aktiv);
   return{aktiv,leit,quelle:P.quelle==='manuell'?'manuell':'scan',stand:P.stand||null,
-         scan:{aktiv:sa.length?sa:(sl?[sl]:[]),leit:sl,stand:s.stand||null}};
+         scan:{aktiv:sa.length?sa:(sl?[sl]:[]),leit:sl,stand:s.stand||null},
+         belege:Array.isArray(P.belege)?P.belege:[],begruendung:P.begruendung||null};
+}
+function phaseEvidence(P,terminCheck){
+  return '<div class="phase-evidence">'+(P.aktiv.length?P.aktiv.map(i=>{
+    const b=P.belege.find(x=>+x.lph===i),t=((terminCheck||{}).phasen||[]).find(x=>+x.lph===i);
+    const why=b&&b.warum?b.warum:(P.quelle==='manuell'?P.begruendung||'Manuell gesetzt':t&&t.ist_hinweis?'Termin-Analyse: '+t.ist_hinweis:'Warum aktiv: noch nicht belegt');
+    const q=b&&b.datei?b.datei:(t&&t.soll_quelle?'Termin-Analyse: '+t.soll_quelle:'Quelldatei noch nicht zugeordnet');
+    return '<div class="phase-evidence-row"><strong>LPH '+i+' · '+esc(LPH_KAT_TITEL[i])+'</strong><span>'+esc(why)+'</span><small>'+esc(q)+(b&&b.fundstelle?' · '+esc(b.fundstelle):'')+'</small></div>';
+  }).join(''):'Keine laufende Phase belegt.')+'</div>';
 }
 const lphTxt=a=>(a&&a.length)?'LPH '+a.join('·'):'—';
 // Sicherheitsnetz unter der Leiste: sagt jederzeit, was du gerade siehst und was laut Analyse gilt —
@@ -45,7 +54,7 @@ const GLOSS={
  'Zwangspunkt':'Unverrückbarer Termin oder Abhängigkeit, der den Ablauf zwingt (z. B. Frist Bauamt, Liefertermin). Davon wird rückwärts terminiert.',
  'Puffer':'Zeitreserve in Wochen, bis dieser Zwangspunkt kritisch wird. 0–2 Wochen = eng (rot).',
  'Rückwärtsterminierung':'Vom Fixtermin aus rückwärts gerechnet, wann spätestens begonnen werden muss.',
- 'Phasen-Reife':'Wie weit die Grundleistungen der aktiven LPH abgeschlossen sind (0–100 %).',
+ 'Phasen-Reife':'Früherer KI-Schätzwert; ohne Abnahmebelege keine belastbare Prozentzahl.',
  'Nachhaken':'Offener Vorgang, auf dessen Antwort/Erledigung gewartet wird — wird überfällig, wenn die Frist verstreicht.',
  'Schnittstelle':'Übergabepunkt zwischen Beteiligten (z. B. Architekt → Statiker). „Stillstand" = wie lange dort nichts passiert ist.',
  'P1':'Priorität 1 — kritisch, sofort handeln.',
@@ -144,9 +153,9 @@ function berHtml(ber){const j=ber.inhalt||{};let h='';
   const dl=j.delta||{};const dHas=['neu','verschaerft','entschaerft','erledigt'].some(k=>(dl[k]||[]).length);
   if(dHas)h+=berCard('Seit dem letzten Bericht',['neu','verschaerft','entschaerft','erledigt'].map(k=>(dl[k]||[]).map(x=>'<div class="ber-li"><span class="ber-tag '+(k==='verschaerft'?'d':k==='neu'?'w':'o')+'">'+({neu:'NEU',verschaerft:'VERSCHÄRFT',entschaerft:'ENTSCHÄRFT',erledigt:'ERLEDIGT'})[k]+'</span>'+esc(x)+'</div>').join('')).join(''));
   const kh=j.kosten_honorar||{};
-  if(kh.lage||kh.kostenstand!=null)h+=berCard('Kosten & Honorar',(kh.lage?'<div class="ber-li">'+esc(kh.lage)+'</div>':'')
-    +berLis([kh.kostenstand!=null?'Kostenstand: <strong>'+berEur(kh.kostenstand)+'</strong>'+(kh.budget!=null?' · Budget '+berEur(kh.budget):''):null,
-      kh.abweichung_hinweis?esc(kh.abweichung_hinweis):null,kh.nachtraege?'Nachträge: '+esc(kh.nachtraege):null,
+  if(kh.kostenstand!=null||kh.nachtraege||kh.honorar_hinweis)h+=berCard('Kosten & Honorar',''
+    +berLis([kh.kostenstand!=null?'Kostenermittlung laut Bericht · Stufe und Beleg prüfen: <strong>'+berEur(kh.kostenstand)+'</strong>':null,
+      kh.nachtraege?'Nachträge: '+esc(kh.nachtraege):null,
       kh.honorar_hinweis?'<strong>Honorar:</strong> '+esc(kh.honorar_hinweis):null].filter(Boolean)));
   const tm=j.termine||{};
   if(tm.lage||(tm.zwangspunkte||[]).length||(tm.verschiebungen||[]).length)h+=berCard('Termine & Zwangspunkte',(tm.lage?'<div class="ber-li">'+esc(tm.lage)+'</div>':'')
@@ -271,6 +280,19 @@ async function renderProject(){
     sb.from('documents').select('filename,modified_at').eq('project_id',current).or('filename.ilike.%kosten%,filename.ilike.%din%276%,filename.ilike.%honorar%,filename.ilike.%angebot%,filename.ilike.%nachtrag%').order('modified_at',{ascending:false}).limit(15),
     sb.from('item_feedback').select('item_type,item_title,kommentar').eq('project_id',current).order('created_at')]);
   if(!proj){go('cockpit');return;}
+  {const{data:ks,error}=await sb.rpc('kostenstand',{p_project:current});
+   if(error)console.warn('Kostenstand nicht geladen:',error.message);
+   const a=!error&&ks&&ks.aktuell?ks.aktuell:null;
+   proj.dashboard=Object.assign({},proj.dashboard||{}, {kosten:{
+     summe_brutto:a?+a.betrag_brutto:null,stufe:a?a.stufe:null,stand:a?a.stichtag:null,
+     quelle:a?a.datei:null,beleg:a?a.beleg_stelle:null,kg_umfang:a?a.kg_umfang:null,budget:null,
+     verlauf:!error&&ks&&Array.isArray(ks.verlauf)?ks.verlauf.map(v=>({stufe:v.stufe,betrag:+v.betrag_brutto,stand:v.stichtag,quelle:v.datei,kg_umfang:v.kg_umfang})):[],
+     zu_pruefen:!error&&ks?ks.zu_pruefen||[]:[]}});
+   if(proj.kennzahlen&&proj.kennzahlen.kosten){const k=proj.kennzahlen.kosten;
+     k.budget=null;k.eur_pro_m2_bgf=null;k.eur_pro_m3_bri=null;
+     if(a){const q={quelle:a.datei,stand:a.stichtag,status:'belegt'};
+       k.gesamt_brutto={wert:+a.betrag_brutto,...q};k.kostenstufe={wert:a.stufe,...q};k.kostenstand={wert:a.stichtag,...q};}
+     else{k.gesamt_brutto=null;k.kostenstufe=null;k.kostenstand=null;}}}
   currentName=proj.name;lastD=proj.dashboard||{};lastStand=proj.dashboard_stand;lastChecklist=proj.checklist||{};lastL1=proj.lph1||null;renderSidebar();
   fbClosed={};(fbRows||[]).forEach(r=>{fbClosed[fbKey(r.item_type,r.item_title)]=r;});
   el('crumb').innerHTML='<a id="toC">Cockpit</a><span class="sep">›</span>'+esc(short(proj.name));
@@ -290,36 +312,32 @@ async function renderProject(){
   if(pview==='bericht'){await renderBericht(proj);return;}
   if(pview!=='dashboard'){renderAgentPanel(pview,D,{recent:recent||[],costDocs:costDocs||[],folders:folders||[],docCount:docCount||0,dokuCheck:proj.doku_check,angeboteCheck:proj.angebote_check,angeboteStand:proj.angebote_stand,terminCheck:proj.termin_check,terminStand:proj.termin_stand,lph:proj.lph||0});return;}
 
-  let h='<header class="hdr"><div><div class="hdr-brand">Gutthann HIW · Projekt-Dashboard · Live</div><h1 class="hdr-title">'+esc(short(proj.name))+'</h1>'+
+  let h='<header class="hdr"><div><div class="hdr-brand">Gutthann HIW · Projekt-Cockpit</div><h1 class="hdr-title">'+esc(short(proj.name))+'</h1>'+
     '<div class="hdr-meta">'+(nr?'<span><strong>Nr.</strong> '+nr+'</span>':'')+'<span><strong>Phase</strong> '+lphTxt(PL.aktiv)+(PL.aktiv.length>1?' · Schwerpunkt '+PL.leit:'')+'</span><span><strong>Dokumente</strong> '+(docCount||0)+'</span><span><strong>Aufgaben</strong> '+offen+' offen</span></div></div>'+
-    '<div class="hdr-status">'+(D?'Analyse-Stand':'Stand')+'<span class="stamp">'+(proj.dashboard_stand?fmtD(proj.dashboard_stand):fmtD(today()))+'</span></div></header>';
-  const kk=D&&D.kosten,kBudget=(kk&&kk.budget!=null&&!isNaN(+kk.budget)&&+kk.budget>0)?+kk.budget:null;
-  let kostenSub=kostenVal?('brutto'+(kk&&kk.stand?' · Stand '+esc(kk.stand):' · Stand lt. Analyse')):'Tiefenanalyse nötig',kostenBar='';
-  if(kostenVal&&kBudget){const dlt=kostenVal-kBudget;kostenSub=(dlt>0?'<span class="up">+':'<span class="okc">−')+Math.abs(Math.round(dlt/1000)).toLocaleString('de-DE')+' T€</span> vs. Budget '+(kBudget/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €';kostenBar='<div class="kpi-bar"><i class="'+(dlt>0?'over':'')+'" style="width:'+Math.min(100,Math.round(kostenVal/kBudget*100))+'%"></i></div>';}
+    '<div class="hdr-status">Analyse-Stand<span class="stamp">'+(proj.dashboard_stand?fmtD(proj.dashboard_stand):'nicht vorhanden')+'</span></div></header>';
+  const kk=D&&D.kosten;
+  let kostenSub=kostenVal?(esc(kk.stufe||'Kostenermittlung')+' · '+esc(kk.stand||'Stand offen')):'kein bestätigter Kostenstand';
   h+='<div class="kpi-strip">'+kpi('accent','Aktive Phase',PL.aktiv.length?gl('LPH')+' '+PL.aktiv.join('·'):'—','',PL.aktiv.length>1?(PL.aktiv.length+' Phasen parallel · Schwerpunkt LPH '+PL.leit):'HOAI § 34')+
-    kpi(kostenVal?'':'','Kosten aktuell',kostenVal?(kostenVal/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}):'—',kostenVal?'Mio €':'',kostenSub,kostenBar)+
+    kpi(kostenVal?'':'','Kostenermittlung · DB bestätigt',kostenVal?(kostenVal/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}):'—',kostenVal?'Mio € brutto':'',kostenSub)+
     kpi(cOver?'alert':'','Überfällige Vorgänge',cOver,'',cOver?'Nachhaken nötig · '+cOpen+' offen gesamt':(cOpen?cOpen+' offen · nichts überfällig':'nichts offen'))+
     kzKpi(proj.kennzahlen,kostenVal)+'</div>';
-  // Phasen-Leiste: durchgezogene Linie bis zur ersten laufenden Phase (= abgeschlossen), gestrichelte Spange
+  // Phasen-Leiste: keine frühere Phase allein aus ihrer Nummer als abgeschlossen darstellen; gestrichelte Spange
   // über die parallel laufenden. Lime-Ring = Schwerpunkt, grauer Ring = die Phase, die du gerade ansiehst.
   {const pos=i=>(i-.5)/9*100,fa=PL.aktiv[0]||0,la=PL.aktiv[PL.aktiv.length-1]||0;
    h+='<nav class="pilgrim"><div class="pilgrim-label">Leistungsphasen HOAI · Klick zeigt eine Phase an — die aktive Phase ändert sich dadurch nicht</div><div class="pilgrim-track"><div class="pilgrim-line"></div>'+
-     (fa>1?'<div class="pilgrim-line-progress" style="width:'+(pos(fa)-pos(1)).toFixed(2)+'%"></div>':'')+
      (la>fa?'<div class="pilgrim-line-parallel" style="left:'+pos(fa).toFixed(2)+'%;width:'+(pos(la)-pos(fa)).toFixed(2)+'%"></div>':'');
    for(let i=1;i<=9;i++){const on=PL.aktiv.includes(i);
-     const cl=[fa&&i<fa?'done':'',on?'active':'',i===PL.leit?'lead':'',i===vw&&i!==PL.leit?'viewing':''].filter(Boolean).join(' ');
-     const tip='LPH '+i+' · '+LPH_KAT_TITEL[i]+(on?(i===PL.leit?' · Schwerpunkt':' · läuft parallel'):(fa&&i<fa?' · abgeschlossen':' · noch nicht begonnen'));
+     const cl=[on?'active':'',i===PL.leit?'lead':'',i===vw&&i!==PL.leit?'viewing':''].filter(Boolean).join(' ');
+     const tip='LPH '+i+' · '+LPH_KAT_TITEL[i]+(on?(i===PL.leit?' · Schwerpunkt':' · läuft parallel'):' · Status nicht bestätigt');
      h+='<div class="pilgrim-station '+cl+'" data-lph="'+i+'" title="'+esc(tip)+'"><div class="pilgrim-dot">'+i+'</div><div class="pilgrim-labelset">'+LPH[i-1]+'</div></div>';}
-   h+='</div>'+phasenBar(PL,vw)+'</nav>';}
+   h+='</div>'+phasenBar(PL,vw)+phaseEvidence(PL,proj.termin_check)+'</nav>';}
   // Aura-Fenster: Phasen-Reife + engster Zwangspunkt-Puffer (echte Analyse-Werte) + „Diese Woche" —
   // alle drei sind Einstiege in dasselbe Vorausschau-Fenster (Termin-Radar, Reife, Jour-Fixe …)
   {const vs=(D&&D.vorausschau)||{};
-   const pr=(vs.phasen_reife&&vs.phasen_reife.pct!=null)?Math.max(0,Math.min(100,Math.round(+vs.phasen_reife.pct))):null;
    const zps=(vs.zwangspunkte||[]).filter(z=>z&&z.puffer_wochen!=null).sort((a,b)=>(+a.puffer_wochen)-(+b.puffer_wochen));
    const wk=(vs.diese_woche||[]).slice(0,3);
    {let ar='<section class="win" data-sec="vorausschau"><div class="aurarow">';
-    if(pr!=null){const cl=pr>=66?'green':'amber';const fe=((vs.phasen_reife&&vs.phasen_reife.fehlend)||[]).slice(0,2).map(f=>f&&f.text).filter(Boolean);
-     ar+='<button class="aura '+cl+'" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">'+(lph?'LPH '+lph+' · ':'')+gl('Fortschritt',GLOSS['Phasen-Reife'])+'</span><span class="aura-v">'+dm(pr,6.5,'#fff')+'<span class="aura-pct">%</span></span><span class="aura-s">der Grundleistungen abgeschlossen</span>'+(fe.length?'<div class="aura-foot"><span>fehlt: '+esc(fe.join(' · '))+'</span></div>':'')+'</div></button>';}
+    ar+='<button class="aura amber" data-openwin="checkliste" title="Checkliste öffnen"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">LPH '+vw+' · Checkliste</span><span class="aura-v">Belege</span><span class="aura-s">Kein unbelegter Prozent-Fortschritt</span></div></button>';
     ar+='<button class="aura '+(p1?'amber':'green')+'" data-openwin="aufgaben" title="Fenster öffnen: Aufgaben-Zentrale"><div class="aura-bg"></div><div class="aura-dots"></div><div class="aura-c"><span class="aura-l">Offene Aufgaben</span><span class="aura-v">'+dm(offen,6.5,'#fff')+'</span><span class="aura-s">'+p1+' kritisch · P1</span></div></button>';
     let zfoot='';if(zps.length){const z=zps[0],pw=Math.max(0,Math.round(+z.puffer_wochen));zfoot='<div class="aura-side-foot"><span class="pdot '+(pw<=6?'warn':'ok')+'"></span><span class="asf-t">'+gl('Puffer')+' <strong>'+pw+' Wo</strong> · '+esc(z.name||'')+'</span>'+(z.frist?'<span class="asf-f">'+fmtFrist(z.frist)+'</span>':'')+'</div>';}
     ar+='<button class="aura-side" data-winopen title="Fenster öffnen: Termine & Vorausschau"><div class="aura-side-h">Diese Woche<span class="cnt">'+wk.length+'</span></div>'+(wk.length?wk.map(a=>'<div class="aura-week'+(a.dringlichkeit==='bald'?' soon':'')+'"><span class="dot"></span><div class="aura-week-t">'+esc(a.titel||'')+'</div>'+(a.frist?'<span class="aura-week-f">'+fmtFrist(a.frist)+'</span>':'')+'</div>').join(''):'<div class="empty" style="padding:14px">Keine fixen Fristen in den nächsten 2 Wochen.</div>')+zfoot+'</button>';
@@ -331,8 +349,8 @@ async function renderProject(){
   {const KZ=proj.kennzahlen||null;lastKz=KZ;lastKzName=proj.name;
    const tKz=KZ?(kzTeaser(KZ)):tz('warn','Noch nicht erfasst — der Agent zieht die Hardfacts aus Flächenermittlung, Bauantrag und Kostenberechnung','');
    const nBel=KZ?kzCount(KZ):0;
-   h+=sec('kennzahlen','prominent','▤','Projekt-Kennzahlen',KZ?('Hardfacts · Stand '+(proj.kennzahlen_stand?fmtD(proj.kennzahlen_stand):'—')):'Flächen, Kubatur, Kennwerte, Auftrag',
-     (KZ?'<span class="stat ok">'+nBel+' Werte</span>':'<span class="stat warn">offen</span>'),renderKennzahlen(KZ,D,proj.name),tKz);}
+   h+=sec('kennzahlen','prominent','▤','Projekt-Kennzahlen',KZ?('Analyseangaben · Stand '+(proj.kennzahlen_stand?fmtD(proj.kennzahlen_stand):'—')):'Flächen, Kubatur, Auftrag',
+     (KZ?'<span class="stat warn">'+nBel+' Angaben · Quelle prüfen</span>':'<span class="stat warn">offen</span>'),renderKennzahlen(KZ,D,proj.name),tKz);}
   // LPH-Katalog der AKTIVEN Phase — Fragenkatalog + Abschnitts-Stand je LPH (LPH 1 = Grundlagen inkl. Raumprogramm, Fallback lph1-Spalte)
   {const kLph=vw||1;const kat=(proj.lph_kataloge&&proj.lph_kataloge[String(kLph)])||(kLph===1?(proj.lph1||null):null);
     lastKat=kat;lastKatLph=kLph;
@@ -358,7 +376,7 @@ async function renderProject(){
   // Kosten (Pflicht) — groß & präsent
   {let tKost='';const k=D&&D.kosten;
    if(k&&k.summe_brutto){tKost='<span class="win-big">'+dm((k.summe_brutto/1e6).toLocaleString('de-DE',{maximumFractionDigits:2}),3.2,'var(--c-navy-900)')+'<span class="win-big-u">Mio € brutto'+(k.stand?' · Stand '+esc(k.stand):'')+'</span></span>';
-    if(k.budget!=null&&!isNaN(+k.budget)&&+k.budget>0){const dlt=k.summe_brutto-(+k.budget);tKost+=tz(dlt>0?'bad':'ok','vs. '+gl('Budget','Vom Bauherrn vorgegebener Kostenrahmen.')+' '+((+k.budget)/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €','<span style="color:'+(dlt>0?'var(--c-danger)':'var(--c-success)')+'">'+(dlt>0?'+':'−')+Math.abs(Math.round(dlt/1000)).toLocaleString('de-DE')+' T€</span>');}
+    tKost+=tz('warn',esc(k.stufe||'Kostenermittlung'),'Originalquelle prüfen · kein Budgetvergleich');
     if(honVal&&honVal.offene_nachtraege)tKost+=tz('warn','Offene Nachträge',''+honVal.offene_nachtraege);
    }else tKost=tz('warn','Noch keine Kostenwerte — Tiefenanalyse starten','');
    h+=sec('kosten','prominent','€','Kosten-Übersicht',k?'DIN 276 · aus Tiefenanalyse':'noch nicht analysiert',(k?'<span class="stat ok">analysiert</span>':'<span class="stat warn">offen</span>'),'<div class="inner">'+renderKosten(D,costDocs||[])+'</div>',tKost);}
@@ -410,20 +428,17 @@ function kzZ(n,dez){return n==null?'—':Number(n).toLocaleString('de-DE',{minim
 function kzRow(g,k,label,einheit,dez){const f=kzW(g,k);
   const roh=f?f.wert:null;const num=typeof roh==='number'?roh:(typeof roh==='string'&&/^-?[0-9.]+$/.test(roh)?+roh:null);
   const txt=f?(num!=null?kzZ(num,dez):esc(String(roh))):'—';
-  const st=f?(f.status==='belegt'?'ok':f.status==='geschaetzt'?'warn':'bad'):'';
+  const st=f?(f.verifiziert===true?'ok':'warn'):'';
   const q=f&&(f.quelle||f.stand)?esc([f.quelle,f.stand].filter(Boolean).join(' · ')):'';
-  return '<div class="kz-row'+(f?'':' leer')+'" title="'+(q||'nicht belegt')+'"><span class="kz-l">'+esc(label)+'</span>'+
+  return '<div class="kz-row'+(f?'':' leer')+'" title="'+(q||'nicht belegt')+'"><span class="kz-l">'+esc(label)+'<small class="kz-source">'+(q||'Originalquelle nicht belegt')+' · '+(f&&f.verifiziert===true?'verifiziert':'ungeprüft')+'</small></span>'+
     '<span class="kz-v">'+txt+(f&&einheit?'<span class="kz-u">'+esc(einheit)+'</span>':'')+'</span>'+
     (st?'<span class="pdot '+st+'"></span>':'<span class="kz-dot-leer"></span>')+'</div>';}
 function kzCount(KZ){let n=0;['groesse','kosten','auftrag','nutzung','termine'].forEach(b=>{const g=KZ[b]||{};Object.keys(g).forEach(k=>{if(kzW(g,k))n++;});});return n;}
 // KPI-Karte oben: die drei meistgebrauchten Zahlen; Klick öffnet das Kennzahlen-Fenster.
 function kzKpi(KZ,kostenVal){
-  const g=(KZ&&KZ.groesse)||{},ko=(KZ&&KZ.kosten)||{};
-  const bgf=kzNum(g,'bgf_m2'),nuf=kzNum(g,'nuf_m2');
-  let eur=kzNum(ko,'eur_pro_m2_bgf');
-  if(eur==null&&bgf&&kostenVal)eur=kostenVal/bgf;   // Notnagel: aus Gesamtkosten, klar als ca. gekennzeichnet
-  const sub=[eur!=null?kzZ(Math.round(eur))+' €/m² BGF':null,nuf!=null?'NUF '+kzZ(nuf)+' m²':null].filter(Boolean).join(' · ')||
-    (KZ?'weitere Kennzahlen im Fenster':'Hardfacts noch nicht erfasst');
+  const g=(KZ&&KZ.groesse)||{};
+  const bgf=kzW(g,'bgf_m2')&&kzW(g,'bgf_m2').verifiziert===true?kzNum(g,'bgf_m2'):null;
+  const sub=bgf!=null?'aus Originalquelle verifiziert':(KZ?'BGF aus Analyse · Prüfung ausstehend':'Kennzahlen noch nicht erfasst');
   const v=bgf!=null?dm(kzZ(bgf),3.1,'var(--c-navy-900)'):'—';
   return '<div class="kpi kz-kpi" data-openwin="kennzahlen" title="Fenster öffnen: Projekt-Kennzahlen">'+
     '<div class="kpi-label">Kennzahlen<span class="kz-kpi-o">⤢</span></div>'+
@@ -431,9 +446,9 @@ function kzKpi(KZ,kostenVal){
     '<div class="kpi-sub">'+esc(sub)+'</div></div>';}
 function kzTeaser(KZ){const g=KZ.groesse||{},ko=KZ.kosten||{},nu=KZ.nutzung||{};
   const bgf=kzNum(g,'bgf_m2'),bri=kzNum(g,'bri_m3'),kg=kzNum(ko,'kg300_400_brutto'),bw=kzW(nu,'bauweise');
-  return (bgf!=null?tz('ok','BGF',kzZ(bgf,2)+' m²'):tz('bad','BGF','—'))+
-    (bri!=null?tz('ok','BRI',kzZ(bri)+' m³'):tz('bad','BRI','—'))+
-    (kg!=null?tz('ok','KG 300+400 brutto',(kg/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €'):'')+
+  return (bgf!=null?tz('warn','BGF · Quelle prüfen',kzZ(bgf,2)+' m²'):tz('warn','BGF','—'))+
+    (bri!=null?tz('warn','BRI · Quelle prüfen',kzZ(bri)+' m³'):tz('warn','BRI','—'))+
+    (kg!=null?tz('warn','KG 300+400 · Quelle prüfen',(kg/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €'):'')+
     (bw?tz(null,esc(String(bw.wert)),''):'');}
 // Fenster-Inhalt: fünf Blöcke nebeneinander + Referenzblatt-Knopf
 function renderKennzahlen(KZ,D,pname){
@@ -441,11 +456,7 @@ function renderKennzahlen(KZ,D,pname){
   const g=KZ.groesse||{},ko=KZ.kosten||{},au=KZ.auftrag||{},nu=KZ.nutzung||{},te=KZ.termine||{},rf=KZ.referenz||{};
   const bgf=kzNum(g,'bgf_m2'),nuf=kzNum(g,'nuf_m2');
   const eff=(bgf&&nuf)?Math.round(nuf/bgf*100):null;
-  const hero=ovHero([
-    ovK('',bgf!=null?kzZ(bgf,2)+'<span class="ov-k-u">m² BGF</span>':'—','Bruttogrundfläche'),
-    ovK('',kzNum(g,'bri_m3')!=null?kzZ(kzNum(g,'bri_m3'))+'<span class="ov-k-u">m³</span>':'—','Bruttorauminhalt'),
-    ovK('',kzNum(ko,'eur_pro_m2_bgf')!=null?kzZ(Math.round(kzNum(ko,'eur_pro_m2_bgf')))+'<span class="ov-k-u">€/m²</span>':'—','Kostenkennwert BGF'),
-    ovK(eff!=null?(eff>=60?'ok':'warn'):'',eff!=null?eff+'<span class="ov-k-u">%</span>':'—','Flächeneffizienz NUF/BGF')]);
+  const hero='<div class="truth-note">Projektkennzahlen sind Analyseangaben. Jede Zahl ist erst mit Originaldatei, Fassung und Einheit belastbar.</div>';
   const blk=(titel,rows)=>'<div class="kz-block"><div class="kz-h">'+titel+'</div>'+rows.join('')+'</div>';
   const B=[];
   B.push(blk('Größe & Kubatur',[
@@ -456,8 +467,7 @@ function renderKennzahlen(KZ,D,pname){
   B.push(blk('Kosten & Kennwerte',[
     kzRow(ko,'gesamt_brutto','Baukosten gesamt','€',0),kzRow(ko,'kg300_400_brutto','KG 300+400 brutto','€',0),
     kzRow(ko,'kg300_brutto','davon KG 300','€',0),kzRow(ko,'kg400_brutto','davon KG 400','€',0),
-    kzRow(ko,'budget','Budget Bauherr','€',0),kzRow(ko,'eur_pro_m2_bgf','€ / m² BGF','€',0),
-    kzRow(ko,'eur_pro_m3_bri','€ / m³ BRI','€',0),kzRow(ko,'kostenstufe','Kostenstufe',''),kzRow(ko,'kostenstand','Kostenstand','')]));
+    kzRow(ko,'kostenstufe','Kostenstufe',''),kzRow(ko,'kostenstand','Kostenstand','')]));
   B.push(blk('Auftrag & Honorar',[
     kzRow(au,'bauherr','Bauherr',''),kzRow(au,'ag_typ','Auftraggeber-Typ',''),kzRow(au,'lph_umfang','Leistungsphasen',''),
     kzRow(au,'rolle','Rolle',''),kzRow(au,'honorarzone','Honorarzone',''),kzRow(au,'anrechenbare_kosten','Anrechenbare Kosten','€',0),
@@ -476,7 +486,7 @@ function renderKennzahlen(KZ,D,pname){
      (kt?'<div class="kz-ref-t">'+esc(String(kt.wert))+'</div>':'')+
      (kat?'<div class="kz-ref-m">Kategorie: <strong>'+esc(String(kat.wert))+'</strong></div>':'')+
      (hw?'<div class="kz-ref-m warn">Vor Verwendung prüfen: '+esc(String(hw.wert))+'</div>':'')+
-     '<button class="btn-sm" id="kzcopy" style="margin-top:10px">Für Referenzblatt kopieren</button>'+
+     '<button class="btn-sm" id="kzcopy" disabled title="Originalprüfung aller Felder fehlt" style="margin-top:10px">Export gesperrt · Quellenprüfung fehlt</button>'+
      '<span class="kz-ref-h" id="kzcopyh"></span></div>';}
   return hero+'<div class="kz-wrap">'+B.join('')+ref+'</div>';}
 // Zwischenablage-Text im Format der Referenzdatenbank
@@ -793,7 +803,7 @@ function panelBody(id,D,ex){
 }
 function renderVorausschauSection(D){
   const vs=D&&D.vorausschau?D.vorausschau:null;
-  const has=vs&&((vs.zwangspunkte&&vs.zwangspunkte.length)||(vs.schnittstellen&&vs.schnittstellen.length)||(vs.diese_woche&&vs.diese_woche.length)||(vs.hotspots&&vs.hotspots.length)||(vs.phasen_reife&&vs.phasen_reife.pct!=null));
+  const has=vs&&((vs.zwangspunkte&&vs.zwangspunkte.length)||(vs.schnittstellen&&vs.schnittstellen.length)||(vs.diese_woche&&vs.diese_woche.length)||(vs.hotspots&&vs.hotspots.length));
   let meta='',body='';
   if(has){
     const eng=(vs.zwangspunkte||[]).filter(z=>z.status==='danger').length;
@@ -808,9 +818,9 @@ function renderVorausschauSection(D){
 }
 function renderVorausschau(vs){
   let h='';
-  const zp=vs.zwangspunkte||[],reife=vs.phasen_reife||null,week=vs.diese_woche||[],jf=vs.jour_fixe||null,sst=vs.schnittstellen||[],hot=vs.hotspots||[];
+  const zp=vs.zwangspunkte||[],week=vs.diese_woche||[],jf=vs.jour_fixe||null,sst=vs.schnittstellen||[],hot=vs.hotspots||[];
   const engst=zp.filter(z=>z&&z.puffer_wochen!=null).slice().sort((a,b)=>(+a.puffer_wochen)-(+b.puffer_wochen))[0];
-  h+=ovHero([reife&&reife.pct!=null?ovK('',Math.max(0,Math.min(100,Math.round(+reife.pct)))+'<span class="ov-k-u"> %</span>','Grundleistungen abgeschlossen'):null,ovK(zp.length?'':'mut',zp.length,'Zwangspunkte'),engst?ovK(Math.round(+engst.puffer_wochen)<=6?'warn':'ok',Math.max(0,Math.round(+engst.puffer_wochen))+'<span class="ov-k-u"> Wo</span>','engster Puffer'):null,week.length?ovK('',week.length,'diese Woche'):null]);
+  h+=ovHero([ovK(zp.length?'':'mut',zp.length,'Zwangspunkte'),engst?ovK(Math.round(+engst.puffer_wochen)<=6?'warn':'ok',Math.max(0,Math.round(+engst.puffer_wochen))+'<span class="ov-k-u"> Wo</span>','engster Puffer'):null,week.length?ovK('',week.length,'diese Woche'):null]);
   let left='';
   if(zp.length){
     left='<div class="vs-block-c"><div class="vs-h">'+icoClock()+'Termin-Radar · '+gl('Rückwärtsterminierung')+'<span class="vs-tag">'+zp.length+' '+gl('Zwangspunkt')+(zp.length>1?'e':'')+'</span></div>';
@@ -819,9 +829,6 @@ function renderVorausschau(vs){
     left+='</div>';
   }
   let right='';
-  if(reife&&reife.pct!=null){const pct=Math.max(0,Math.min(100,Math.round(+reife.pct)));
-    right='<div class="vs-block-c"><div class="vs-h">'+icoCheck()+gl('Phasen-Reife')+'</div><div class="vs-reife"><div class="vs-ring" style="background:conic-gradient(var(--c-blue-600) '+pct+'%,var(--c-slate-200) 0)"><div class="vs-ring-v"><div class="vs-ring-pct">'+pct+'%</div><div class="vs-ring-l">reif</div></div></div><div class="vs-reife-side">'+(reife.hinweis?'<div class="vs-prog">'+esc(reife.hinweis)+'</div>':'')+(reife.fehlend&&reife.fehlend.length?'<ul class="vs-miss">'+reife.fehlend.map(f=>'<li><span class="dot'+(f.status==='teilweise'?' part':'')+'"></span>'+esc(f.text)+'</li>').join('')+'</ul>':'')+'</div></div></div>';
-  }
   if(left||right)h+='<div class="vs-row">'+(left||'<div></div>')+(right||'<div></div>')+'</div>';
   if(week.length||(jf&&((jf.punkte&&jf.punkte.length)||jf.datum))){
     let acts='<div class="vs-block-c"><div class="vs-h">'+icoClock()+'Diese & nächste Woche</div><div class="vs-acts">';
@@ -848,13 +855,10 @@ function renderVorausschau(vs){
 function eur(n){return (Number(n)||0).toLocaleString('de-DE')+' €';}
 function renderKostenTrend(k){
   const v=(k.verlauf||[]).filter(s=>s&&s.betrag!=null).slice().sort((a,b)=>(a.lph||0)-(b.lph||0));
-  const budget=(k.budget!=null&&!isNaN(+k.budget))?+k.budget:null;
-  if(!v.length&&budget==null)return '';
-  let h='<div class="kt"><div class="kt-h">'+gl('Kosten-Verlauf','Die HOAI-Kostenstufen über die Zeit: Kostenrahmen → Schätzung → Berechnung → Anschlag → Feststellung. Zeigt, ob das Projekt im Budget bleibt.')+' · Schätzung → Feststellung</div>';
-  if(budget!=null)h+='<div class="kt-budget"><span class="kt-budget-l">'+gl('Budget','Vom Bauherrn vorgegebener Kostenrahmen, an dem die Stufen gemessen werden.')+' / Kostenrahmen</span><span class="kt-budget-v mono">'+eur(budget)+'</span></div>';
+  if(!v.length)return '';
+  let h='<div class="kt"><div class="kt-h">Belegte Kostenermittlungen · keine davon ist automatisch ein Budget</div>';
   if(v.length){h+='<div class="kt-steps">';
-    for(const s of v){let cls='',dlt='';if(budget!=null&&budget>0){const over=+s.betrag-budget;cls=over>budget*0.02?'over':over<-budget*0.02?'under':'on';dlt=' · <span class="kt-delta '+cls+'">'+(over>=0?'+':'')+eur(over)+' vs. Budget</span>';}
-      h+='<div class="kt-step '+cls+'"><div class="kt-step-top"><span class="kt-stufe">'+esc(s.stufe||'')+'</span>'+(s.lph?'<span class="kt-lph">LPH '+esc(''+s.lph)+'</span>':'')+'</div><div class="kt-betrag mono">'+eur(s.betrag)+'</div><div class="kt-foot">'+(s.stand?esc(fmtFrist(s.stand)):'')+dlt+(s.quelle?'<div class="kt-q">Quelle: '+esc(s.quelle)+'</div>':'')+'</div></div>';}
+    for(const s of v){h+='<div class="kt-step"><div class="kt-step-top"><span class="kt-stufe">'+esc(s.stufe||'')+'</span>'+(s.lph?'<span class="kt-lph">LPH '+esc(''+s.lph)+'</span>':'')+'</div><div class="kt-betrag mono">'+eur(s.betrag)+'</div><div class="kt-foot">'+(s.stand?esc(fmtFrist(s.stand)):'')+(s.quelle?'<div class="kt-q">Quelle: '+esc(s.quelle)+'</div>':'')+'</div></div>';}
     h+='</div>';}
   return h+'</div>';
 }
@@ -873,11 +877,12 @@ function renderHonorar(D){const ho=D&&D.honorare?D.honorare:null;if(!ho)return '
 }
 function renderKosten(D,costDocs){
   if(D&&D.kosten){const k=D.kosten;let h='';
-    if(k.summe_brutto){const bud=(k.budget!=null&&!isNaN(+k.budget)&&+k.budget>0)?+k.budget:null,ho=D.honorare||null,dlt=bud!=null?k.summe_brutto-bud:null;
-      h+=ovHero([ovK('',(k.summe_brutto/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+'<span class="ov-k-u"> Mio € brutto</span>','Stand '+(k.stand||'?')),dlt!=null?ovK(dlt>0?'bad':'ok',(dlt>0?'+':'−')+Math.abs(Math.round(dlt/1000)).toLocaleString('de-DE')+'<span class="ov-k-u"> T€</span>','vs. Budget '+(bud/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+' Mio €'):null,ho&&ho.offene_nachtraege?ovK('warn',ho.offene_nachtraege,'offene Nachträge'):null]);}
+    if(k.summe_brutto){const ho=D.honorare||null;
+      h+=ovHero([ovK('',(k.summe_brutto/1e6).toLocaleString('de-DE',{maximumFractionDigits:2})+'<span class="ov-k-u"> Mio € brutto</span>',esc(k.stufe||'Kostenermittlung')+' · '+(k.stand||'Stand offen')),ho&&ho.offene_nachtraege?ovK('warn',ho.offene_nachtraege,'offene Nachträge'):null]);}
     h+=renderKostenTrend(k);
     if(k.kg&&k.kg.length){h+='<div class="kt-h" style="margin-top:14px">Kostengruppen · DIN 276</div><table class="kg-table"><tr><th>'+gl('KG','Kostengruppe nach DIN 276 — z. B. KG 300 Bauwerk, KG 400 Technik.')+' (DIN 276)</th><th style="text-align:right">Betrag</th></tr>'+k.kg.map(r=>'<tr><td>KG '+esc(''+r.kg)+'</td><td class="n">'+(Number(r.betrag)||0).toLocaleString('de-DE')+' €</td></tr>').join('')+'</table>';}
     h+=renderHonorar(D);
+    if(!k.summe_brutto)h+='<div class="empty">Kein bestätigter Kostenstand. Eine ältere Analysezahl wird nicht angezeigt.</div>';
     if(k.quelle)h+='<div class="page-sub" style="margin-top:10px">Quelle: '+esc(k.quelle)+'</div>';
     return h||'<div class="empty">Analyse ohne Kostenwerte.</div>';}
   let h='<div class="cta"><p>Kosten (KG 200–700), Verträge und Trend werden von der <strong>Dashboard-Analyse</strong> aus deinen Kosten-Dokumenten ermittelt. Noch nicht gelaufen.</p><button class="btn-sm" data-agent="dashboard-analyse">Tiefenanalyse starten</button></div>';

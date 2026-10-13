@@ -1,0 +1,22 @@
+/* Projektleiter-Cockpit: lesbare, responsiv skalierte Kennzahlen und Belege. */
+.main{min-width:0}
+.kpi-strip{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.kpi{min-width:0;min-height:122px;padding:16px 18px}
+.kpi-value{font-size:clamp(1.45rem,2.3vw,2.3rem);line-height:1.1;overflow-wrap:anywhere}
+.kpi-value .dm{font-size:inherit!important;line-height:inherit!important}
+.kpi-sub{line-height:1.35;overflow-wrap:anywhere}
+.kpi-unit{font-size:.4em;white-space:nowrap}
+.pilgrim{max-width:100%}
+.phase-evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:8px;margin-top:12px}
+.phase-evidence-row{display:grid;gap:4px;padding:11px;border:1px solid var(--c-slate-200);border-radius:10px;background:var(--c-slate-50);min-width:0}
+.phase-evidence-row strong{font-size:11px;color:var(--c-navy-900)}
+.phase-evidence-row span{font-size:11px;line-height:1.35}
+.phase-evidence-row small{font-size:10px;color:var(--c-slate-500);overflow-wrap:anywhere}
+.kz-wrap{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.kz-block{min-width:0}
+.kz-row{min-width:0;grid-template-columns:minmax(90px,1fr) minmax(0,1fr) auto;gap:8px;align-items:start}
+.kz-l,.kz-v{overflow-wrap:anywhere}
+.kz-source{display:block;margin-top:3px;font-size:10px;font-weight:400;line-height:1.3;color:var(--c-slate-500);overflow-wrap:anywhere}
+.kz-v{text-align:right;font-size:clamp(12px,1.1vw,15px)}
+.truth-note{margin:14px 20px 0;padding:12px 15px;border:1px solid #e6d29a;background:var(--c-warning-bg);border-radius:10px;color:#75501d;font-size:12px;line-height:1.45}
+@media(max-width:700px){.kpi-strip{grid-template-columns:1fr}.pilgrim{overflow-x:auto}.pilgrim-track{min-width:680px}.phase-evidence{grid-template-columns:1fr}.kz-wrap{grid-template-columns:1fr}}
